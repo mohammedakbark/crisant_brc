@@ -3,7 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/controller/location_provider.dart';
-import 'package:test_managment/presentation/components/location_banner.dart';
+import 'package:test_managment/presentation/components/overlay_location_banner.dart';
 import 'package:test_managment/presentation/screens/page.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -85,15 +85,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           controller.currentLat!, controller.currentLon!)),
                   mapType: MapType.normal,
                   myLocationEnabled: true,
-                  
 
-                  markers: {
-                    // Marker(
-                    //     icon: BitmapDescriptor.defaultMarker,
-                    //     position: LatLng(
-                    //         controller.currentLat!, controller.currentLon!),
-                    //     markerId: MarkerId('1'))
-                  },
+                  // markers: {
+                  //   Marker(
+                  //       icon: BitmapDescriptor.defaultMarkerWithHue(
+                  //           BitmapDescriptor.hueAzure),
+                  //       position: LatLng(
+                  //           controller.currentLat!, controller.currentLon!),
+                  //       markerId: MarkerId('1'))
+                  // },
                 ),
               )
             ],
