@@ -1,7 +1,4 @@
-// location_permission_handler.dart
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 

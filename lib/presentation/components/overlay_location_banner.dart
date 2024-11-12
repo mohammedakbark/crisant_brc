@@ -21,13 +21,13 @@ class LocationBanner extends StatelessWidget {
             children: [
               const Icon(
                 Icons.location_off_outlined,
-                color: AppColours.kWhite,
+                color: AppColors.kWhite,
               ),
               const SizedBox(width: 12),
               const Expanded(
                 child: Text(
                   'Location services are disabled',
-                  style: TextStyle(color: AppColours.kWhite),
+                  style: TextStyle(color: AppColors.kWhite),
                 ),
               ),
               TextButton(
@@ -36,7 +36,7 @@ class LocationBanner extends StatelessWidget {
                 },
                 child: const Text(
                   'ENABLE',
-                  style: TextStyle(color: Colors.blue),
+                  style: TextStyle(color: AppColors.kPrimaryColor),
                 ),
               ),
             ],

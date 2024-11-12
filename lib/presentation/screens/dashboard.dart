@@ -1,10 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:provider/provider.dart';
+import 'package:test_managment/controller/dashboard_controller.dart';
 import 'package:test_managment/controller/location_provider.dart';
 import 'package:test_managment/presentation/components/overlay_location_banner.dart';
-import 'package:test_managment/presentation/screens/page.dart';
+import 'package:test_managment/presentation/screens/home/add_asset_screen.dart';
+import 'package:test_managment/presentation/screens/home/home_screen.dart';
+import 'package:test_managment/presentation/screens/home/test_asset_screen.dart';
+import 'package:test_managment/presentation/screens/home/view_assets_screen.dart';
+import 'package:test_managment/utils/app_colors.dart';
+import 'package:test_managment/utils/app_dimentions.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -57,51 +63,86 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.dispose();
   }
 
+  List<Widget> pages = [
+    const HomeScreen(),
+    AddAssetScreen(),
+     TestAssetScreen(),
+    const ViewAssetsScreen()
+  ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Consumer<LocationProvider>(builder: (context, controller, _) {
-        if (controller.currentLat != null || controller.currentLon != null) {
-          return Column(
-            children: [
-              Expanded(
-                child: GoogleMap(
-                  zoomGesturesEnabled: true,
-                  zoomControlsEnabled: true,
-                  buildingsEnabled: true,
-                  compassEnabled: true,
-                  liteModeEnabled: false, // rediretion to google map
-                  mapToolbarEnabled: true,
-                  myLocationButtonEnabled: true,
-                  rotateGesturesEnabled: true,
-                  indoorViewEnabled: true,
-                  fortyFiveDegreeImageryEnabled: true,
-                  scrollGesturesEnabled: true,
-                  tiltGesturesEnabled: true,
-                  trafficEnabled: true,
-
-                  initialCameraPosition: CameraPosition(
-                      target: LatLng(
-                          controller.currentLat!, controller.currentLon!)),
-                  mapType: MapType.normal,
-                  myLocationEnabled: true,
-
-                  // markers: {
-                  //   Marker(
-                  //       icon: BitmapDescriptor.defaultMarkerWithHue(
-                  //           BitmapDescriptor.hueAzure),
-                  //       position: LatLng(
-                  //           controller.currentLat!, controller.currentLon!),
-                  //       markerId: MarkerId('1'))
-                  // },
-                ),
-              )
-            ],
-          );
-        } else {
-          return const Center(child: CircularProgressIndicator());
-        }
-      }),
+    final controller = Provider.of<DashboardController>(context);
+    return SafeArea(
+      child: Scaffold(
+        body: pages[controller.currentScreenIndex],
+        bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: AppColors.kWhite,
+            onTap: controller.onChagePageIndex,
+            currentIndex: controller.currentScreenIndex,
+            selectedLabelStyle: TextStyle(
+              fontSize: AppDimensions.fontSize10(context),
+            ),
+            unselectedLabelStyle: TextStyle(
+                fontSize: AppDimensions.fontSize10(context),
+                fontWeight: FontWeight.bold),
+            selectedItemColor: AppColors.kPrimaryColor,
+            unselectedItemColor: AppColors.kGrey,
+            items: const [
+              BottomNavigationBarItem(
+                  label: 'HOME',
+                  icon: Icon(
+                    Icons.home_outlined,
+                  ),
+                  activeIcon: CircleAvatar(
+                      backgroundColor: AppColors.kPrimaryColor,
+                      child: Icon(
+                        Icons.home_outlined,
+                        color: AppColors.kWhite,
+                      ))),
+              BottomNavigationBarItem(
+                  label: 'ADD ASSET',
+                  icon: Icon(
+                    Icons.playlist_add_sharp,
+                  ),
+                  activeIcon: CircleAvatar(
+                      backgroundColor: AppColors.kPrimaryColor,
+                      child: Icon(
+                        Icons.playlist_add_sharp,
+                        color: AppColors.kWhite,
+                      ))),
+              BottomNavigationBarItem(
+                  label: 'TEST ASSET',
+                  icon: Icon(
+                    Icons.playlist_add_check_outlined,
+                  ),
+                  activeIcon: CircleAvatar(
+                      backgroundColor: AppColors.kPrimaryColor,
+                      child: Icon(
+                        Icons.playlist_add_check_outlined,
+                        color: AppColors.kWhite,
+                      ))),
+              BottomNavigationBarItem(
+                  label: 'VIEW TEST ASSET',
+                  icon: Icon(
+                    Icons.file_open_outlined,
+                  ),
+                  activeIcon: CircleAvatar(
+                    backgroundColor: AppColors.kPrimaryColor,
+                    child: Icon(
+                      Icons.file_open_outlined,
+                      color: AppColors.kWhite,
+                    ),
+                  ))
+            ]),
+        floatingActionButton: FloatingActionButton(
+          shape: const CircleBorder(),
+          tooltip: 'Download Data',
+          backgroundColor: AppColors.kPrimaryColor,
+          onPressed: () {},
+          child: const Icon(color: AppColors.kWhite, Icons.sync),
+        ),
+      ),
     );
   }
 }

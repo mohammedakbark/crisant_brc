@@ -40,6 +40,8 @@ class AppDimensions {
   static const double paddingSize15 = 15.0;
   static const double paddingSize20 = 20.0;
   static const double paddingSize25 = 25.0;
+    static const double paddingSize30 = 30.0;
+
 
   static const double radiusSize5 = 5.0;
   static const double radiusSize8 = 8.0;
