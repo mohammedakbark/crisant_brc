@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/controller/camera_controller.dart';
 import 'package:test_managment/controller/dashboard_controller.dart';
@@ -15,9 +14,10 @@ void main() {
     ChangeNotifierProvider<DashboardController>(
       create: (context) => DashboardController(),
     ),
-     ChangeNotifierProvider<CameraController>(
+    ChangeNotifierProvider<CameraController>(
       create: (context) => CameraController(),
-    )
+    ),
+  
   ], child: const MyApp()));
 }
 
@@ -44,7 +44,6 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'BRC',
         theme: ThemeData(
-          
           scaffoldBackgroundColor: AppColors.kBgColor,
           fontFamily: 'OpenSans',
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.kPrimaryColor),

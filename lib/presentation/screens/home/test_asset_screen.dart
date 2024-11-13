@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/controller/camera_controller.dart';
@@ -9,7 +6,6 @@ import 'package:test_managment/presentation/components/app_page_head_text.dart';
 import 'package:test_managment/presentation/components/app_spacer.dart';
 import 'package:test_managment/presentation/components/custom_button.dart';
 import 'package:test_managment/presentation/components/custom_dropdown_field.dart';
-import 'package:test_managment/presentation/components/custom_form_field.dart';
 import 'package:test_managment/utils/app_colors.dart';
 import 'package:test_managment/utils/app_dimentions.dart';
 import 'package:test_managment/utils/responsive_helper.dart';
@@ -41,6 +37,7 @@ class TestAssetScreen extends StatelessWidget {
         child: Column(
           children: [
             const AppPageHeadText(title: 'Test Asset'),
+            TextButton(onPressed: () {}, child: Text('Show')),
             CustomDropdownField(
               hintText: 'Asset Group',
               items: assetsGroup,
@@ -130,7 +127,6 @@ class TestAssetScreen extends StatelessWidget {
                             ),
                             _diologueButton(context, () {
                               controller.onPickImage();
-                              
                             }, 'Take Photo'),
                             _diologueButton(context, () {}, 'Cancel',
                                 color: AppColors.kRed)
@@ -180,7 +176,8 @@ class TestAssetScreen extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: AppDimensions.paddingSize10),
+        padding:
+            const EdgeInsets.symmetric(vertical: AppDimensions.paddingSize10),
         child: Row(
           children: [
             Text(
