@@ -26,8 +26,8 @@ class LocationProvider with ChangeNotifier {
   //----Current Location
   double? _currentLat;
   double? _currentLon;
-  double get currentLat => _currentLat!;
-  double get currentLon => _currentLon!;
+  double get currentLat => _currentLat ?? 0;
+  double get currentLon => _currentLon ?? 0;
   _streamCurrentLocation() {
     return Geolocator.getCurrentPosition().then((value) {
       _currentLat = value.latitude;
@@ -93,7 +93,6 @@ class LocationProvider with ChangeNotifier {
     distance = Geolocator.distanceBetween(
         currentLat, currentLon, _targetLat!, _targetLon!);
     isNearTarget = distance <= 5;
-    _getDirectionGuidance();
     notifyListeners(); // Within 5 meters is Nearest
   }
 
@@ -102,7 +101,7 @@ class LocationProvider with ChangeNotifier {
   double bearing = 0;
   String _direction = 'Unknown';
   String get direction => _direction;
-  String _getDirectionGuidance() {
+  String getDirectionGuidance() {
     bearing = Geolocator.bearingBetween(
         currentLat, currentLon, _targetLat!, _targetLon!);
 
@@ -123,7 +122,7 @@ class LocationProvider with ChangeNotifier {
     } else if (bearing >= -67.5 && bearing < -22.5) {
       _direction = 'Northwest';
     }
-
-    return 'Head $direction for ${(distance / 1000).toStringAsFixed(4)} Km';
+    // notifyListeners();
+    return 'Head $direction for ${(distance / 1000).toStringAsFixed(3)} Km';
   }
 }

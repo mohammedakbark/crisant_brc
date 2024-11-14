@@ -1,4 +1,4 @@
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:test_managment/utils/app_colors.dart';
 import 'package:test_managment/utils/app_dimentions.dart';
@@ -41,23 +41,25 @@ class HomeAppBar extends StatelessWidget {
               color: AppColors.kBgColor,
               initialValue: 'English',
               tooltip: 'Language',
-              icon: const Row(
+              icon: Row(
                 children: [
                   Text(
-                    'English',
-                    style: TextStyle(),
+                    context.locale.languageCode == 'en' ? 'English' : 'हिन्दी',
+                    style: const TextStyle(),
                   ),
-                  Icon(
+                  const Icon(
                     Icons.keyboard_arrow_down_rounded,
                     color: AppColors.kBlack,
                   )
                 ],
               ),
-              onSelected: (value) {},
+              onSelected: (value) {
+                context.setLocale(Locale(value));
+              },
               itemBuilder: (context) {
                 return [
-                  const PopupMenuItem(child: Text('English')),
-                  const PopupMenuItem(child: Text('हिन्दी'))
+                  const PopupMenuItem(value: 'en', child: Text('English')),
+                  const PopupMenuItem(value: 'hi', child: Text('हिन्दी'))
                 ];
               },
             ),

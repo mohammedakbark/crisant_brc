@@ -31,33 +31,31 @@ class AddAssetScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppMargin(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const AppPageHeadText(title: 'Add Asset'),
-            CustomDropdownField(
-              hintText: 'Asset Group',
-              items: assetsGroup,
-              onChanged: (value) {},
-            ),
-            CustomDropdownField(
-              hintText: 'Section Incharge',
-              items: inchargeList,
-              onChanged: (value) {},
-            ),
-            CustomDropdownField(
-              hintText: 'Section',
-              items: sections,
-              onChanged: (value) {},
-            ),
-            CustomFormField(
-                controller: assetIdController, hintText: 'Asset ID / SL#'),
-            const AppSpacer(
-              heightPortion: .05,
-            ),
-            const CustomButton(title: 'SUBMIT')
-          ],
-        ),
+      child: Column(
+        children: [
+          const AppPageHeadText(title: 'Add Asset'),
+          CustomDropdownField(
+            hintText: 'Asset Group',
+            items: assetsGroup,
+            onChanged: (value) {},
+          ),
+          CustomDropdownField(
+            hintText: 'Section Incharge',
+            items: inchargeList,
+            onChanged: (value) {},
+          ),
+          CustomDropdownField(
+            hintText: 'Section',
+            items: sections,
+            onChanged: (value) {},
+          ),
+          CustomFormField(
+              controller: assetIdController, hintText: 'Asset ID / SL#'),
+          const AppSpacer(
+            heightPortion: .05,
+          ),
+          const CustomButton(title: 'SUBMIT')
+        ],
       ),
     );
   }

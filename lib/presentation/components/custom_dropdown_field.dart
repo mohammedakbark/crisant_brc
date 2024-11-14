@@ -50,8 +50,7 @@ class CustomDropdownField extends StatelessWidget {
             .toList(),
         onChanged: (value) {},
         hint: Text(
-          hintText,
-          style: TextStyle(
+          hintText,          style: TextStyle(
               fontSize: AppDimensions.fontSize16(context),
               color: AppColors.kGrey),
         ),

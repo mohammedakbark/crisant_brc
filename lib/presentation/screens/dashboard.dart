@@ -9,6 +9,7 @@ import 'package:test_managment/presentation/screens/home/add_asset_screen.dart';
 import 'package:test_managment/presentation/screens/home/home_screen.dart';
 import 'package:test_managment/presentation/screens/home/test_asset_screen.dart';
 import 'package:test_managment/presentation/screens/home/view_assets_screen.dart';
+import 'package:test_managment/presentation/screens/home/widgets/floating_location_bar.dart';
 import 'package:test_managment/utils/app_colors.dart';
 import 'package:test_managment/utils/app_dimentions.dart';
 
@@ -66,7 +67,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List<Widget> pages = [
     const HomeScreen(),
     AddAssetScreen(),
-     TestAssetScreen(),
+    TestAssetScreen(),
     const ViewAssetsScreen()
   ];
   @override
@@ -74,7 +75,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final controller = Provider.of<DashboardController>(context);
     return SafeArea(
       child: Scaffold(
-        body: pages[controller.currentScreenIndex],
+        body: Stack(
+          children: [
+            pages[controller.currentScreenIndex],
+            Consumer<LocationProvider>(builder: (context, controller, _) {
+              return Visibility(
+                  visible: controller.showFloatingLocation,
+                  child: FloatingDirectionBar());
+            }),
+          ],
+        ),
         bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             backgroundColor: AppColors.kWhite,

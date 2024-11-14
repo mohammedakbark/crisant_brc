@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/controller/camera_controller.dart';
+import 'package:test_managment/controller/location_provider.dart';
 import 'package:test_managment/presentation/components/app_margin.dart';
 import 'package:test_managment/presentation/components/app_page_head_text.dart';
 import 'package:test_managment/presentation/components/app_spacer.dart';
 import 'package:test_managment/presentation/components/custom_button.dart';
 import 'package:test_managment/presentation/components/custom_dropdown_field.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:test_managment/utils/app_colors.dart';
 import 'package:test_managment/utils/app_dimentions.dart';
 import 'package:test_managment/utils/responsive_helper.dart';
@@ -33,46 +35,63 @@ class TestAssetScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppMargin(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const AppPageHeadText(title: 'Test Asset'),
-            TextButton(onPressed: () {}, child: Text('Show')),
-            CustomDropdownField(
-              hintText: 'Asset Group',
-              items: assetsGroup,
-              onChanged: (value) {},
-            ),
-            CustomDropdownField(
-              hintText: 'Section Incharge',
-              items: inchargeList,
-              onChanged: (value) {},
-            ),
-            CustomDropdownField(
-              hintText: 'Section',
-              items: sections,
-              onChanged: (value) {},
-            ),
-            CustomDropdownField(
-              hintText: 'Select',
-              items: sections,
-              onChanged: (value) {},
-            ),
-            CustomDropdownField(
-              hintText: 'Asset Profile',
-              items: sections,
-              onChanged: (value) {},
-            ),
-            const AppSpacer(
-              heightPortion: .03,
-            ),
-            imagePicker(context),
-            const AppSpacer(
-              heightPortion: .05,
-            ),
-            const CustomButton(title: 'SUBMIT')
-          ],
-        ),
+      child: Column(
+        children: [
+          
+          const AppPageHeadText(title: 'Test Asset'),
+          
+          Consumer<LocationProvider>(builder: (context, controller, _) {
+            return Column(
+              children: [
+                TextButton(
+                    onPressed: () {
+                      if (controller.showFloatingLocation) {
+                        controller.showFlaotingLocation(false,
+                            targetLat: null, targetLon: null);
+                      } else {
+                        controller.showFlaotingLocation(true,
+                            targetLat: 12.306598756316292,
+                            targetLon: 76.64572844249811);
+                      }
+                    },
+                    child: Text('Show')),
+              ],
+            );
+          }),
+          CustomDropdownField(
+            hintText: 'Asset Group',
+            items: assetsGroup,
+            onChanged: (value) {},
+          ),
+          CustomDropdownField(
+            hintText: 'Section Incharge',
+            items: inchargeList,
+            onChanged: (value) {},
+          ),
+          CustomDropdownField(
+            hintText: 'Section',
+            items: sections,
+            onChanged: (value) {},
+          ),
+          CustomDropdownField(
+            hintText: 'Select',
+            items: sections,
+            onChanged: (value) {},
+          ),
+          CustomDropdownField(
+            hintText: 'Asset Profile',
+            items: sections,
+            onChanged: (value) {},
+          ),
+          const AppSpacer(
+            heightPortion: .03,
+          ),
+          imagePicker(context),
+          const AppSpacer(
+            heightPortion: .05,
+          ),
+          const CustomButton(title: 'SUBMIT')
+        ],
       ),
     );
   }

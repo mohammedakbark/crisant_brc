@@ -1,24 +1,46 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/controller/camera_controller.dart';
 import 'package:test_managment/controller/dashboard_controller.dart';
+import 'package:test_managment/controller/floating_bar_controller.dart';
 import 'package:test_managment/controller/location_provider.dart';
 import 'package:test_managment/presentation/screens/dashboard.dart';
 import 'package:test_managment/utils/app_colors.dart';
 
-void main() {
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider<LocationProvider>(
-      create: (context) => LocationProvider(),
-    ),
-    ChangeNotifierProvider<DashboardController>(
-      create: (context) => DashboardController(),
-    ),
-    ChangeNotifierProvider<CameraController>(
-      create: (context) => CameraController(),
-    ),
-  
-  ], child: const MyApp()));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(EasyLocalization(
+    
+    supportedLocales: const [
+      Locale('en'),
+      Locale(
+        'hi',
+      )
+    ],
+
+    fallbackLocale: const Locale(
+      'en',
+    ), // Default language,
+
+    path: 'assets/language', // Path to your language files
+    child: MultiProvider(providers: [
+      ChangeNotifierProvider<LocationProvider>(
+        create: (context) => LocationProvider(),
+      ),
+      ChangeNotifierProvider<DashboardController>(
+        create: (context) => DashboardController(),
+      ),
+      ChangeNotifierProvider<CameraController>(
+        create: (context) => CameraController(),
+      ),
+      ChangeNotifierProvider<FloatingBarController>(
+        create: (context) => FloatingBarController(),
+      ),
+    ], child: const MyApp()),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -49,6 +71,9 @@ class _MyAppState extends State<MyApp> {
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.kPrimaryColor),
           useMaterial3: true,
         ),
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale, // Automatically uses the selected locale
         home: const DashboardScreen());
   }
 }

@@ -35,7 +35,7 @@ class HomeScreen extends StatelessWidget {
 
                 initialCameraPosition: CameraPosition(
                     target:
-                        LatLng(controller.currentLat!, controller.currentLon!)),
+                        LatLng(controller.currentLat, controller.currentLon)),
                 mapType: MapType.normal,
                 myLocationEnabled: true,
 
