@@ -67,10 +67,12 @@ class AdditionalQuestionView extends StatelessWidget {
         children: [
           _titleText('Available Eq. Amp. Cards', isRequired: true),
           CustomFormField(
+              isRequiredField: true,
               controller: ctlr.textedEditionControllers[0]['0']!,
               hintText: 'Available Eq. Amp. Cards'),
           _titleText('Available ISO TRF Cards', isRequired: true),
           CustomFormField(
+              isRequiredField: true,
               controller: ctlr.textedEditionControllers[1]['1']!,
               hintText: 'Available ISO TRF Cards'),
           _titleText('Card Working Status', isRequired: true),
@@ -80,6 +82,7 @@ class AdditionalQuestionView extends StatelessWidget {
               hintText: 'Select'),
           _titleText('Battery voltage on Load', isRequired: true),
           CustomFormField(
+              isRequiredField: true,
               controller: ctlr.textedEditionControllers[2]['2']!,
               hintText: 'Battery voltage on Load'),
           _titleText('Battery Working Status', isRequired: true),
@@ -103,6 +106,7 @@ class AdditionalQuestionView extends StatelessWidget {
         children: [
           _titleText('Battery Voltage', isRequired: true),
           CustomFormField(
+              isRequiredField: true,
               controller: ctlr.textedEditionControllers[0]['0']!,
               hintText: 'Battery Voltage'),
           _titleText('I/P Ring Voltage on line'),
@@ -178,11 +182,13 @@ class AdditionalQuestionView extends StatelessWidget {
               hintText: 'Select'),
           _titleText('Out Put Voltage', isRequired: true),
           CustomFormField(
+            isRequiredField: true,
             controller: ctlr.textedEditionControllers[0]['0']!,
             hintText: 'Out Put Voltage',
           ),
           _titleText('Bateery Voltage on Load', isRequired: true),
           CustomFormField(
+              isRequiredField: true,
               controller: ctlr.textedEditionControllers[1]['1']!,
               hintText: 'Bateery Voltage on Load'),
           _titleText('Remarks'),
