@@ -11,7 +11,7 @@ class CustomFormField extends StatelessWidget {
   const CustomFormField(
       {super.key,
       required this.controller,
-      required this.hintText,
+      required this.hintText,    
       this.isRequiredField});
 
   @override
