@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test_managment/controller/text_asset_controller.dart';
 import 'package:test_managment/controller/camera_controller.dart';
 import 'package:test_managment/controller/dashboard_controller.dart';
 import 'package:test_managment/controller/floating_bar_controller.dart';
@@ -13,7 +14,6 @@ void main() async {
   await EasyLocalization.ensureInitialized();
 
   runApp(EasyLocalization(
-    
     supportedLocales: const [
       Locale('en'),
       Locale(
@@ -38,6 +38,9 @@ void main() async {
       ),
       ChangeNotifierProvider<FloatingBarController>(
         create: (context) => FloatingBarController(),
+      ),
+      ChangeNotifierProvider<TestAssetsController>(
+        create: (context) => TestAssetsController(),
       ),
     ], child: const MyApp()),
   ));

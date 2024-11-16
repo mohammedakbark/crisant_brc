@@ -54,7 +54,9 @@ class AddAssetScreen extends StatelessWidget {
           const AppSpacer(
             heightPortion: .05,
           ),
-          const CustomButton(title: 'SUBMIT')
+           CustomButton(title: 'SUBMIT',onTap: () {
+            
+          },)
         ],
       ),
     );
