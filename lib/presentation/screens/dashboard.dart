@@ -2,18 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:test_managment/controller/dashboard_controller.dart';
-import 'package:test_managment/controller/location_provider.dart';
-import 'package:test_managment/presentation/components/overlay_location_banner.dart';
+import 'package:test_managment/core/controller/dashboard_controller.dart';
+import 'package:test_managment/core/services/location_service.dart';
+import 'package:test_managment/core/components/overlay_location_banner.dart';
 import 'package:test_managment/presentation/screens/home/add_asset_screen.dart';
 import 'package:test_managment/presentation/screens/home/download_data.dart';
 import 'package:test_managment/presentation/screens/home/home_screen.dart';
 import 'package:test_managment/presentation/screens/home/test_asset_screen.dart';
 import 'package:test_managment/presentation/screens/home/view_assets_screen.dart';
 import 'package:test_managment/presentation/screens/home/widgets/floating_location_bar.dart';
-import 'package:test_managment/utils/app_colors.dart';
-import 'package:test_managment/utils/app_dimentions.dart';
-import 'package:test_managment/utils/route.dart';
+import 'package:test_managment/core/utils/app_colors.dart';
+import 'package:test_managment/core/utils/app_dimentions.dart';
+import 'package:test_managment/core/utils/route.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -22,12 +22,12 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  late LocationProvider _locationProvider;
+  late LocationService _locationProvider;
   OverlayEntry? _overlayEntry;
   @override
   void initState() {
     super.initState();
-    _locationProvider = Provider.of<LocationProvider>(context, listen: false);
+    _locationProvider = Provider.of<LocationService>(context, listen: false);
     _locationProvider.addListener(_handleLocationStatusChange);
     _locationProvider.startMonitoring();
   }
@@ -80,7 +80,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         body: Stack(
           children: [
             pages[controller.currentScreenIndex],
-            Consumer<LocationProvider>(builder: (context, controller, _) {
+            Consumer<LocationService>(builder: (context, controller, _) {
               return Visibility(
                   visible: controller.showFloatingLocation,
                   child: FloatingDirectionBar());

@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:test_managment/controller/floating_bar_controller.dart';
-import 'package:test_managment/controller/location_provider.dart';
-import 'package:test_managment/presentation/components/app_spacer.dart';
-import 'package:test_managment/utils/app_colors.dart';
-import 'package:test_managment/utils/app_dimentions.dart';
-import 'package:test_managment/utils/responsive_helper.dart';
+import 'package:test_managment/core/controller/floating_bar_controller.dart';
+import 'package:test_managment/core/services/location_service.dart';
+import 'package:test_managment/core/components/app_spacer.dart';
+import 'package:test_managment/core/utils/app_colors.dart';
+import 'package:test_managment/core/utils/app_dimentions.dart';
+import 'package:test_managment/core/utils/responsive_helper.dart';
 
 class FloatingDirectionBar extends StatefulWidget {
   const FloatingDirectionBar({super.key});
@@ -31,7 +31,7 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
             width: floatingController.isMinimized ? 60 : null,
             height: floatingController.isMinimized ? 60 : null,
             decoration: BoxDecoration(
-              color: Provider.of<LocationProvider>(context).isNearTarget
+              color: Provider.of<LocationService>(context).isNearTarget
                   ? AppColors.kPrimaryColor
                   : AppColors.kRed,
               borderRadius: BorderRadius.circular(AppDimensions.radiusSize10),
@@ -46,7 +46,7 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
                 ? IconButton(
                     icon: const Icon(Icons.open_in_full, color: Colors.white),
                     onPressed: floatingController.minimizeBar)
-                : Consumer<LocationProvider>(builder: (context, controller, _) {
+                : Consumer<LocationService>(builder: (context, controller, _) {
                     return SingleChildScrollView(
                       child: Column(
                         children: [
@@ -116,7 +116,7 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
     });
   }
 
-  Widget _buildNavigationUI(LocationProvider controller) {
+  Widget _buildNavigationUI(LocationService controller) {
     return Column(
       children: [
         Text(
@@ -176,7 +176,7 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
     );
   }
 
-  Widget _buildDestinationReachedUI(LocationProvider controller) {
+  Widget _buildDestinationReachedUI(LocationService controller) {
     return Column(
       children: [
         const Icon(

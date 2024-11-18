@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:test_managment/controller/test_asset_controller.dart';
-import 'package:test_managment/presentation/components/custom_dropdown_field.dart';
-import 'package:test_managment/presentation/components/custom_form_field.dart';
-import 'package:test_managment/utils/app_colors.dart';
-import 'package:test_managment/utils/app_dimentions.dart';
+import 'package:test_managment/core/controller/test_asset_controller.dart';
+import 'package:test_managment/core/components/custom_dropdown_field.dart';
+import 'package:test_managment/core/components/custom_form_field.dart';
+import 'package:test_managment/core/utils/app_colors.dart';
+import 'package:test_managment/core/utils/app_dimentions.dart';
 
 class AdditionalQuestionView extends StatefulWidget {
   const AdditionalQuestionView({super.key});

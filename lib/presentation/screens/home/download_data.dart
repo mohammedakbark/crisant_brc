@@ -1,9 +1,17 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:test_managment/presentation/components/app_margin.dart';
-import 'package:test_managment/presentation/components/app_spacer.dart';
-import 'package:test_managment/utils/app_colors.dart';
-import 'package:test_managment/utils/app_dimentions.dart';
-import 'package:test_managment/utils/responsive_helper.dart';
+import 'package:provider/provider.dart';
+import 'package:test_managment/core/database/entite_db.dart';
+import 'package:test_managment/core/database/auth_db.dart';
+import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/model/entity_model.dart';
+import 'package:test_managment/core/components/app_margin.dart';
+import 'package:test_managment/core/components/app_spacer.dart';
+import 'package:test_managment/core/repositories/fetch_entity_repo.dart';
+import 'package:test_managment/core/utils/app_colors.dart';
+import 'package:test_managment/core/utils/app_dimentions.dart';
+import 'package:test_managment/core/utils/responsive_helper.dart';
 
 class DownloadDataScreen extends StatefulWidget {
   const DownloadDataScreen({super.key});
@@ -63,18 +71,38 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
             const AppSpacer(
               heightPortion: .01,
             ),
-            _buildTile('Entities', '12-12-2024'),
-            _buildTile('Section Incharge', '12-12-2024'),
-            _buildTile('Section', '12-12-2024'),
+            Consumer<EntiteDb>(
+                builder: (context, dbController, _) {
+              return _buildTile(
+                'Entities',
+                '12-12-2024',
+                () async {
+                  log('dowload');
+              
+// 
+                  dbController.storeEntity( context);
+                },
+              );
+            }),
+            Consumer<EntiteDb>(
+                builder: (context, localController, _) {
+              return Column(
+                children: [
+                  Text(localController.listOfEntityData.length.toString())
+                ],
+              );
+            }),
+            _buildTile('Section Incharge', '12-12-2024', () async {
+            
+            }),
+            _buildTile('Section', '12-12-2024', () {}),
+            _buildTile('Block Section', '12-12-2024', () {}),
+            _buildTile('Station', '12-12-2024', () {}),
+            _buildTile('Parameters', '12-12-2024', () {}),
+            _buildTile('Parameters Value', '12-12-2024', () {}),
+            _buildTile('Parameters Reason', '12-12-2024', () {}),
             _buildTile(
-              'Block Section',
-              '12-12-2024',
-            ),
-            _buildTile('Station', '12-12-2024'),
-            _buildTile('Parameters', '12-12-2024'),
-            _buildTile('Parameters Value', '12-12-2024'),
-            _buildTile('Parameters Reason', '12-12-2024'),
-            _buildTile('Entity Profile', '12-12-2024', hideDevider: true),
+                'Entity Profile', '12-12-2024', hideDevider: true, () {}),
             AppSpacer(
               heightPortion: .02,
             )
@@ -84,7 +112,8 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
     );
   }
 
-  Widget _buildTile(String title, String date, {bool? hideDevider}) {
+  Widget _buildTile(String title, String date, void Function()? onPressed,
+      {bool? hideDevider}) {
     return Column(
       children: [
         AppMargin(
@@ -130,7 +159,7 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                 ],
               ),
               trailing: IconButton(
-                  onPressed: () {},
+                  onPressed: onPressed,
                   icon: const Icon(
                     Icons.download_for_offline,
                     color: AppColors.kWhite,

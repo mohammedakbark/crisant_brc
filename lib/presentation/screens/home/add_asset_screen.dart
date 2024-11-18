@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:test_managment/controller/add_asset_controller.dart';
-import 'package:test_managment/presentation/components/app_margin.dart';
-import 'package:test_managment/presentation/components/app_page_head_text.dart';
-import 'package:test_managment/presentation/components/app_spacer.dart';
-import 'package:test_managment/presentation/components/custom_button.dart';
-import 'package:test_managment/presentation/components/custom_dropdown_field.dart';
-import 'package:test_managment/presentation/components/custom_form_field.dart';
-import 'package:test_managment/utils/app_dimentions.dart';
+import 'package:test_managment/core/controller/add_asset_controller.dart';
+import 'package:test_managment/core/components/app_margin.dart';
+import 'package:test_managment/core/components/app_page_head_text.dart';
+import 'package:test_managment/core/components/app_spacer.dart';
+import 'package:test_managment/core/components/custom_button.dart';
+import 'package:test_managment/core/components/custom_dropdown_field.dart';
+import 'package:test_managment/core/components/custom_form_field.dart';
+import 'package:test_managment/core/utils/app_dimentions.dart';
 
 class AddAssetScreen extends StatefulWidget {
   AddAssetScreen({super.key});

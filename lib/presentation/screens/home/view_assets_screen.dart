@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:test_managment/presentation/components/app_margin.dart';
-import 'package:test_managment/presentation/components/app_page_head_text.dart';
-import 'package:test_managment/presentation/components/app_spacer.dart';
+import 'package:test_managment/core/components/app_margin.dart';
+import 'package:test_managment/core/components/app_page_head_text.dart';
+import 'package:test_managment/core/components/app_spacer.dart';
 
 class ViewAssetsScreen extends StatelessWidget {
   const ViewAssetsScreen({super.key});

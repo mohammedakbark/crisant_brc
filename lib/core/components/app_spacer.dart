@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_managment/utils/responsive_helper.dart';
+import 'package:test_managment/core/utils/responsive_helper.dart';
 
 class AppSpacer extends StatelessWidget {
   final double? heightPortion;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test_managment/utils/app_colors.dart';
-import 'package:test_managment/utils/app_dimentions.dart';
+import 'package:test_managment/core/utils/app_colors.dart';
+import 'package:test_managment/core/utils/app_dimentions.dart';
 
 class CustomButton extends StatelessWidget {
   final String title;

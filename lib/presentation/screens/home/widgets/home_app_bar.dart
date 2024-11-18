@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:test_managment/utils/app_colors.dart';
-import 'package:test_managment/utils/app_dimentions.dart';
-import 'package:test_managment/utils/responsive_helper.dart';
+import 'package:test_managment/core/utils/app_colors.dart';
+import 'package:test_managment/core/utils/app_dimentions.dart';
+import 'package:test_managment/core/utils/responsive_helper.dart';
 
 class HomeAppBar extends StatelessWidget {
   const HomeAppBar({super.key});

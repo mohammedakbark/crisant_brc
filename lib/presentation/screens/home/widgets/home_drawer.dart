@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test_managment/utils/app_colors.dart';
-import 'package:test_managment/utils/responsive_helper.dart';
+import 'package:test_managment/core/utils/app_colors.dart';
+import 'package:test_managment/core/utils/responsive_helper.dart';
 
 class HomeDrawer extends StatelessWidget {
   const HomeDrawer({super.key});

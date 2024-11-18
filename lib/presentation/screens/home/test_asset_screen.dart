@@ -1,18 +1,18 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:test_managment/controller/camera_controller.dart';
-import 'package:test_managment/controller/location_provider.dart';
-import 'package:test_managment/presentation/components/app_margin.dart';
-import 'package:test_managment/presentation/components/app_page_head_text.dart';
-import 'package:test_managment/presentation/components/app_spacer.dart';
-import 'package:test_managment/presentation/components/custom_button.dart';
-import 'package:test_managment/presentation/components/custom_dropdown_field.dart';
-import 'package:test_managment/controller/test_asset_controller.dart';
+import 'package:test_managment/core/controller/camera_controller.dart';
+import 'package:test_managment/core/services/location_service.dart';
+import 'package:test_managment/core/components/app_margin.dart';
+import 'package:test_managment/core/components/app_page_head_text.dart';
+import 'package:test_managment/core/components/app_spacer.dart';
+import 'package:test_managment/core/components/custom_button.dart';
+import 'package:test_managment/core/components/custom_dropdown_field.dart';
+import 'package:test_managment/core/controller/test_asset_controller.dart';
 import 'package:test_managment/presentation/screens/home/widgets/additional_question_view.dart';
-import 'package:test_managment/utils/app_colors.dart';
-import 'package:test_managment/utils/app_dimentions.dart';
-import 'package:test_managment/utils/responsive_helper.dart';
+import 'package:test_managment/core/utils/app_colors.dart';
+import 'package:test_managment/core/utils/app_dimentions.dart';
+import 'package:test_managment/core/utils/responsive_helper.dart';
 
 class TestAssetScreen extends StatefulWidget {
   TestAssetScreen({super.key});
@@ -61,7 +61,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
               key: _formkey,
               child: Column(
                 children: [
-                  Consumer<LocationProvider>(builder: (context, controller, _) {
+                  Consumer<LocationService>(builder: (context, controller, _) {
                     return Column(
                       children: [
                         TextButton(

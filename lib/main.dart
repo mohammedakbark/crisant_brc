@@ -1,17 +1,21 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:test_managment/controller/add_asset_controller.dart';
-import 'package:test_managment/controller/api_controller.dart';
-import 'package:test_managment/controller/local_database_controller.dart';
-import 'package:test_managment/controller/test_asset_controller.dart';
-import 'package:test_managment/controller/camera_controller.dart';
-import 'package:test_managment/controller/dashboard_controller.dart';
-import 'package:test_managment/controller/floating_bar_controller.dart';
-import 'package:test_managment/controller/location_provider.dart';
+import 'package:test_managment/core/controller/add_asset_controller.dart';
+import 'package:test_managment/core/database/entite_db.dart';
+import 'package:test_managment/core/services/api_service.dart';
+import 'package:test_managment/core/database/auth_db.dart';
+import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/controller/test_asset_controller.dart';
+import 'package:test_managment/core/controller/camera_controller.dart';
+import 'package:test_managment/core/controller/dashboard_controller.dart';
+import 'package:test_managment/core/controller/floating_bar_controller.dart';
+import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/presentation/screens/dashboard.dart';
-import 'package:test_managment/utils/app_colors.dart';
+import 'package:test_managment/core/utils/app_colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,8 +35,8 @@ void main() async {
 
     path: 'assets/language', // Path to your language files
     child: MultiProvider(providers: [
-      ChangeNotifierProvider<LocationProvider>(
-        create: (context) => LocationProvider(),
+      ChangeNotifierProvider<LocationService>(
+        create: (context) => LocationService(),
       ),
       ChangeNotifierProvider<DashboardController>(
         create: (context) => DashboardController(),
@@ -49,11 +53,13 @@ void main() async {
       ChangeNotifierProvider<AddAssetController>(
         create: (context) => AddAssetController(),
       ),
-      ChangeNotifierProvider<LocalDatabaseController>(
-        create: (context) => LocalDatabaseController(),
+
+      //  db Poviders 
+      ChangeNotifierProvider<EntiteDb>(
+        create: (context) => EntiteDb(),
       ),
-      ChangeNotifierProvider<ApiController>(
-        create: (context) => ApiController(),
+      ChangeNotifierProvider<AuthDb>(
+        create: (context) => AuthDb(),
       ),
     ], child: const MyApp()),
   ));
@@ -73,14 +79,15 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-LocationProvider _locationProvider = LocationProvider();
+LocationService _locationProvider = LocationService();
 
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
     _locationProvider.handleLocationPermission();
-    // _locationProvider.streamCurrentLocation();
+//-----------------temporory  login
+    ApiService.loginUser('crisant', 'M@njula1105', 1, context);
   }
 
   @override
@@ -89,7 +96,7 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'BRC',
         theme: ThemeData(
-          appBarTheme: AppBarTheme(backgroundColor: AppColors.kWhite),
+          appBarTheme: const AppBarTheme(backgroundColor: AppColors.kWhite),
           scaffoldBackgroundColor: AppColors.kBgColor,
           fontFamily: 'OpenSans',
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.kPrimaryColor),

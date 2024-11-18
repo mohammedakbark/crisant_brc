@@ -4,11 +4,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:test_managment/controller/location_provider.dart';
-import 'package:test_managment/presentation/components/common_widgets.dart';
+import 'package:test_managment/core/database/auth_db.dart';
+import 'package:test_managment/core/services/location_service.dart';
+import 'package:test_managment/core/components/common_widgets.dart';
 import 'package:test_managment/presentation/screens/home/widgets/home_drawer.dart';
-import 'package:test_managment/utils/app_colors.dart';
-import 'package:test_managment/utils/app_dimentions.dart';
+import 'package:test_managment/core/utils/app_colors.dart';
+import 'package:test_managment/core/utils/app_dimentions.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -28,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
           color: AppColors.kBlack,
         ),
         title: Text(
-          'Hi Crisant',
+          'Hi ${Provider.of<AuthDb>(context, listen: false).userName}',
           style: TextStyle(
               fontWeight: FontWeight.bold,
               color: AppColors.kBlack,
@@ -64,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       drawer: const HomeDrawer(),
-      body: Consumer<LocationProvider>(builder: (context, controller, _) {
+      body: Consumer<LocationService>(builder: (context, controller, _) {
         if (controller.currentLat != null || controller.currentLon != null) {
           return Stack(
             children: [
@@ -86,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     log('- gMap - ${e.toString()}');
                   }
                 },
-                minMaxZoomPreference:const  MinMaxZoomPreference(15, 15),
+                minMaxZoomPreference: const MinMaxZoomPreference(15, 15),
                 zoomGesturesEnabled: true,
                 zoomControlsEnabled: false,
                 buildingsEnabled: false,
