@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +6,6 @@ import 'package:test_managment/core/controller/add_asset_controller.dart';
 import 'package:test_managment/core/database/entite_db.dart';
 import 'package:test_managment/core/services/api_service.dart';
 import 'package:test_managment/core/database/auth_db.dart';
-import 'package:test_managment/core/services/local_service.dart';
 import 'package:test_managment/core/controller/test_asset_controller.dart';
 import 'package:test_managment/core/controller/camera_controller.dart';
 import 'package:test_managment/core/controller/dashboard_controller.dart';
