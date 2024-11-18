@@ -8,19 +8,20 @@ class ViewAssetsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppMargin(
-      child: Column(
-        children: [
-          const AppPageHeadText(title: 'View Test Asset'),
-          Expanded(
-              child: ListView.separated(
-                  itemBuilder: (context, index) => const Text('Id'),
-                  separatorBuilder: (context, index) => const AppSpacer(
-                        heightPortion: .05,
-                      ),
-                  itemCount: 10))
-        ],
-      ),
+    return Column(
+      children: [
+        const AppPageHeadText(title: 'View Test Asset'),
+        Expanded(
+          child: ListView.separated(
+              shrinkWrap: true,
+              itemBuilder: (context, index) =>
+                  AppMargin(child: const Text('Id')),
+              separatorBuilder: (context, index) => const AppSpacer(
+                    heightPortion: .05,
+                  ),
+              itemCount: 20),
+        ),
+      ],
     );
   }
 }

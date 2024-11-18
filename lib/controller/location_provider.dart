@@ -49,6 +49,7 @@ class LocationProvider with ChangeNotifier {
     _locationCheckTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _checkLocationStatus();
     });
+    log('----monitoring-----');
   }
 
   Future<void> _checkLocationStatus() async {
@@ -60,12 +61,6 @@ class LocationProvider with ChangeNotifier {
       _streamCurrentLocation();
     }
     notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    _locationCheckTimer?.cancel();
-    super.dispose();
   }
 
   // location finder
@@ -96,6 +91,12 @@ class LocationProvider with ChangeNotifier {
     notifyListeners(); // Within 5 meters is Nearest
   }
 
+  Future<void> getCurrentLocation() async {
+    final position = await Geolocator.getCurrentPosition();
+    _currentLat = position.latitude;
+    _currentLon = position.longitude;
+  }
+
   // bearing
 
   double bearing = 0;
@@ -124,5 +125,11 @@ class LocationProvider with ChangeNotifier {
     }
     // notifyListeners();
     return 'Head $direction for ${(distance / 1000).toStringAsFixed(3)} Km';
+  }
+
+  @override
+  void dispose() {
+    _locationCheckTimer?.cancel();
+    super.dispose();
   }
 }

@@ -8,14 +8,20 @@ import 'package:test_managment/presentation/components/app_page_head_text.dart';
 import 'package:test_managment/presentation/components/app_spacer.dart';
 import 'package:test_managment/presentation/components/custom_button.dart';
 import 'package:test_managment/presentation/components/custom_dropdown_field.dart';
-import 'package:test_managment/controller/text_asset_controller.dart';
+import 'package:test_managment/controller/test_asset_controller.dart';
 import 'package:test_managment/presentation/screens/home/widgets/additional_question_view.dart';
 import 'package:test_managment/utils/app_colors.dart';
 import 'package:test_managment/utils/app_dimentions.dart';
 import 'package:test_managment/utils/responsive_helper.dart';
 
-class TestAssetScreen extends StatelessWidget {
+class TestAssetScreen extends StatefulWidget {
   TestAssetScreen({super.key});
+
+  @override
+  State<TestAssetScreen> createState() => _TestAssetScreenState();
+}
+
+class _TestAssetScreenState extends State<TestAssetScreen> {
   final List<String> assetsGroup = [
     'Way Station Equip',
     '4W Repeater',
@@ -23,123 +29,144 @@ class TestAssetScreen extends StatelessWidget {
     'EC Socket',
     'Battery Charger'
   ];
+
   final List<String> inchargeList = [
     'SSE/TELE/PRTN',
     'SSE/TELE/DB',
     'JE/TELE/CTE',
     'DUMMY/INCHARGE',
   ];
+
   final List<String> sections = [
     'VISHVAMITRI - DABHOLI',
   ];
+
   final assetIdController = TextEditingController();
+
   final _formkey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<TestAssetsController>(context, listen: false).clearAllData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: AppMargin(
-        child: Form(
-          key: _formkey,
-          child: Column(
-            children: [
-              const AppPageHeadText(title: 'Test Asset'),
-              Consumer<LocationProvider>(builder: (context, controller, _) {
-                return Column(
-                  children: [
-                    TextButton(
-                        onPressed: () {
-                          if (controller.showFloatingLocation) {
-                            controller.showFlaotingLocation(false,
-                                targetLat: null, targetLon: null);
-                          } else {
-                            controller.showFlaotingLocation(true,
-                                targetLat: 12.306598756316292,
-                                targetLon: 76.64572844249811);
-                          }
-                        },
-                        child: const Text('Show')),
-                  ],
-                );
-              }),
-              Consumer<TestAssetsController>(builder: (context, ctlr, _) {
-                return CustomDropdownField(
-                    hintText: 'Asset Group',
-                    items: assetsGroup,
-                    onChanged: ctlr.onChangedAssetGroup);
-              }),
-              Consumer<TestAssetsController>(builder: (context, ctlr, _) {
-                return CustomDropdownField(
-                  hintText: 'Section Incharge',
-                  items: ctlr.selectedAssetGroup == null ? [] : inchargeList,
-                  onChanged: ctlr.onChangedSectionIncharge,
-                );
-              }),
-              Consumer<TestAssetsController>(builder: (context, ctlr, _) {
-                return CustomDropdownField(
-                    hintText: 'Section',
-                    items: ctlr.selectedSectonIncharge == null ? [] : sections,
-                    onChanged: ctlr.onChangedSection);
-              }),
-              Consumer<TestAssetsController>(builder: (context, ctlr, _) {
-                return CustomDropdownField(
-                    hintText: 'Select',
-                    items: ctlr.selectedSection == null ? [] : sections,
-                    onChanged: ctlr.onChangedStations);
-              }),
-              Consumer<TestAssetsController>(builder: (context, ctlr, _) {
-                return CustomDropdownField(
-                  hintText: 'Asset Profile',
-                  items: ctlr.selectedStation == null ? [] : sections,
-                  onChanged: ctlr.onChangedAssetsProfile,
-                );
-              }),
-              const AppSpacer(
-                heightPortion: .03,
-              ),
-              imagePicker(context),
-              const AppSpacer(
-                heightPortion: .015,
-              ),
-              const AdditionalQuestionView(),
-              const AppSpacer(
-                heightPortion: .04,
-              ),
-              CustomButton(
-                title: 'SUBMIT',
-                onTap: () {
-                  if (_formkey.currentState!.validate()) {
-                    final controller = Provider.of<TestAssetsController>(
-                        context,
-                        listen: false);
-                    switch (controller.selectedAssetGroup) {
-                      case 'Way Station Equip':
-                        {
-                          log('Ramrks : ${controller.textedEditionControllers[0]['0']!.text}');
+      child: Column(
+        children: [
+          const AppPageHeadText(title: 'Test Asset'),
+          AppMargin(
+            child: Form(
+              key: _formkey,
+              child: Column(
+                children: [
+                  Consumer<LocationProvider>(builder: (context, controller, _) {
+                    return Column(
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              if (controller.showFloatingLocation) {
+                                controller.showFlaotingLocation(false,
+                                    targetLat: null, targetLon: null);
+                              } else {
+                                controller.showFlaotingLocation(true,
+                                    targetLat: 12.306598756316292,
+                                    targetLon: 76.64572844249811);
+                              }
+                            },
+                            child: const Text('Show')),
+                      ],
+                    );
+                  }),
+                  Consumer<TestAssetsController>(builder: (context, ctlr, _) {
+                    return CustomDropdownField(
+                        hintText: 'Asset Group',
+                        items: assetsGroup,
+                        onChanged: ctlr.onChangedAssetGroup);
+                  }),
+                  Consumer<TestAssetsController>(builder: (context, ctlr, _) {
+                    return CustomDropdownField(
+                      hintText: 'Section Incharge',
+                      items:
+                          ctlr.selectedAssetGroup == null ? [] : inchargeList,
+                      onChanged: ctlr.onChangedSectionIncharge,
+                    );
+                  }),
+                  Consumer<TestAssetsController>(builder: (context, ctlr, _) {
+                    return CustomDropdownField(
+                        hintText: 'Section',
+                        items:
+                            ctlr.selectedSectonIncharge == null ? [] : sections,
+                        onChanged: ctlr.onChangedSection);
+                  }),
+                  Consumer<TestAssetsController>(builder: (context, ctlr, _) {
+                    return ctlr.isTheAssetisBlock
+                        ? CustomDropdownField(
+                            hintText: 'Block',
+                            items: ctlr.selectedSection == null ? [] : sections,
+                            onChanged: ctlr.onChangedStations)
+                        : CustomDropdownField(
+                            hintText: 'Station',
+                            items: ctlr.selectedSection == null ? [] : sections,
+                            onChanged: ctlr.onChangedStations);
+                  }),
+                  Consumer<TestAssetsController>(builder: (context, ctlr, _) {
+                    return CustomDropdownField(
+                      hintText: 'Asset Profile',
+                      items:
+                          ctlr.selectedStation == null ? [] : ['Prathapnagar'],
+                      onChanged: ctlr.onChangedAssetsProfile,
+                    );
+                  }),
+                  const AppSpacer(
+                    heightPortion: .03,
+                  ),
+                  imagePicker(context),
+                  const AppSpacer(
+                    heightPortion: .015,
+                  ),
+                  const AdditionalQuestionView(),
+                  const AppSpacer(
+                    heightPortion: .04,
+                  ),
+                  CustomButton(
+                    title: 'SUBMIT',
+                    onTap: () {
+                      if (_formkey.currentState!.validate()) {
+                        final controller = Provider.of<TestAssetsController>(
+                            context,
+                            listen: false);
+                        switch (controller.selectedAssetGroup) {
+                          case 'Way Station Equip':
+                            {
+                              log('Ramrks : ${controller.textedEditionControllers[0]['0']!.text}');
+                            }
+                          case '4W Repeater':
+                            {
+                              log('1 : ${controller.textedEditionControllers[0]['0']!.text}');
+                              log('2 : ${controller.textedEditionControllers[1]['1']!.text}');
+                              log('3 : ${controller.textedEditionControllers[2]['2']!.text}');
+                              log('Ramrks : ${controller.textedEditionControllers[3]['3']!.text}');
+                            }
+                          case 'LC Gate Phone':
+                            {}
+                          case 'EC Socket':
+                            {}
+                          case 'Battery Charger':
+                            {}
                         }
-                      case '4W Repeater':
-                        {
-                          log('1 : ${controller.textedEditionControllers[0]['0']!.text}');
-                          log('2 : ${controller.textedEditionControllers[1]['1']!.text}');
-                          log('3 : ${controller.textedEditionControllers[2]['2']!.text}');
-                          log('Ramrks : ${controller.textedEditionControllers[3]['3']!.text}');
-                        }
-                      case 'LC Gate Phone':
-                        {}
-                      case 'EC Socket':
-                        {}
-                      case 'Battery Charger':
-                        {}
-                    }
-                  }
-                },
+                      }
+                    },
+                  ),
+                  const AppSpacer(
+                    heightPortion: .025,
+                  ),
+                ],
               ),
-              const AppSpacer(
-                heightPortion: .025,
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

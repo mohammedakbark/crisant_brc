@@ -6,12 +6,14 @@ import 'package:test_managment/controller/dashboard_controller.dart';
 import 'package:test_managment/controller/location_provider.dart';
 import 'package:test_managment/presentation/components/overlay_location_banner.dart';
 import 'package:test_managment/presentation/screens/home/add_asset_screen.dart';
+import 'package:test_managment/presentation/screens/home/download_data.dart';
 import 'package:test_managment/presentation/screens/home/home_screen.dart';
 import 'package:test_managment/presentation/screens/home/test_asset_screen.dart';
 import 'package:test_managment/presentation/screens/home/view_assets_screen.dart';
 import 'package:test_managment/presentation/screens/home/widgets/floating_location_bar.dart';
 import 'package:test_managment/utils/app_colors.dart';
 import 'package:test_managment/utils/app_dimentions.dart';
+import 'package:test_managment/utils/route.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -65,7 +67,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   List<Widget> pages = [
-    const HomeScreen(),
+    HomeScreen(),
     AddAssetScreen(),
     TestAssetScreen(),
     const ViewAssetsScreen()
@@ -149,7 +151,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           shape: const CircleBorder(),
           tooltip: 'Download Data',
           backgroundColor: AppColors.kPrimaryColor,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context)
+                .push(AppRoutes.createRoute(DownloadDataScreen()));
+          },
           child: const Icon(color: AppColors.kWhite, Icons.sync),
         ),
       ),

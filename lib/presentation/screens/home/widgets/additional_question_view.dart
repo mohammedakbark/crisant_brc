@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:test_managment/controller/text_asset_controller.dart';
+import 'package:test_managment/controller/test_asset_controller.dart';
 import 'package:test_managment/presentation/components/custom_dropdown_field.dart';
 import 'package:test_managment/presentation/components/custom_form_field.dart';
 import 'package:test_managment/utils/app_colors.dart';
 import 'package:test_managment/utils/app_dimentions.dart';
 
-class AdditionalQuestionView extends StatelessWidget {
+class AdditionalQuestionView extends StatefulWidget {
   const AdditionalQuestionView({super.key});
 
+  @override
+  State<AdditionalQuestionView> createState() => _AdditionalQuestionViewState();
+}
+
+class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
   @override
   Widget build(BuildContext context) {
     return Consumer<TestAssetsController>(builder: (context, ctlr, _) {

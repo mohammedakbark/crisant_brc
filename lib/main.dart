@@ -1,7 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:test_managment/controller/text_asset_controller.dart';
+import 'package:test_managment/controller/add_asset_controller.dart';
+import 'package:test_managment/controller/api_controller.dart';
+import 'package:test_managment/controller/local_database_controller.dart';
+import 'package:test_managment/controller/test_asset_controller.dart';
 import 'package:test_managment/controller/camera_controller.dart';
 import 'package:test_managment/controller/dashboard_controller.dart';
 import 'package:test_managment/controller/floating_bar_controller.dart';
@@ -42,8 +46,24 @@ void main() async {
       ChangeNotifierProvider<TestAssetsController>(
         create: (context) => TestAssetsController(),
       ),
+      ChangeNotifierProvider<AddAssetController>(
+        create: (context) => AddAssetController(),
+      ),
+      ChangeNotifierProvider<LocalDatabaseController>(
+        create: (context) => LocalDatabaseController(),
+      ),
+      ChangeNotifierProvider<ApiController>(
+        create: (context) => ApiController(),
+      ),
     ], child: const MyApp()),
   ));
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.white,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -69,6 +89,7 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'BRC',
         theme: ThemeData(
+          appBarTheme: AppBarTheme(backgroundColor: AppColors.kWhite),
           scaffoldBackgroundColor: AppColors.kBgColor,
           fontFamily: 'OpenSans',
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.kPrimaryColor),
@@ -76,7 +97,7 @@ class _MyAppState extends State<MyApp> {
         ),
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
-        locale: context.locale, // Automatically uses the selected locale
+        locale: context.locale,
         home: const DashboardScreen());
   }
 }

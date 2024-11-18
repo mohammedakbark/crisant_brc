@@ -6,6 +6,8 @@ class AppColors {
   static const kRed = Color.fromARGB(255, 208, 62, 52);
   static const kBgColor2 = Color.fromARGB(255, 255, 234, 233);
 
+  static const kSuccessColor = Colors.amber;
+
   static const Color kGrey = Color.fromARGB(179, 57, 57, 57);
   static Color kBgColor = const Color.fromARGB(255, 236, 255, 240);
 

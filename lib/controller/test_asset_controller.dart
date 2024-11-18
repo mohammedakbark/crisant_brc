@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:test_managment/presentation/components/custom_form_field.dart';
 
 class TestAssetsController with ChangeNotifier {
   String? _selectedAssetGroup;
@@ -16,6 +15,14 @@ class TestAssetsController with ChangeNotifier {
 
   String? _selectedAssetProfile;
   String? get selectedAssetProfile => _selectedAssetProfile;
+
+  clearAllData() {
+    _selectedAssetGroup = null;
+    _selectedSectonIncharge = null;
+    _selectedSection = null;
+    _selectedStation = null;
+    _selectedAssetProfile = null;
+  }
 
   List<Map<String, TextEditingController>>? _textedEditionControllers = null;
   List<Map<String, TextEditingController>> get textedEditionControllers =>
@@ -121,4 +128,9 @@ class TestAssetsController with ChangeNotifier {
     _selectedAssetProfile = value;
     notifyListeners();
   }
+
+  //-----------
+
+  bool isTheAssetisBlock = false;
+  
 }
