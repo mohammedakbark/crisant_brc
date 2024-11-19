@@ -17,13 +17,13 @@ class _FloatingWidgetExampleState extends State<FloatingWidgetExample> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Floating Widget Example"),
+        title: const Text("Floating Widget Example"),
       ),
-      body: Stack(
+      body: const Stack(
         children: [
           // Main content
           Center(
-            child: Text("Main Content Here"),
+            child: const Text("Main Content Here"),
           ),
 
           // Floating widget

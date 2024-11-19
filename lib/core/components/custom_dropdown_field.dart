@@ -4,14 +4,16 @@ import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
 
 class CustomDropdownField extends StatelessWidget {
-  final List<dynamic> items;
+  final List<Map<String, dynamic>> items;
   final String hintText;
-  final void Function(dynamic)? onChanged;
+  final void Function(Map<String, dynamic>)? onCallBack;
+  // final void Function(dynamic)? onChanged;
 
   const CustomDropdownField(
       {super.key,
       required this.items,
-      required this.onChanged,
+      // required this.onChanged,
+      this.onCallBack,
       required this.hintText});
 
   @override
@@ -69,15 +71,18 @@ class CustomDropdownField extends StatelessWidget {
                         Radius.circular(AppDimensions.radiusSize5)))),
             items: items
                 .map((e) => DropdownMenuItem(
-                    value: e,
+                    onTap: () {
+                      onCallBack!(e);
+                    },
+                    value: e['id'],
                     child: Text(
-                      e,
+                      e['title'],
                       style: TextStyle(
                         fontSize: AppDimensions.fontSize16(context),
                       ),
                     )))
                 .toList(),
-            onChanged: onChanged,
+            onChanged: (value) {},
             hint: Text(
               hintText,
               style: TextStyle(

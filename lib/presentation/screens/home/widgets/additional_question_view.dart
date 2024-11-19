@@ -17,7 +17,7 @@ class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
   @override
   Widget build(BuildContext context) {
     return Consumer<TestAssetsController>(builder: (context, ctlr, _) {
-      switch (ctlr.selectedAssetGroup) {
+      switch (ctlr.selectedEntityId) {
         case 'Way Station Equip':
           {
             return wayStationEquipView();
@@ -56,10 +56,10 @@ class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
               controller: ctlr.textedEditionControllers[0]['0']!,
               hintText: 'Remarks..'),
           _titleText('Way STN Working Status', isRequired: true),
-          CustomDropdownField(
-              items: const ['OK', 'NOT OK', 'OK (NOT IN USE)'],
-              onChanged: (value) {},
-              hintText: 'Select')
+          // CustomDropdownField(
+          //     items: const ['OK', 'NOT OK', 'OK (NOT IN USE)'],
+          //     onChanged: (value) {},
+          //     hintText: 'Select')
         ],
       );
     });
@@ -81,20 +81,20 @@ class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
               controller: ctlr.textedEditionControllers[1]['1']!,
               hintText: 'Available ISO TRF Cards'),
           _titleText('Card Working Status', isRequired: true),
-          CustomDropdownField(
-              items: const ['OK', 'NOT OK'],
-              onChanged: (value) {},
-              hintText: 'Select'),
-          _titleText('Battery voltage on Load', isRequired: true),
-          CustomFormField(
-              isRequiredField: true,
-              controller: ctlr.textedEditionControllers[2]['2']!,
-              hintText: 'Battery voltage on Load'),
-          _titleText('Battery Working Status', isRequired: true),
-          CustomDropdownField(
-              items: const ['OK', 'NOT OK'],
-              onChanged: (value) {},
-              hintText: 'Select'),
+          // CustomDropdownField(
+          //     items: const ['OK', 'NOT OK'],
+          //     onChanged: (value) {},
+          //     hintText: 'Select'),
+          // _titleText('Battery voltage on Load', isRequired: true),
+          // CustomFormField(
+          //     isRequiredField: true,
+          //     controller: ctlr.textedEditionControllers[2]['2']!,
+          //     hintText: 'Battery voltage on Load'),
+          // _titleText('Battery Working Status', isRequired: true),
+          // CustomDropdownField(
+          //     items: const ['OK', 'NOT OK'],
+          //     onChanged: (value) {},
+          //     hintText: 'Select'),
           _titleText('Remarks'),
           CustomFormField(
               controller: ctlr.textedEditionControllers[3]['3']!,
@@ -123,10 +123,10 @@ class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
               controller: ctlr.textedEditionControllers[2]['2']!,
               hintText: 'O/p Ring Voltage on line'),
           _titleText('LC Phone Working Status', isRequired: true),
-          CustomDropdownField(
-              items: const ['OK', 'NOT OK'],
-              onChanged: (value) {},
-              hintText: 'Select'),
+          // CustomDropdownField(
+          //     items: const ['OK', 'NOT OK'],
+          //     onChanged: (value) {},
+          // hintText: 'Select'),
           _titleText('Remarks'),
           CustomFormField(
               controller: ctlr.textedEditionControllers[3]['3']!,
@@ -142,25 +142,25 @@ class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _titleText('Box Condtion', isRequired: true),
-          CustomDropdownField(
-              items: const ['OK', 'NOT OK'],
-              onChanged: (value) {},
-              hintText: 'Select'),
-          _titleText('Socket Condition', isRequired: true),
-          CustomDropdownField(
-              items: const ['OK', 'NOT OK'],
-              onChanged: (value) {},
-              hintText: 'Select'),
-          _titleText('Working Status', isRequired: true),
-          CustomDropdownField(
-              items: const ['OK', 'NOT OK'],
-              onChanged: (value) {},
-              hintText: 'Select'),
-          _titleText('Box Type', isRequired: true),
-          CustomDropdownField(
-              items: const ['IRON Type', 'FRP Type'],
-              onChanged: (value) {},
-              hintText: 'Select'),
+          // CustomDropdownField(
+          //     items: const ['OK', 'NOT OK'],
+          //     onChanged: (value) {},
+          //     hintText: 'Select'),
+          // _titleText('Socket Condition', isRequired: true),
+          // CustomDropdownField(
+          //     items: const ['OK', 'NOT OK'],
+          //     onChanged: (value) {},
+          //     hintText: 'Select'),
+          // _titleText('Working Status', isRequired: true),
+          // CustomDropdownField(
+          //     items: const ['OK', 'NOT OK'],
+          //     onChanged: (value) {},
+          //     hintText: 'Select'),
+          // _titleText('Box Type', isRequired: true),
+          // CustomDropdownField(
+          //     items: const ['IRON Type', 'FRP Type'],
+          //     onChanged: (value) {},
+          //     hintText: 'Select'),
           _titleText('Remarks'),
           CustomFormField(
               controller: ctlr.textedEditionControllers[0]['0']!,
@@ -176,16 +176,16 @@ class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _titleText('Charger Working Status', isRequired: true),
-          CustomDropdownField(
-              items: const ['OK', 'NOT OK'],
-              onChanged: (value) {},
-              hintText: 'Select'),
-          _titleText('Battery Working Status', isRequired: true),
-          CustomDropdownField(
-              items: const ['OK', 'NOT OK'],
-              onChanged: (value) {},
-              hintText: 'Select'),
-          _titleText('Out Put Voltage', isRequired: true),
+          // CustomDropdownField(
+          //     items: const ['OK', 'NOT OK'],
+          //     onChanged: (value) {},
+          //     hintText: 'Select'),
+          // _titleText('Battery Working Status', isRequired: true),
+          // CustomDropdownField(
+          //     items: const ['OK', 'NOT OK'],
+          //     onChanged: (value) {},
+          //     hintText: 'Select'),
+          // _titleText('Out Put Voltage', isRequired: true),
           CustomFormField(
             isRequiredField: true,
             controller: ctlr.textedEditionControllers[0]['0']!,

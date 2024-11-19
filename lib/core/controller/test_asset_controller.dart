@@ -1,27 +1,34 @@
 import 'package:flutter/material.dart';
 
 class TestAssetsController with ChangeNotifier {
-  String? _selectedAssetGroup;
-  String? get selectedAssetGroup => _selectedAssetGroup;
+  String? _selectedEntityId;
+  String? get selectedEntityId => _selectedEntityId;
 
-  String? _selectedSectonIncharge;
-  String? get selectedSectonIncharge => _selectedSectonIncharge;
+  String? _selectedEntityType;
+  String? get selectedEntityType => _selectedEntityType;
 
-  String? _selectedSection;
-  String? get selectedSection => _selectedSection;
+  String? _selectedSectonInchargeId;
+  String? get selectedSectonInchargeId => _selectedSectonInchargeId;
 
-  String? _selectedStation;
-  String? get selectedStation => _selectedStation;
+  String? _selectedSectionID;
+  String? get selectedSectionId => _selectedSectionID;
 
-  String? _selectedAssetProfile;
-  String? get selectedAssetProfile => _selectedAssetProfile;
+  String? _selectedStationId;
+  String? get selectedStationId => _selectedStationId;
+
+  String? _selectedBlockId;
+  String? get selectedBlockId => _selectedBlockId;
+
+  String? _selectedAssetProfileId;
+  String? get selectedAssetProfileId => _selectedAssetProfileId;
 
   clearAllData() {
-    _selectedAssetGroup = null;
-    _selectedSectonIncharge = null;
-    _selectedSection = null;
-    _selectedStation = null;
-    _selectedAssetProfile = null;
+    _selectedEntityId = null;
+    _selectedSectonInchargeId = null;
+    _selectedSectionID = null;
+    _selectedStationId = null;
+    _selectedBlockId = null;
+    _selectedAssetProfileId = null;
   }
 
   List<Map<String, TextEditingController>>? _textedEditionControllers = null;
@@ -29,18 +36,17 @@ class TestAssetsController with ChangeNotifier {
       _textedEditionControllers ?? [];
 
   void onChangedAssetGroup(dynamic value) {
-    switch (value) {
+    switch (value['title']) {
       case 'Way Station Equip':
         {
           TextEditingController remarkController = TextEditingController();
-          _selectedAssetGroup = value;
+
           _textedEditionControllers = [
             {'0': remarkController}
           ];
         }
       case '4W Repeater':
         {
-          _selectedAssetGroup = value;
           TextEditingController remarkController = TextEditingController();
           TextEditingController ampCardController = TextEditingController();
 
@@ -57,7 +63,7 @@ class TestAssetsController with ChangeNotifier {
         }
       case 'LC Gate Phone':
         {}
-        _selectedAssetGroup = value;
+
         TextEditingController remarkController = TextEditingController();
         TextEditingController batteryVoltageController =
             TextEditingController();
@@ -73,7 +79,6 @@ class TestAssetsController with ChangeNotifier {
         ];
       case 'EC Socket':
         {
-          _selectedAssetGroup = value;
           TextEditingController remarkController = TextEditingController();
           _textedEditionControllers = [
             {'0': remarkController}
@@ -81,7 +86,6 @@ class TestAssetsController with ChangeNotifier {
         }
       case 'Battery Charger':
         {
-          _selectedAssetGroup = value;
           TextEditingController remarkController = TextEditingController();
           TextEditingController outputVolateController =
               TextEditingController();
@@ -96,41 +100,51 @@ class TestAssetsController with ChangeNotifier {
           ];
         }
     }
-    _selectedSectonIncharge = null;
-    _selectedSection = null;
-    _selectedStation = null;
-    _selectedAssetProfile = null;
+    _selectedEntityId = value['id'];
+    _selectedEntityType = value['data']['entityType'];
+    _selectedSectonInchargeId = null;
+    _selectedSectionID = null;
+    _selectedStationId = null;
+    _selectedBlockId = null;
+    _selectedAssetProfileId = null;
     notifyListeners();
   }
 
   void onChangedSectionIncharge(dynamic value) {
-    _selectedSectonIncharge = value;
-    _selectedSection = null;
-    _selectedStation = null;
-    _selectedAssetProfile = null;
+    _selectedSectonInchargeId = value['id'];
+    _selectedSectionID = null;
+    _selectedStationId = null;
+    _selectedBlockId = null;
+
+    _selectedAssetProfileId = null;
     notifyListeners();
   }
 
   void onChangedSection(dynamic value) {
-    _selectedSection = value;
-    _selectedStation = null;
-    _selectedAssetProfile = null;
+    _selectedSectionID = value['id'];
+    _selectedStationId = null;
+    _selectedBlockId = null;
+
+    _selectedAssetProfileId = null;
     notifyListeners();
   }
 
   void onChangedStations(dynamic value) {
-    _selectedStation = value;
-    _selectedAssetProfile = null;
+    _selectedStationId = value['id'];
+    _selectedAssetProfileId = null;
+    notifyListeners();
+  }
+
+  void onChangedBlock(dynamic value) {
+    _selectedBlockId = value['id'];
+    _selectedAssetProfileId = null;
     notifyListeners();
   }
 
   void onChangedAssetsProfile(dynamic value) {
-    _selectedAssetProfile = value;
+    _selectedAssetProfileId = value['id'];
     notifyListeners();
   }
 
   //-----------
-
-  bool isTheAssetisBlock = false;
-  
 }

@@ -40,7 +40,7 @@ class AuthDb with ChangeNotifier {
           final db = await LocalDatabaseService().initAuthDb;
 
       final datas =
-          await db!.rawQuery('SELECT * FROM $authtableCollection');
+          await db.rawQuery('SELECT * FROM $authtableCollection');
       final data = datas.first;
       _token = data['token'] as String;
       _userName = data['userName'] as String;

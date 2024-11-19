@@ -2,6 +2,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/core/controller/camera_controller.dart';
+import 'package:test_managment/core/database/block_section_db.dart';
+import 'package:test_managment/core/database/enitity_profile_db.dart';
+import 'package:test_managment/core/database/entite_db.dart';
+import 'package:test_managment/core/database/section_db.dart';
+import 'package:test_managment/core/database/section_incharge_db.dart';
+import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_page_head_text.dart';
@@ -9,6 +15,7 @@ import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/custom_button.dart';
 import 'package:test_managment/core/components/custom_dropdown_field.dart';
 import 'package:test_managment/core/controller/test_asset_controller.dart';
+import 'package:test_managment/model/entity_profile_model.dart';
 import 'package:test_managment/presentation/screens/home/widgets/additional_question_view.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
@@ -79,44 +86,106 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                       ],
                     );
                   }),
-                  Consumer<TestAssetsController>(builder: (context, ctlr, _) {
+                  Consumer2<TestAssetsController, EntiteDb>(
+                      builder: (context, ctlr, ctrl2, _) {
                     return CustomDropdownField(
-                        hintText: 'Asset Group',
-                        items: assetsGroup,
-                        onChanged: ctlr.onChangedAssetGroup);
-                  }),
-                  Consumer<TestAssetsController>(builder: (context, ctlr, _) {
-                    return CustomDropdownField(
-                      hintText: 'Section Incharge',
-                      items:
-                          ctlr.selectedAssetGroup == null ? [] : inchargeList,
-                      onChanged: ctlr.onChangedSectionIncharge,
+                      onCallBack: ctlr.onChangedAssetGroup,
+                      hintText: 'Asset Group',
+                      items: ctrl2.listOfEntityData
+                          .map((e) => {
+                                'title': e.entityName,
+                                'id': e.entityId,
+                                'data': e.toJson()
+                              })
+                          .toList(),
                     );
                   }),
-                  Consumer<TestAssetsController>(builder: (context, ctlr, _) {
+                  Consumer2<TestAssetsController, SectionInchargeDb>(
+                      builder: (context, ctlr, ctrl2, _) {
+                    return CustomDropdownField(
+                      hintText: 'Section Incharge',
+                      items: ctlr.selectedEntityId == null
+                          ? []
+                          : ctrl2.listOfSectionIncharge
+                              .map((e) => {
+                                    'title': e.sectionInchargeName,
+                                    'id': e.sectionInchargeId,
+                                    'data': e.toJson()
+                                  })
+                              .toList(),
+                      onCallBack: ctlr.onChangedSectionIncharge,
+                    );
+                  }),
+                  Consumer2<TestAssetsController, SectionDb>(
+                      builder: (context, ctlr, ctrl2, _) {
                     return CustomDropdownField(
                         hintText: 'Section',
-                        items:
-                            ctlr.selectedSectonIncharge == null ? [] : sections,
-                        onChanged: ctlr.onChangedSection);
+                        items: ctlr.selectedSectonInchargeId == null
+                            ? []
+                            : ctrl2.listOfSection
+                                .map((e) => {
+                                      'title': e.sectionName,
+                                      'id': e.sectionId,
+                                      'data': e.toJson()
+                                    })
+                                .toList(),
+                        onCallBack: ctlr.onChangedSection);
                   }),
                   Consumer<TestAssetsController>(builder: (context, ctlr, _) {
-                    return ctlr.isTheAssetisBlock
-                        ? CustomDropdownField(
-                            hintText: 'Block',
-                            items: ctlr.selectedSection == null ? [] : sections,
-                            onChanged: ctlr.onChangedStations)
-                        : CustomDropdownField(
-                            hintText: 'Station',
-                            items: ctlr.selectedSection == null ? [] : sections,
-                            onChanged: ctlr.onChangedStations);
+                    return ctlr.selectedEntityType != null
+                        ? Column(
+                            children: [
+                              if (ctlr.selectedEntityType == 'BLOCK')
+                                Consumer<BlockSectionDb>(
+                                    builder: (context, ctrl2, _) {
+                                  return CustomDropdownField(
+                                      hintText: 'Block',
+                                      items: ctlr.selectedSectionId == null
+                                          ? []
+                                          : ctrl2.listOfBlockSections
+                                              .map((e) => {
+                                                    'title': e.blockSectionName,
+                                                    'id': e.blockSectionId,
+                                                    'data': e.toJson()
+                                                  })
+                                              .toList(),
+                                      onCallBack: ctlr.onChangedBlock);
+                                }),
+                              if (ctlr.selectedEntityType == 'STATION')
+                                Consumer<StationDb>(
+                                    builder: (context, ctrl2, _) {
+                                  return CustomDropdownField(
+                                      hintText: 'Station',
+                                      items: ctlr.selectedSectionId == null
+                                          ? []
+                                          : ctrl2.listOfStationModel
+                                              .map((e) => {
+                                                    'title': e.stationName,
+                                                    'id': e.sectionId,
+                                                    'data': e.toJson()
+                                                  })
+                                              .toList(),
+                                      onCallBack: ctlr.onChangedStations);
+                                })
+                            ],
+                          )
+                        : SizedBox();
                   }),
-                  Consumer<TestAssetsController>(builder: (context, ctlr, _) {
+                  Consumer2<TestAssetsController, EnitityProfileDb>(
+                      builder: (context, ctlr, ctrl2, _) {
                     return CustomDropdownField(
                       hintText: 'Asset Profile',
-                      items:
-                          ctlr.selectedStation == null ? [] : ['Prathapnagar'],
-                      onChanged: ctlr.onChangedAssetsProfile,
+                      items: (ctlr.selectedStationId == null) &&
+                              (ctlr.selectedBlockId == null)
+                          ? []
+                          : ctrl2.listOfEnitityProfiles
+                              .map((e) => {
+                                    'title': e.entityIdentifier,
+                                    'id': e.entityProfileId,
+                                    'data': e.toJson()
+                                  })
+                              .toList(),
+                      onCallBack: ctlr.onChangedAssetsProfile,
                     );
                   }),
                   const AppSpacer(
@@ -137,7 +206,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                         final controller = Provider.of<TestAssetsController>(
                             context,
                             listen: false);
-                        switch (controller.selectedAssetGroup) {
+                        switch (controller.selectedEntityId) {
                           case 'Way Station Equip':
                             {
                               log('Ramrks : ${controller.textedEditionControllers[0]['0']!.text}');

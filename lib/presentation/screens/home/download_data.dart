@@ -2,13 +2,18 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test_managment/core/database/block_section_db.dart';
+import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
-import 'package:test_managment/core/database/auth_db.dart';
-import 'package:test_managment/core/services/local_service.dart';
-import 'package:test_managment/model/entity_model.dart';
+import 'package:test_managment/core/database/parameters_db.dart';
+import 'package:test_managment/core/database/parameters_reason_db.dart';
+import 'package:test_managment/core/database/parameters_value_db.dart';
+import 'package:test_managment/core/database/section_db.dart';
+import 'package:test_managment/core/database/section_incharge_db.dart';
+import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_spacer.dart';
-import 'package:test_managment/core/repositories/fetch_entity_repo.dart';
+import 'package:test_managment/core/services/local_service.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
@@ -21,6 +26,13 @@ class DownloadDataScreen extends StatefulWidget {
 }
 
 class _DownloadDataScreenState extends State<DownloadDataScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    LocalDatabaseService().fetchAllDatabases(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,39 +83,92 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
             const AppSpacer(
               heightPortion: .01,
             ),
-            Consumer<EntiteDb>(
-                builder: (context, dbController, _) {
-              return _buildTile(
-                'Entities',
-                '12-12-2024',
-                () async {
-                  log('dowload');
-              
-// 
-                  dbController.storeEntity( context);
-                },
-              );
-            }),
-            Consumer<EntiteDb>(
-                builder: (context, localController, _) {
+            Consumer<EntiteDb>(builder: (context, dbController, _) {
               return Column(
                 children: [
-                  Text(localController.listOfEntityData.length.toString())
+                  _buildTile(
+                    'Entities',
+                    '12-12-2024',
+                    () async {
+                      log('dowload');
+
+//
+                      dbController.storeEntity(context);
+                    },
+                  ),
+                  Text(dbController.listOfEntityData.length.toString())
                 ],
               );
             }),
-            _buildTile('Section Incharge', '12-12-2024', () async {
-            
+            Consumer<SectionInchargeDb>(builder: (context, dbController, _) {
+              return Column(
+                children: [
+                  _buildTile('Section Incharge', '12-12-2024', () async {
+                    dbController.storeSectionIncharges(context);
+                  }),
+                  Text(dbController.listOfSectionIncharge.length.toString())
+                ],
+              );
             }),
-            _buildTile('Section', '12-12-2024', () {}),
-            _buildTile('Block Section', '12-12-2024', () {}),
-            _buildTile('Station', '12-12-2024', () {}),
-            _buildTile('Parameters', '12-12-2024', () {}),
-            _buildTile('Parameters Value', '12-12-2024', () {}),
-            _buildTile('Parameters Reason', '12-12-2024', () {}),
-            _buildTile(
-                'Entity Profile', '12-12-2024', hideDevider: true, () {}),
-            AppSpacer(
+            Consumer<SectionDb>(
+              builder: (context, dbController, _) => Column(
+                children: [
+                  _buildTile('Section', '12-12-2024', () {
+                    dbController.storeSection(context);
+                  }),
+                  Text(dbController.listOfSection.length.toString())
+                ],
+              ),
+            ),
+            Consumer<BlockSectionDb>(
+              builder: (context, dbController, _) => Column(
+                children: [
+                  _buildTile('Block Section', '12-12-2024', () {
+                    dbController.storeBlockSections(context);
+                  }),
+                  Text(dbController.listOfBlockSections.length.toString())
+                ],
+              ),
+            ),
+            Consumer<StationDb>(
+                builder: (context, dbController, _) => Column(children: [
+                      _buildTile('Station', '12-12-2024', () {
+                        dbController.storeStations(context);
+                      }),
+                      Text(dbController.listOfStationModel.length.toString())
+                    ])),
+            Consumer<ParametersDb>(
+                builder: (context, dbController, _) => Column(children: [
+                      _buildTile('Parameters', '12-12-2024', () {
+                        dbController.storeParameters(context);
+                      }),
+                      Text(dbController.listOfParameters.length.toString())
+                    ])),
+            Consumer<ParametersValueDb>(
+                builder: (context, dbController, _) => Column(children: [
+                      _buildTile('Parameters Value', '12-12-2024', () {
+                        dbController.storeParametersValues(context);
+                      }),
+                      Text(
+                          dbController.listOfParametersValues.length.toString())
+                    ])),
+            Consumer<ParametersReasonDb>(
+                builder: (context, dbController, _) => Column(children: [
+                      _buildTile('Parameters Reason', '12-12-2024', () {
+                        dbController.storeParameterReson(context);
+                      }),
+                      Text(
+                          dbController.listOfParametersResons.length.toString())
+                    ])),
+            Consumer<EnitityProfileDb>(
+                builder: (context, dbController, _) => Column(children: [
+                      _buildTile('Entity Profile', '12-12-2024',
+                          hideDevider: true, () {
+                        dbController.storeEnitityProfile(context);
+                      }),
+                      Text(dbController.listOfEnitityProfiles.length.toString())
+                    ])),
+            const AppSpacer(
               heightPortion: .02,
             )
           ],

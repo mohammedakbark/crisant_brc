@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:test_managment/core/utils/responsive_helper.dart';
 
 class AppEmptyText extends StatelessWidget {
   final String text;

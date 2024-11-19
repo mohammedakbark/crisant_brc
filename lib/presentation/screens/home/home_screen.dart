@@ -66,58 +66,53 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       drawer: const HomeDrawer(),
       body: Consumer<LocationService>(builder: (context, controller, _) {
-        if (controller.currentLat != null || controller.currentLon != null) {
-          return Stack(
-            children: [
-              GoogleMap(
-                onMapCreated: (gMapController) async {
-                  try {
-                    await controller
-                        .getCurrentLocation(); // gMapController.getLatLng(ScreenCoordinate(x: x, y: y))
-                    await gMapController.animateCamera(
-                      CameraUpdate.newCameraPosition(
-                        CameraPosition(
-                          target: LatLng(
-                              controller.currentLat, controller.currentLon),
-                          zoom: 15.0, // Adjust zoom level as needed
-                        ),
-                      ),
-                    );
-                  } catch (e) {
-                    log('- gMap - ${e.toString()}');
-                  }
-                },
-                minMaxZoomPreference: const MinMaxZoomPreference(15, 15),
-                zoomGesturesEnabled: true,
-                zoomControlsEnabled: false,
-                buildingsEnabled: false,
-                compassEnabled: true,
-                liteModeEnabled: false, // rediretion to google map
-                mapToolbarEnabled: true,
-                myLocationButtonEnabled: true,
-                rotateGesturesEnabled: true,
-                indoorViewEnabled: true,
-                fortyFiveDegreeImageryEnabled: true,
-                scrollGesturesEnabled: true,
-                tiltGesturesEnabled: true,
-                trafficEnabled: true,
+        if (controller.currentLat != 0 || controller.currentLon != 0) {
+          return GoogleMap(
+            onMapCreated: (gMapController) async {
+              try {
+                await controller
+                    .getCurrentLocation(); // gMapController.getLatLng(ScreenCoordinate(x: x, y: y))
+                await gMapController.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(
+                      target:
+                          LatLng(controller.currentLat, controller.currentLon),
+                      zoom: 15.0, // Adjust zoom level as needed
+                    ),
+                  ),
+                );
+              } catch (e) {
+                log('- gMap - ${e.toString()}');
+              }
+            },
+            minMaxZoomPreference: const MinMaxZoomPreference(15, 15),
+            zoomGesturesEnabled: true,
+            zoomControlsEnabled: false,
+            buildingsEnabled: false,
+            compassEnabled: true,
+            liteModeEnabled: false, // rediretion to google map
+            mapToolbarEnabled: true,
+            myLocationButtonEnabled: true,
+            rotateGesturesEnabled: true,
+            indoorViewEnabled: true,
+            fortyFiveDegreeImageryEnabled: true,
+            scrollGesturesEnabled: true,
+            tiltGesturesEnabled: true,
+            trafficEnabled: true,
 
-                initialCameraPosition: CameraPosition(
-                    target:
-                        LatLng(controller.currentLat, controller.currentLon)),
-                mapType: MapType.normal,
-                myLocationEnabled: true,
+            initialCameraPosition: CameraPosition(
+                target: LatLng(controller.currentLat, controller.currentLon)),
+            mapType: MapType.normal,
+            myLocationEnabled: true,
 
-                // markers: {
-                //   Marker(
-                //       icon: BitmapDescriptor.defaultMarkerWithHue(
-                //           BitmapDescriptor.hueAzure),
-                //       position: LatLng(
-                //           controller.currentLat!, controller.currentLon!),
-                //       markerId: MarkerId('1'))
-                // },
-              ),
-            ],
+            // markers: {
+            //   Marker(
+            //       icon: BitmapDescriptor.defaultMarkerWithHue(
+            //           BitmapDescriptor.hueAzure),
+            //       position: LatLng(
+            //           controller.currentLat!, controller.currentLon!),
+            //       markerId: MarkerId('1'))
+            // },
           );
         } else {
           return const AppLoadingIndicator();

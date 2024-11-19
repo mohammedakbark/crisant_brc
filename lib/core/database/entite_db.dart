@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/repositories/fetch_entity_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
 import 'package:test_managment/model/entity_model.dart';
@@ -9,6 +10,7 @@ class EntiteDb with ChangeNotifier {
   static const entitiesCollection = 'entities';
   List<EntityModel> _listOfEntityData = [];
   List<EntityModel> get listOfEntityData => _listOfEntityData;
+  bool isDowloading = false;
 
   void storeEntity(BuildContext context) async {
     try {
@@ -21,19 +23,24 @@ class EntiteDb with ChangeNotifier {
           data.map((e) => EntityModel.fromJson(e)).toList();
 
       for (var entity in listOFEntity) {
-        await db.rawInsert(
-            'INSERT INTO $entitiesCollection(entityId,entityName,pictureRequired,periodicity,entityType) VALUES(?,?,?,?,?)',
-            [
-              entity.entityId,
-              entity.entityName,
-              entity.pictureRequired,
-              entity.periodicity,
-              entity.entityType
-            ]);
+        await db.insert(
+          entitiesCollection,
+          entity.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+        // await db.rawInsert(
+        //     'INSERT INTO $entitiesCollection(entityId,entityName,pictureRequired,periodicity,entityType) VALUES(?,?,?,?,?)',
+        //     [
+        //       entity.entityId,
+        //       entity.entityName,
+        //       entity.pictureRequired,
+        //       entity.periodicity,
+        //       entity.entityType
+        //     ]);
       }
 
       log('Entity Downloaded Successful');
-     await getAllEntities();
+      await getAllEntities();
     } catch (e) {
       log('exception on adding data in to table ${e.toString()}');
     }

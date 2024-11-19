@@ -3,7 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/core/controller/add_asset_controller.dart';
+import 'package:test_managment/core/database/block_section_db.dart';
+import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
+import 'package:test_managment/core/database/parameters_db.dart';
+import 'package:test_managment/core/database/parameters_reason_db.dart';
+import 'package:test_managment/core/database/parameters_value_db.dart';
+import 'package:test_managment/core/database/section_db.dart';
+import 'package:test_managment/core/database/section_incharge_db.dart';
+import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/services/api_service.dart';
 import 'package:test_managment/core/database/auth_db.dart';
 import 'package:test_managment/core/controller/test_asset_controller.dart';
@@ -11,6 +19,7 @@ import 'package:test_managment/core/controller/camera_controller.dart';
 import 'package:test_managment/core/controller/dashboard_controller.dart';
 import 'package:test_managment/core/controller/floating_bar_controller.dart';
 import 'package:test_managment/core/services/location_service.dart';
+
 import 'package:test_managment/presentation/screens/dashboard.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 
@@ -51,12 +60,36 @@ void main() async {
         create: (context) => AddAssetController(),
       ),
 
-      //  db Poviders 
+      //  db Poviders
       ChangeNotifierProvider<EntiteDb>(
         create: (context) => EntiteDb(),
       ),
       ChangeNotifierProvider<AuthDb>(
         create: (context) => AuthDb(),
+      ),
+      ChangeNotifierProvider<SectionInchargeDb>(
+        create: (context) => SectionInchargeDb(),
+      ),
+      ChangeNotifierProvider<SectionDb>(
+        create: (context) => SectionDb(),
+      ),
+      ChangeNotifierProvider<BlockSectionDb>(
+        create: (context) => BlockSectionDb(),
+      ),
+      ChangeNotifierProvider<StationDb>(
+        create: (context) => StationDb(),
+      ),
+      ChangeNotifierProvider<ParametersDb>(
+        create: (context) => ParametersDb(),
+      ),
+      ChangeNotifierProvider<ParametersValueDb>(
+        create: (context) => ParametersValueDb(),
+      ),
+      ChangeNotifierProvider<ParametersReasonDb>(
+        create: (context) => ParametersReasonDb(),
+      ),
+       ChangeNotifierProvider<EnitityProfileDb>(
+        create: (context) => EnitityProfileDb(),
       ),
     ], child: const MyApp()),
   ));

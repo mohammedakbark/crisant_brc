@@ -1,9 +1,20 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:test_managment/core/database/block_section_db.dart';
+import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
 import 'package:test_managment/core/database/auth_db.dart';
+import 'package:test_managment/core/database/parameters_db.dart';
+import 'package:test_managment/core/database/parameters_reason_db.dart';
+import 'package:test_managment/core/database/parameters_value_db.dart';
+import 'package:test_managment/core/database/section_db.dart';
+import 'package:test_managment/core/database/section_incharge_db.dart';
+import 'package:test_managment/core/database/station_db.dart';
+import 'package:test_managment/model/parameter_values_model.dart';
 
 class LocalDatabaseService {
   static final LocalDatabaseService _instance =
@@ -12,14 +23,6 @@ class LocalDatabaseService {
   LocalDatabaseService._internal();
 
   // Database get database => _database;
-  static const _sectionInchargeCollection = 'section_incharge';
-  static const _sectionCollection = 'section';
-  static const _blockSectionCollection = 'block_section';
-  static const _stationCollection = 'station';
-  static const _parametersCollection = 'parameters';
-  static const _parametersValueCollection = 'parameters_value';
-  static const _parametersReasonCollection = 'parameters_reason';
-  static const _entityProfileCollection = 'entity_profile';
 
   //-------
   Database? _initDb;
@@ -47,39 +50,43 @@ class LocalDatabaseService {
         onCreate: (db, version) {
           // Entity Table
           db.execute(
-              'CREATE TABLE ${EntiteDb.entitiesCollection} (entityId TEXT PRIMARY KEY, entityName TEXT, pictureRequired TEXT, periodicity TEXT,entityType TEXT)');
+              'CREATE TABLE IF NOT EXISTS ${EntiteDb.entitiesCollection} (entityId TEXT PRIMARY KEY, entityName TEXT, pictureRequired TEXT, periodicity TEXT,entityType TEXT)');
 
           // Section Incharge Table
           db.execute(
-              'CREATE TABLE $_sectionInchargeCollection (sectionInchargeId TEXT PRIMARY KEY, sectionInchargeName TEXT, divisionId TEXT)');
+              'CREATE TABLE IF NOT EXISTS ${SectionInchargeDb.sectionInchargeCollection} (sectionInchargeId TEXT PRIMARY KEY, sectionInchargeName TEXT, divisionId TEXT)');
 
           //Section Table
           db.execute(
-              'CREATE TABLE $_sectionCollection (sectionId TEXT PRIMARY KEY, sectionName TEXT, sectionInchargeId TEXT)');
+              'CREATE TABLE IF NOT EXISTS ${SectionDb.sectionCollection} (sectionId TEXT PRIMARY KEY, sectionName TEXT, sectionInchargeId TEXT)');
 
           //Block station Table
           db.execute(
-              'CREATE TABLE $_blockSectionCollection (blockSectionId TEXT PRIMARY KEY, blockSectionName TEXT, sectionId TEXT)');
+              'CREATE TABLE IF NOT EXISTS ${BlockSectionDb.blockSectionCollection} (blockSectionId TEXT PRIMARY KEY, blockSectionName TEXT, sectionId TEXT)');
 
           //Station Table
           db.execute(
-              'CREATE TABLE $_stationCollection (stationId TEXT PRIMARY KEY, stationName TEXT, sectionId TEXT)');
+              'CREATE TABLE IF NOT EXISTS ${StationDb.stationCollection} (stationId TEXT PRIMARY KEY, stationName TEXT, sectionId TEXT)');
 
-          //Parameters Table
-          // db.execute(
-          //     'CREATE TABLE $_parametersCollection (parameterId TEXT PRIMARY KEY, entityId TEXT, parameterName TEXT, parameterType TEXT,mandatory TEXT,values )');
+          // Parameters Table
+          db.execute(
+              '''CREATE TABLE IF NOT EXISTS ${ParametersDb.parametersCollection} ( parameterId TEXT PRIMARY KEY,
+          entityId TEXT,
+          parameterName TEXT,
+          parameterType TEXT,
+          mandatory TEXT)''');
 
-          // //Parameters Value Table
-          // db.execute(
-          //     'CREATE TABLE $_parametersValueCollection (entityId TEXT PRIMARY KEY, entityName TEXT, pictureRequired TEXT, periodicity TEXT,entityType TEXT)');
+          //Parameters Value Table
+          db.execute(
+              'CREATE TABLE IF NOT EXISTS ${ParametersValueDb.parametersValueCollection} (parameterValueId TEXT PRIMARY KEY, parameterId TEXT, parameterValue TEXT, parameterStatus TEXT)');
 
-          // //Parameters Reason Table
-          // db.execute(
-          //     'CREATE TABLE $_parametersReasonCollection (entityId TEXT PRIMARY KEY, entityName TEXT, pictureRequired TEXT, periodicity TEXT,entityType TEXT)');
+          //Parameters Reason Table
+          db.execute(
+              'CREATE TABLE IF NOT EXISTS ${ParametersReasonDb.parametersReasonCollection} (parameterReasonId TEXT PRIMARY KEY, parameterValueId TEXT, reason TEXT)');
 
-          // // Entity Profile Table
-          // db.execute(
-          //     'CREATE TABLE $_entityProfileCollection (entityId TEXT PRIMARY KEY, entityName TEXT, pictureRequired TEXT, periodicity TEXT,entityType TEXT)');
+          // Entity Profile Table
+          db.execute(
+              'CREATE TABLE IF NOT EXISTS ${EnitityProfileDb.entityProfileCollection} (entityProfileId TEXT PRIMARY KEY, divisionId TEXT, sectionInchargeId TEXT, sectionId TEXT,blockSectionId TEXT,stationId TEXT,entityId TEXT,entityIdentifier TEXT,entityLatt TEXT,entityLong TEXT,entityStatus TEXT,entityConfirmed TEXT,status TEXT,userId TEXT,modifiedDate TEXT)');
         },
       );
     } catch (e) {
@@ -107,5 +114,23 @@ class LocalDatabaseService {
       log('exception on initializing AUTH table ${e.toString()}');
       return null;
     }
+  }
+
+  void fetchAllDatabases(BuildContext context) async {
+    await Provider.of<EntiteDb>(context, listen: false).getAllEntities();
+    await Provider.of<SectionInchargeDb>(context, listen: false)
+        .getAllSectionIncharges();
+    await Provider.of<SectionDb>(context, listen: false).getAllSections();
+    await Provider.of<BlockSectionDb>(context, listen: false)
+        .getAllBlockSections();
+    await Provider.of<StationDb>(context, listen: false)
+        .getAllSectionIncharges();
+    await Provider.of<ParametersDb>(context, listen: false).getAllParameters();
+    await Provider.of<ParametersValueDb>(context, listen: false)
+        .getAllParametersValues();
+    await Provider.of<ParametersReasonDb>(context, listen: false)
+        .getAllParameterReson();
+    await Provider.of<EnitityProfileDb>(context, listen: false)
+        .getAllEnitityProfile();
   }
 }
