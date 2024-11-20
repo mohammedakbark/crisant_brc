@@ -14,7 +14,6 @@ import 'package:test_managment/core/database/parameters_value_db.dart';
 import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
-import 'package:test_managment/model/parameter_values_model.dart';
 
 class LocalDatabaseService {
   static final LocalDatabaseService _instance =

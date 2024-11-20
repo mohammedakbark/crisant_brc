@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/repositories/fetch_station_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
-import 'package:test_managment/model/station_model.dart';
+import 'package:test_managment/model/db%20models/station_model.dart';
 
 class StationDb with ChangeNotifier {
   static const stationCollection = 'station';

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/controller/camera_controller.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
@@ -9,6 +10,7 @@ import 'package:test_managment/core/database/parameters_db.dart';
 import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
+import 'package:test_managment/core/services/api_service.dart';
 import 'package:test_managment/core/services/local_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/components/app_margin.dart';
@@ -17,7 +19,8 @@ import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/custom_button.dart';
 import 'package:test_managment/core/components/custom_dropdown_field.dart';
 import 'package:test_managment/core/controller/test_asset_controller.dart';
-import 'package:test_managment/model/entity_profile_model.dart';
+import 'package:test_managment/model/db%20models/entity_profile_model.dart';
+import 'package:test_managment/model/reposrts%20models/test_report_add_model.dart';
 import 'package:test_managment/presentation/screens/home/widgets/additional_question_view.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
@@ -269,7 +272,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                   ),
                   Consumer<TestAssetsController>(builder: (context, ctlr, _) {
                     return ctlr.filterdParameters == null
-                        ? SizedBox()
+                        ? const SizedBox()
                         : const AdditionalQuestionView();
                   }),
                   const AppSpacer(
@@ -277,32 +280,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                   ),
                   CustomButton(
                     title: 'SUBMIT',
-                    onTap: () {
-                      if (_formkey.currentState!.validate()) {
-                        final controller = Provider.of<TestAssetsController>(
-                            context,
-                            listen: false);
-                        switch (controller.selectedEntityId) {
-                          case 'Way Station Equip':
-                            {
-                              log('Ramrks : ${controller.textedEditionControllers[0]['0']!.text}');
-                            }
-                          case '4W Repeater':
-                            {
-                              log('1 : ${controller.textedEditionControllers[0]['0']!.text}');
-                              log('2 : ${controller.textedEditionControllers[1]['1']!.text}');
-                              log('3 : ${controller.textedEditionControllers[2]['2']!.text}');
-                              log('Ramrks : ${controller.textedEditionControllers[3]['3']!.text}');
-                            }
-                          case 'LC Gate Phone':
-                            {}
-                          case 'EC Socket':
-                            {}
-                          case 'Battery Charger':
-                            {}
-                        }
-                      }
-                    },
+                    onTap: handleSubmit,
                   ),
                   const AppSpacer(
                     heightPortion: .025,
@@ -314,6 +292,46 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> handleSubmit() async {
+    if (_formkey.currentState!.validate()) {
+      final cameraController =
+          Provider.of<CameraController>(context, listen: false);
+      if (cameraController.convertedImageFile != null) {
+        final locationProvider =
+            Provider.of<LocationService>(context, listen: false);
+        final ctr = Provider.of<TestAssetsController>(context, listen: false);
+
+        await locationProvider.getCurrentLocation();
+        await ctr.onSubmitTextfield();
+        List<TestParametersModel> listOfParameters =
+            ctr.infinityHelperData!.map((element) {
+          return TestParametersModel(
+              parameterId: element['parameterId'] ?? '',
+              parameterValue: element['parameterValue'] ?? '',
+              parameterReasonId: element['parameterReasonId'] ?? '');
+        }).toList();
+        final model = AddNewTestModel(
+            stationId: ctr.selectedStationId,
+            entityId: ctr.selectedEntityId!,
+            sectionInchargeId: ctr.selectedSectonInchargeId!,
+            sectionId: ctr.selectedSectionId!,
+            blockSectionId: ctr.selectedBlockId,
+            entityProfileId: ctr.selectedEntityId!,
+            testLatt: locationProvider.currentLat.toString(),
+            testLong: locationProvider.currentLon.toString(),
+            testMode: 'AUTO',
+            connectivityMode: 'ONLINE',
+            picture: cameraController.convertedImageFile?['file'],
+            parameters: listOfParameters);
+        await ApiService.addNewTest(context, model);
+        await ctr.clearAllData();
+        setState(() {});
+      } else {
+        showMessage('Pick image');
+      }
+    }
   }
 
   Widget imagePicker(BuildContext context) {

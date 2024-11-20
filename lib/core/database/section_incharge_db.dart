@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/repositories/fetch_section_incharge_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
-import 'package:test_managment/model/section_incharge_model.dart';
+import 'package:test_managment/model/db%20models/section_incharge_model.dart';
 
 class SectionInchargeDb with ChangeNotifier {
   static const sectionInchargeCollection = 'sectionIncharge';

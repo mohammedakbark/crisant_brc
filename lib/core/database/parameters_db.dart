@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/repositories/fetch_parameters_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
-import 'package:test_managment/model/parameters_model.dart';
+import 'package:test_managment/model/db%20models/parameters_model.dart';
 
 class ParametersDb with ChangeNotifier {
   static const parametersCollection = 'parameters';

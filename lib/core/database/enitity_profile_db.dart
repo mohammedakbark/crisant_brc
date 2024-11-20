@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/repositories/fetch_entity_profile_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
-import 'package:test_managment/model/entity_profile_model.dart';
+import 'package:test_managment/model/db%20models/entity_profile_model.dart';
 
 class EnitityProfileDb with ChangeNotifier {
   static const entityProfileCollection = 'entity_profile';

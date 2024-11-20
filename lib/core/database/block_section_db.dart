@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/repositories/fetch_block_section_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
-import 'package:test_managment/model/block_station_model.dart';
+import 'package:test_managment/model/db%20models/block_station_model.dart';
 
 class BlockSectionDb with ChangeNotifier {
   static const blockSectionCollection = 'block_section';

@@ -6,11 +6,12 @@ import 'package:test_managment/core/utils/responsive_helper.dart';
 class CustomFormField extends StatelessWidget {
   final String hintText;
   final bool? isRequiredField;
-  final TextEditingController controller;
+  final TextEditingController ?controller;
+  
 
   const CustomFormField(
       {super.key,
-      required this.controller,
+       this.controller,
       required this.hintText,    
       this.isRequiredField});
 

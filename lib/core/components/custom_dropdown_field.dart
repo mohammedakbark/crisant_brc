@@ -34,7 +34,8 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
         Container(
           width: w(context),
           height: 56,
-          margin: const EdgeInsets.symmetric(vertical: AppDimensions.paddingSize5),
+          margin:
+              const EdgeInsets.symmetric(vertical: AppDimensions.paddingSize5),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(
               Radius.circular(AppDimensions.radiusSize5),
@@ -50,9 +51,13 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingSize5),
+          padding:
+              const EdgeInsets.symmetric(vertical: AppDimensions.paddingSize5),
           child: DropdownButtonFormField<String>(
-            value: widget.items.any((e) => e['title'] == _selectedValue)
+            value: widget.items
+                    .asMap()
+                    .entries
+                    .any((e) => e.key.toString() == _selectedValue)
                 ? _selectedValue
                 : null, // Reset if value doesn't match any item
             validator: (value) {
@@ -88,18 +93,21 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
               ),
             ),
             items: widget.items
+                .asMap()
+                .entries
                 .map(
                   (e) => DropdownMenuItem<String>(
-                    value: e['title'], // Ensure this matches the key used in the value
+                    value: e.key
+                        .toString(), // Ensure this matches the key used in the value
                     onTap: () {
                       try {
-                        widget.onCallBack(e);
+                        widget.onCallBack(e.value);
                       } catch (err) {
                         log('Error in dropdown onTap: ${err.toString()}');
                       }
                     },
                     child: Text(
-                      e['title'],
+                      e.value['title'],
                       style: TextStyle(
                         fontSize: AppDimensions.fontSize16(context),
                       ),

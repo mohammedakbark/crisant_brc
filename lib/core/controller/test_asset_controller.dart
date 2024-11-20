@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:test_managment/model/block_station_model.dart';
-import 'package:test_managment/model/entity_profile_model.dart';
-import 'package:test_managment/model/parameters_model.dart';
-import 'package:test_managment/model/section_model.dart';
-import 'package:test_managment/model/station_model.dart';
+import 'package:test_managment/model/db%20models/block_station_model.dart';
+import 'package:test_managment/model/db%20models/entity_profile_model.dart';
+import 'package:test_managment/model/db%20models/parameters_model.dart';
+import 'package:test_managment/model/db%20models/section_model.dart';
+import 'package:test_managment/model/db%20models/station_model.dart';
 
 class TestAssetsController with ChangeNotifier {
   String? _selectedEntityId;
@@ -30,7 +32,7 @@ class TestAssetsController with ChangeNotifier {
   String? _selectedAssetProfileId;
   String? get selectedAssetProfileId => _selectedAssetProfileId;
 
-  clearAllData() {
+  Future<void> clearAllData() async {
     _selectedEntityId = null;
     _selectedSectonInchargeId = null;
     _pictureIsMandatory = false;
@@ -40,6 +42,7 @@ class TestAssetsController with ChangeNotifier {
     _selectedAssetProfileId = null;
     //----------
     _filterdParameters = null;
+    _infinityhelperData = null;
   }
 
   List<Map<String, TextEditingController>>? _textedEditionControllers;
@@ -55,77 +58,13 @@ class TestAssetsController with ChangeNotifier {
       _pictureIsMandatory = false;
     }
 
-    // switch (value['title']) {
-    //   case 'Way Station Equip':
-    //     {
-    //       TextEditingController remarkController = TextEditingController();
-
-    //       _textedEditionControllers = [
-    //         {'0': remarkController}
-    //       ];
-    //     }
-    //   case '4W Repeater':
-    //     {
-    //       TextEditingController remarkController = TextEditingController();
-    //       TextEditingController ampCardController = TextEditingController();
-
-    //       TextEditingController trfCardController = TextEditingController();
-
-    //       TextEditingController batteryVoltageLoadController =
-    //           TextEditingController();
-    //       _textedEditionControllers = [
-    //         {'0': ampCardController},
-    //         {'1': trfCardController},
-    //         {'2': batteryVoltageLoadController},
-    //         {'3': remarkController}
-    //       ];
-    //     }
-    //   case 'LC Gate Phone':
-    //     {}
-
-    //     TextEditingController remarkController = TextEditingController();
-    //     TextEditingController batteryVoltageController =
-    //         TextEditingController();
-
-    //     TextEditingController ipRingVoltageController = TextEditingController();
-
-    //     TextEditingController opRingVotageController = TextEditingController();
-    //     _textedEditionControllers = [
-    //       {'0': batteryVoltageController},
-    //       {'1': ipRingVoltageController},
-    //       {'2': opRingVotageController},
-    //       {'3': remarkController}
-    //     ];
-    //   case 'EC Socket':
-    //     {
-    //       TextEditingController remarkController = TextEditingController();
-    //       _textedEditionControllers = [
-    //         {'0': remarkController}
-    //       ];
-    //     }
-    //   case 'Battery Charger':
-    //     {
-    //       TextEditingController remarkController = TextEditingController();
-    //       TextEditingController outputVolateController =
-    //           TextEditingController();
-
-    //       TextEditingController batteryVoltageController =
-    //           TextEditingController();
-
-    //       _textedEditionControllers = [
-    //         {'0': outputVolateController},
-    //         {'1': batteryVoltageController},
-    //         {'2': remarkController},
-    //       ];
-    //     }
-    // }
-
     _selectedSectonInchargeId = null;
     _selectedSectionID = null;
     _selectedStationId = null;
     _selectedBlockId = null;
     _selectedAssetProfileId = null;
     _filterdParameters = null;
+    _infinityhelperData = null;
     notifyListeners();
   }
 
@@ -143,6 +82,7 @@ class TestAssetsController with ChangeNotifier {
     _selectedBlockId = null;
     _selectedAssetProfileId = null;
     _filterdParameters = null;
+    _infinityhelperData = null;
     notifyListeners();
   }
 
@@ -179,6 +119,7 @@ class TestAssetsController with ChangeNotifier {
     _selectedBlockId = null;
     _selectedAssetProfileId = null;
     _filterdParameters = null;
+    _infinityhelperData = null;
     notifyListeners();
   }
 
@@ -192,6 +133,7 @@ class TestAssetsController with ChangeNotifier {
         .toList();
     _selectedAssetProfileId = null;
     _filterdParameters = null;
+    _infinityhelperData = null;
     notifyListeners();
   }
 
@@ -202,6 +144,7 @@ class TestAssetsController with ChangeNotifier {
         .toList();
     _selectedAssetProfileId = null;
     _filterdParameters = null;
+    _infinityhelperData = null;
     notifyListeners();
   }
 
@@ -211,8 +154,74 @@ class TestAssetsController with ChangeNotifier {
     _selectedAssetProfileId = value['id'];
     _filterdParameters =
         list.where((element) => element.entityId == _selectedEntityId).toList();
+
+    _genarateAdditionalQuestionDataComponets();
+    _genarateTextEditingController();
     notifyListeners();
   }
 
-  //-----------
+  //-----additional ------
+  List<Map<String, dynamic>>? _infinityhelperData;
+  List<Map<String, dynamic>>? get infinityHelperData => _infinityhelperData;
+
+  _genarateAdditionalQuestionDataComponets() {
+    // final finalList = _filterdParameters!
+    //     .where((element) => element.parameterType == 'SELECT')
+    //     .toList();
+    _infinityhelperData = List.generate(
+        _filterdParameters!.length,
+        (index) => {
+              'bool': true,
+              'parameterId': null,
+              'parameterValue': null,
+              'parameterReasonId': null,
+            });
+    log(_infinityhelperData!.length.toString());
+  }
+
+  List<Map<String, TextEditingController>>? _infinityControllers;
+  List<Map<String, TextEditingController>>? get infinityControllers =>
+      _infinityControllers;
+  _genarateTextEditingController() {
+    _infinityControllers = List.generate(_filterdParameters!.length,
+        (index) => {'$index': TextEditingController()}).toList();
+  }
+
+  void onChangeTheParameterValue(
+      index, bool value, String? parameterValueId, String? parameterId) {
+    _infinityhelperData?[index]['bool'] = value;
+    _infinityhelperData?[index]['parameterId'] = parameterId;
+    _infinityhelperData?[index]['parameterValue'] = parameterValueId;
+    notifyListeners();
+  }
+
+  onChangeTheParameterReason(index, String? parameterReasonId) {
+    _infinityhelperData?[index]['parameterReasonId'] = parameterReasonId;
+
+    notifyListeners();
+  }
+
+  // getTextFieldData(index, String? parameterId) {
+  //   _infinityhelperData?[index]['parameterId'] = parameterId;
+  //   log('text field  parameter ID ${_infinityhelperData![index]['parameterId']}');
+  // }
+
+  Future onSubmitTextfield() async {
+    for (var i in _filterdParameters!) {
+      _infinityControllers!.asMap().entries.map(
+        (e) {
+          final index = e.key;
+          final controller = e.value['$index'];
+          if (i.parameterType == 'INPUT') {
+            _infinityhelperData?[index]['parameterId'] = i.parameterId;
+            _infinityhelperData?[index]['parameterValue'] = controller!.text;
+            _infinityhelperData?[index]['parameterReasonId'] = controller!.text;
+          }
+        },
+      );
+    }
+    log('text field  parameter ID ${_infinityhelperData![0]['parameterId']}');
+    log('text field  parameter Value ID ${_infinityhelperData![0]['parameterValue']}');
+    log('text field  parameterReason ID ${_infinityhelperData![0]['parameterReasonId']}');
+  }
 }

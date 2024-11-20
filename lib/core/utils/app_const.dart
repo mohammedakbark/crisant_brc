@@ -13,4 +13,5 @@ class AppConst {
   static const profileURL = '/profile';
   static const entityProfileURL = '/entityprofiles';
   static const entityProfileAddURL = '/entityprofiles/create';
+  static const entityTestAddURL = '/entitytest/create';
 }

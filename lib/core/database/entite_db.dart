@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/repositories/fetch_entity_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
-import 'package:test_managment/model/entity_model.dart';
+import 'package:test_managment/model/db%20models/entity_model.dart';
 
 class EntiteDb with ChangeNotifier {
   static const entitiesCollection = 'entities';

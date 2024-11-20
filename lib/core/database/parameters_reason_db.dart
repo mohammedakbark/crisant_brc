@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/repositories/fetch_parameter_reason_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
-import 'package:test_managment/model/parameter_reson_model.dart';
+import 'package:test_managment/model/db%20models/parameter_reson_model.dart';
 
 class ParametersReasonDb with ChangeNotifier {
   static const parametersReasonCollection = 'parameters_reason';
