@@ -11,7 +11,7 @@ class EnitityProfileDb with ChangeNotifier {
   List<EntityProfileModel> _listOfEnitityProfiles = [];
   List<EntityProfileModel> get listOfEnitityProfiles => _listOfEnitityProfiles;
 
-  void storeEnitityProfile(BuildContext context) async {
+  Future<void> storeEnitityProfile(BuildContext context) async {
     try {
       final db = await LocalDatabaseService().initDb;
 

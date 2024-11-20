@@ -5,9 +5,11 @@ import 'package:test_managment/core/controller/camera_controller.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
+import 'package:test_managment/core/database/parameters_db.dart';
 import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
+import 'package:test_managment/core/services/local_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_page_head_text.dart';
@@ -55,6 +57,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
   void initState() {
     super.initState();
     Provider.of<TestAssetsController>(context, listen: false).clearAllData();
+    LocalDatabaseService().fetchAllDatabases(context);
   }
 
   @override
@@ -68,24 +71,55 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
               key: _formkey,
               child: Column(
                 children: [
-                  Consumer<LocationService>(builder: (context, controller, _) {
-                    return Column(
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              if (controller.showFloatingLocation) {
-                                controller.showFlaotingLocation(false,
-                                    targetLat: null, targetLon: null);
-                              } else {
-                                controller.showFlaotingLocation(true,
-                                    targetLat: 12.306598756316292,
-                                    targetLon: 76.64572844249811);
-                              }
-                            },
-                            child: const Text('Show')),
-                      ],
-                    );
-                  }),
+                  // Consumer<LocationService>(builder: (context, controller, _) {
+                  //   return Column(
+                  //     children: [
+                  //       TextButton(
+                  //           onPressed: () {
+                  //             if (controller.showFloatingLocation) {
+                  //               controller.showFlaotingLocation(false,
+                  //                   targetLat: null, targetLon: null);
+                  //             } else {
+                  //               controller.showFlaotingLocation(true,
+                  //                   targetLat: 12.306598756316292,
+                  //                   targetLon: 76.64572844249811);
+                  //             }
+                  //           },
+                  //           child: const Text('Show')),
+                  //     ],
+                  //   );
+                  // }),
+
+                  Container(
+                    margin: const EdgeInsets.symmetric(
+                        vertical: AppDimensions.paddingSize15),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.kPrimaryColor),
+                        borderRadius: const BorderRadius.all(
+                            Radius.circular(AppDimensions.radiusSize10))),
+                    child: const DefaultTabController(
+                      length: 2,
+                      child: TabBar(
+                          labelColor: AppColors.kWhite,
+                          labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                          unselectedLabelStyle:
+                              TextStyle(fontWeight: FontWeight.w500),
+                          dividerColor: Colors.transparent,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          indicator: BoxDecoration(
+                              color: AppColors.kPrimaryColor,
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(AppDimensions.radiusSize10))),
+                          tabs: [
+                            Tab(
+                              text: 'Manual',
+                            ),
+                            Tab(
+                              text: 'Automatic',
+                            )
+                          ]),
+                    ),
+                  ),
                   Consumer2<TestAssetsController, EntiteDb>(
                       builder: (context, ctlr, ctrl2, _) {
                     return CustomDropdownField(
@@ -113,7 +147,12 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                                     'data': e.toJson()
                                   })
                               .toList(),
-                      onCallBack: ctlr.onChangedSectionIncharge,
+                      onCallBack: (value) {
+                        final sectionList =
+                            Provider.of<SectionDb>(context, listen: false)
+                                .listOfSection;
+                        ctlr.onChangedSectionIncharge(value, sectionList);
+                      },
                     );
                   }),
                   Consumer2<TestAssetsController, SectionDb>(
@@ -122,14 +161,28 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                         hintText: 'Section',
                         items: ctlr.selectedSectonInchargeId == null
                             ? []
-                            : ctrl2.listOfSection
+                            : ctlr.filterdSectionList!
                                 .map((e) => {
                                       'title': e.sectionName,
                                       'id': e.sectionId,
                                       'data': e.toJson()
                                     })
                                 .toList(),
-                        onCallBack: ctlr.onChangedSection);
+                        onCallBack: (value) {
+                          if (ctlr.selectedEntityType == 'BLOCK') {
+                            final blockList = Provider.of<BlockSectionDb>(
+                                    context,
+                                    listen: false)
+                                .listOfBlockSections;
+                            ctlr.onChangedSection(value, blockList: blockList);
+                          } else {
+                            final stationList =
+                                Provider.of<StationDb>(context, listen: false)
+                                    .listOfStationModel;
+                            ctlr.onChangedSection(value,
+                                stationList: stationList);
+                          }
+                        });
                   }),
                   Consumer<TestAssetsController>(builder: (context, ctlr, _) {
                     return ctlr.selectedEntityType != null
@@ -142,14 +195,21 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                                       hintText: 'Block',
                                       items: ctlr.selectedSectionId == null
                                           ? []
-                                          : ctrl2.listOfBlockSections
+                                          : ctlr.filterdBlockSectionList!
                                               .map((e) => {
                                                     'title': e.blockSectionName,
                                                     'id': e.blockSectionId,
                                                     'data': e.toJson()
                                                   })
                                               .toList(),
-                                      onCallBack: ctlr.onChangedBlock);
+                                      onCallBack: (value) {
+                                        final list =
+                                            Provider.of<EnitityProfileDb>(
+                                                    context,
+                                                    listen: false)
+                                                .listOfEnitityProfiles;
+                                        ctlr.onChangedBlock(value, list);
+                                      });
                                 }),
                               if (ctlr.selectedEntityType == 'STATION')
                                 Consumer<StationDb>(
@@ -158,34 +218,46 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                                       hintText: 'Station',
                                       items: ctlr.selectedSectionId == null
                                           ? []
-                                          : ctrl2.listOfStationModel
+                                          : ctlr.filteredStationList!
                                               .map((e) => {
                                                     'title': e.stationName,
                                                     'id': e.sectionId,
                                                     'data': e.toJson()
                                                   })
                                               .toList(),
-                                      onCallBack: ctlr.onChangedStations);
+                                      onCallBack: (value) {
+                                        final list =
+                                            Provider.of<EnitityProfileDb>(
+                                                    context,
+                                                    listen: false)
+                                                .listOfEnitityProfiles;
+                                        ctlr.onChangedStations(value, list);
+                                      });
                                 })
                             ],
                           )
-                        : SizedBox();
+                        : const SizedBox();
                   }),
                   Consumer2<TestAssetsController, EnitityProfileDb>(
                       builder: (context, ctlr, ctrl2, _) {
                     return CustomDropdownField(
-                      hintText: 'Asset Profile',
+                      hintText: 'Entity Profile',
                       items: (ctlr.selectedStationId == null) &&
                               (ctlr.selectedBlockId == null)
                           ? []
-                          : ctrl2.listOfEnitityProfiles
+                          : ctlr.filteredEntityProfiles!
                               .map((e) => {
                                     'title': e.entityIdentifier,
                                     'id': e.entityProfileId,
                                     'data': e.toJson()
                                   })
                               .toList(),
-                      onCallBack: ctlr.onChangedAssetsProfile,
+                      onCallBack: (value) {
+                        final list =
+                            Provider.of<ParametersDb>(context, listen: false)
+                                .listOfParameters;
+                        ctlr.onChangedAssetsProfile(value, list);
+                      },
                     );
                   }),
                   const AppSpacer(
@@ -195,7 +267,11 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                   const AppSpacer(
                     heightPortion: .015,
                   ),
-                  const AdditionalQuestionView(),
+                  Consumer<TestAssetsController>(builder: (context, ctlr, _) {
+                    return ctlr.filterdParameters == null
+                        ? SizedBox()
+                        : const AdditionalQuestionView();
+                  }),
                   const AppSpacer(
                     heightPortion: .04,
                   ),

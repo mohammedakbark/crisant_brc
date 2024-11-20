@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/core/controller/add_asset_controller.dart';
+import 'package:test_managment/core/controller/parameter_controller.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
@@ -90,6 +91,9 @@ void main() async {
       ),
        ChangeNotifierProvider<EnitityProfileDb>(
         create: (context) => EnitityProfileDb(),
+      ),
+        ChangeNotifierProvider<ParameterController>(
+        create: (context) => ParameterController(),
       ),
     ], child: const MyApp()),
   ));

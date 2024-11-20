@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,56 +15,32 @@ import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/services/api_service.dart';
+import 'package:test_managment/core/services/local_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/model/add_new_asset_model.dart';
 
 class AddAssetScreen extends StatefulWidget {
-  const AddAssetScreen({super.key});
+  const AddAssetScreen({Key? key}) : super(key: key);
 
   @override
   State<AddAssetScreen> createState() => _AddAssetScreenState();
 }
 
 class _AddAssetScreenState extends State<AddAssetScreen> {
-  final List<String> assetsGroup = [
-    'Way Station Equip',
-    '4W Repeater',
-    'LC Gate Phone',
-    'EC Socket',
-    'Battery Charger'
-  ];
+  final TextEditingController assetIdController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final List<String> inchargeList = [
-    'SSE/TELE/PRTN',
-    'SSE/TELE/DB',
-    'JE/TELE/CTE',
-    'DUMMY/INCHARGE',
-  ];
-
-  final List<String> sections = [
-    'VISHVAMITRI - DABHOLI',
-  ];
-
-  final assetIdController = TextEditingController();
-
-  final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
     Provider.of<AddAssetController>(context, listen: false).clearAllData();
-    // getData();
+    LocalDatabaseService().fetchAllDatabases(context);
   }
 
-  // List<Map<String, dynamic>> listOfassetsGroup = [];
-  // getData() async {
-  //   final obj = Provider.of<EntiteDb>(context, listen: false);
-  //   await obj.getAllEntities();
-  //   listOfassetsGroup = obj.listOfEntityData.map((e) {
-  //     log(e.entityId);
-  //     return {'title ': e.entityName, 'id': e.entityId};
-  //   }).toList();
-  //   // await Provider.of<EntiteDb>(context, listen: false).get();
-  // }
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,147 +53,20 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
             AppMargin(
               child: Column(
                 children: [
-                  Consumer2<AddAssetController, EntiteDb>(
-                      builder: (context, ctlr, ctrl2, child) {
-                    return CustomDropdownField(
-                      onCallBack: (p0) {
-                        ctlr.onChangeEnitity(p0);
-                      },
-                      hintText: 'Asset Group',
-                      items: ctrl2.listOfEntityData
-                          .map((map) => {
-                                'title': map.entityName,
-                                'id': map.entityId,
-                                'entityType': map.entityType
-                              })
-                          .toList(),
-                      // onChanged:
-                    );
-                  }),
-                  Consumer2<AddAssetController, SectionInchargeDb>(
-                      builder: (context, ctlr, ctlr2, child) {
-                    return CustomDropdownField(
-                      onCallBack: ctlr.onChangedSectionIncharge,
-                      hintText: 'Section Incharge',
-                      items: ctlr.selectedEntityId == null
-                          ? []
-                          : ctlr2.listOfSectionIncharge
-                              .map((map) => {
-                                    'title': map.sectionInchargeName,
-                                    'id': map.sectionInchargeId
-                                  })
-                              .toList(),
-                      // onChanged: ctlr.onChangedSectionIncharge,
-                    );
-                  }),
-                  Consumer2<AddAssetController, SectionDb>(
-                      builder: (context, ctlr, ctrl2, child) {
-                    return CustomDropdownField(
-                      onCallBack: ctlr.onChangedSection,
-                      hintText: 'Section',
-                      items: ctlr.selectedSectonInchargeId == null
-                          ? []
-                          : ctrl2.listOfSection
-                              .map((e) =>
-                                  {'title': e.sectionName, 'id': e.sectionId})
-                              .toList(),
-                      // onChanged: ctlr.onChangedSection,
-                    );
-                  }),
-                  // Consumer2<AddAssetController,>(
-                  //     builder: (context, ctlr, child) {
-                  //   return CustomDropdownField(
-                  //     hintText: 'Asset Type',
-                  //     items: ctlr.selectedSection == null
-                  //         ? []
-                  //         : ['Block', 'Station'],
-                  // onChanged: (value) => ctlr.onchangeTheAssetType(value),
-                  //   );
-                  // }),
-                  // ctlr.isTheAssetisBlock
-                  //       ?
-                  Consumer<AddAssetController>(
-                    builder: (context, ctrl, _) {
-                      return ctrl.selectedEntityType != null
-                          ? Column(
-                              children: [
-                                if (ctrl.selectedEntityType == 'BLOCK')
-                                  Consumer<BlockSectionDb>(
-                                      builder: (context, ctlr2, child) {
-                                    return CustomDropdownField(
-                                      onCallBack: ctrl.onChangedBlocks,
-                                      hintText: 'Block',
-                                      items: ctrl.selectedSectionId == null
-                                          ? []
-                                          : ctlr2.listOfBlockSections
-                                              .map((e) => {
-                                                    'title': e.blockSectionName,
-                                                    'id': e.blockSectionId
-                                                  })
-                                              .toList(),
-                                      // onChanged: ctlr.onChangedStations,
-                                    );
-                                  }),
-                                if (ctrl.selectedEntityType == 'STATION')
-                                  Consumer<StationDb>(
-                                      builder: (context, ctlr2, child) {
-                                    return CustomDropdownField(
-                                      onCallBack: ctrl.onChangedStations,
-                                      hintText: 'Station',
-                                      items: ctrl.selectedSectionId == null
-                                          ? []
-                                          : ctlr2.listOfStationModel
-                                              .map((e) => {
-                                                    'title': e.stationName,
-                                                    'id': e.stationId
-                                                  })
-                                              .toList(),
-                                      // onChanged: ctlr.onChangedStations,
-                                    );
-                                  })
-                              ],
-                            )
-                          : const SizedBox();
-                    },
-                  ),
+                  _buildEntityDropdown(),
+                  _buildSectionInchargeDropdown(),
+                  _buildSectionDropdown(),
+                  _buildBlockOrStationDropdown(),
                   CustomFormField(
-                      isRequiredField: true,
-                      controller: assetIdController,
-                      hintText: 'Asset ID / SL#'),
-                  const AppSpacer(
-                    heightPortion: .05,
+                    isRequiredField: true,
+                    controller: assetIdController,
+                    hintText: 'Asset ID / SL#',
                   ),
+                  const AppSpacer(heightPortion: .05),
                   CustomButton(
                     title: 'SUBMIT',
-                    onTap: () async {
-                      if (_formKey.currentState!.validate()) {
-                        final locationProvider = Provider.of<LocationService>(
-                            context,
-                            listen: false);
-                        final cntroller = Provider.of<AddAssetController>(
-                            context,
-                            listen: false);
-                        await locationProvider.getCurrentLocation();
-                        final model = AddNewAssetModel(
-                            entityId: cntroller.selectedEntityId!,
-                            sectionInchargeId:
-                                cntroller.selectedSectonInchargeId!,
-                            sectionId: cntroller.selectedSectionId!,
-                            entityIdentifier: assetIdController.text,
-                            entityLatt: locationProvider.currentLat.toString(),
-                            entityLong: locationProvider.currentLon.toString(),
-                            stationId: cntroller.selectedStationId,
-                            blockSectionId: cntroller.selectedBlockId);
-                        await ApiService.addNewAsset(context, model);
-                        Provider.of<EnitityProfileDb>(context, listen: false)
-                            .storeEnitityProfile(context);
-
-                        await cntroller.clearAllData();
-                        assetIdController.clear();
-                        setState(() {});
-                      }
-                    },
-                  )
+                    onTap: _handleSubmit,
+                  ),
                 ],
               ),
             ),
@@ -227,5 +74,151 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildEntityDropdown() {
+    return Consumer2<AddAssetController, EntiteDb>(
+      builder: (context, assetCtrl, entityDb, _) {
+        return CustomDropdownField(
+          onCallBack: assetCtrl.onChangeEnitity,
+          hintText: 'Asset Group',
+          items: entityDb.listOfEntityData.map((entity) {
+            return {
+              'title': entity.entityName,
+              'id': entity.entityId,
+              'entityType': entity.entityType,
+            };
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  Widget _buildSectionInchargeDropdown() {
+    return Consumer2<AddAssetController, SectionInchargeDb>(
+      builder: (context, assetCtrl, sectionInchargeDb, _) {
+        return CustomDropdownField(
+          onCallBack: (value) {
+            final sectionList =
+                Provider.of<SectionDb>(context, listen: false).listOfSection;
+            assetCtrl.onChangedSectionIncharge(value, sectionList);
+          },
+          hintText: 'Section Incharge',
+          items: assetCtrl.selectedEntityId == null
+              ? []
+              : sectionInchargeDb.listOfSectionIncharge.map((sectionIncharge) {
+                  return {
+                    'title': sectionIncharge.sectionInchargeName,
+                    'id': sectionIncharge.sectionInchargeId,
+                  };
+                }).toList(),
+        );
+      },
+    );
+  }
+
+  Widget _buildSectionDropdown() {
+    return Consumer2<AddAssetController, SectionDb>(
+      builder: (context, assetCtrl, sectionDb, _) {
+        return CustomDropdownField(
+          onCallBack: (value) {
+            if (assetCtrl.selectedEntityType == 'BLOCK') {
+              final blockList =
+                  Provider.of<BlockSectionDb>(context, listen: false)
+                      .listOfBlockSections;
+              assetCtrl.onChangedSection(value, blockList: blockList);
+            } else {
+              final stationList = Provider.of<StationDb>(context, listen: false)
+                  .listOfStationModel;
+              assetCtrl.onChangedSection(value, stationList: stationList);
+            }
+          },
+          hintText: 'Section',
+          items: assetCtrl.selectedSectonInchargeId == null
+              ? []
+              : assetCtrl.listOfDisplaySection!.map((section) {
+                  return {
+                    'title': section.sectionName,
+                    'id': section.sectionId,
+                    'data': section.toJson(),
+                  };
+                }).toList(),
+        );
+      },
+    );
+  }
+
+  Widget _buildBlockOrStationDropdown() {
+    return Consumer<AddAssetController>(
+      builder: (context, assetCtrl, _) {
+        if (assetCtrl.selectedEntityType == null) {
+          return const SizedBox();
+        }
+        if (assetCtrl.selectedEntityType == 'BLOCK') {
+          return Consumer<BlockSectionDb>(
+            builder: (context, blockDb, _) {
+              return CustomDropdownField(
+                onCallBack: assetCtrl.onChangedBlocks,
+                hintText: 'Block',
+                items: assetCtrl.selectedSectionId == null
+                    ? []
+                    : assetCtrl.listOfBlockStation!.map((block) {
+                        return {
+                          'title': block.blockSectionName,
+                          'id': block.blockSectionId,
+                          'data': block.toJson(),
+                        };
+                      }).toList(),
+              );
+            },
+          );
+        }
+        return Consumer<StationDb>(
+          builder: (context, stationDb, _) {
+            return CustomDropdownField(
+              onCallBack: assetCtrl.onChangedStations,
+              hintText: 'Station',
+              items: assetCtrl.selectedSectionId == null
+                  ? []
+                  : assetCtrl.listOfDispalySation!.map((station) {
+                      return {
+                        'title': station.stationName,
+                        'id': station.stationId,
+                        'data': station.toJson(),
+                      };
+                    }).toList(),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _handleSubmit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final locationProvider =
+        Provider.of<LocationService>(context, listen: false);
+    final assetCtrl = Provider.of<AddAssetController>(context, listen: false);
+
+    await locationProvider.getCurrentLocation();
+
+    final assetModel = AddNewAssetModel(
+      entityId: assetCtrl.selectedEntityId!,
+      sectionInchargeId: assetCtrl.selectedSectonInchargeId!,
+      sectionId: assetCtrl.selectedSectionId!,
+      entityIdentifier: assetIdController.text,
+      entityLatt: locationProvider.currentLat.toString(),
+      entityLong: locationProvider.currentLon.toString(),
+      stationId: assetCtrl.selectedStationId,
+      blockSectionId: assetCtrl.selectedBlockId,
+    );
+
+    await ApiService.addNewAsset(context, assetModel);
+    await Provider.of<EnitityProfileDb>(context, listen: false)
+        .storeEnitityProfile(context);
+    await assetCtrl.clearAllData();
+    assetIdController.clear();
+    setState(() {});
   }
 }

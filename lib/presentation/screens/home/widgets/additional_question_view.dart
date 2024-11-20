@@ -1,10 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test_managment/core/controller/parameter_controller.dart';
 import 'package:test_managment/core/controller/test_asset_controller.dart';
 import 'package:test_managment/core/components/custom_dropdown_field.dart';
 import 'package:test_managment/core/components/custom_form_field.dart';
+import 'package:test_managment/core/database/parameters_value_db.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
+import 'package:test_managment/model/parameter_values_model.dart';
+import 'package:test_managment/model/parameters_model.dart';
 
 class AdditionalQuestionView extends StatefulWidget {
   const AdditionalQuestionView({super.key});
@@ -14,35 +20,68 @@ class AdditionalQuestionView extends StatefulWidget {
 }
 
 class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
+  getFilterParametersValue() {}
+
+  List<ParameterValuesModel> allListOfparametrsValue = [];
+  @override
+  void initState() {
+    super.initState();
+    allListOfparametrsValue =
+        Provider.of<ParametersValueDb>(context, listen: false)
+            .listOfParametersValues;
+  }
+
+  List<Map<String, dynamic>> filterParametsrValue(ParametersModel parameter) {
+    final filterdParameterValues = allListOfparametrsValue
+        .where((element) => element.parameterId == parameter.parameterId)
+        .toList();
+    List<Map<String, dynamic>> map = [];
+    for (var i in filterdParameterValues) {
+      // Provider.of<ParameterController>(context,listen: false).listOfParametersValueList?.add(value)
+      map.add({
+        'title': i.parameterValue,
+        'id': i.parameterValueId,
+        'data': i.toJson()
+      });
+    }
+    return map;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<TestAssetsController>(builder: (context, ctlr, _) {
-      switch (ctlr.selectedEntityId) {
-        case 'Way Station Equip':
-          {
-            return wayStationEquipView();
-          }
-        case '4W Repeater':
-          {
-            return fourWRepeater();
-          }
-        case 'LC Gate Phone':
-          {
-            return lcGetePhone();
-          }
-        case 'EC Socket':
-          {
-            return ecSocket();
-          }
-        case 'Battery Charger':
-          {
-            return batteryCharger();
-          }
-        default:
-          {
-            return const SizedBox();
-          }
-      }
+      return Column(
+          children: ctlr.filterdParameters!.asMap().entries.map((parameterRef) {
+        final parameter = parameterRef.value;
+        final index = parameterRef.key;
+        return Column(
+          children: [
+            if (parameter.parameterType == 'SELECT') ...[
+              Builder(builder: (context) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _titleText(parameter.parameterName,
+                        isRequired:
+                            parameter.mandatory == 'YES' ? true : false),
+                    CustomDropdownField(
+                        items: filterParametsrValue(parameter),
+                        onCallBack: (p0) {
+                          
+                        },
+                        hintText: parameter.parameterName),
+                  ],
+                );
+              })
+            ],
+            if (parameter.parameterType == 'INPUT') ...[
+              // CustomFormField(
+              //     controller: ctlr.textedEditionControllers[0]['0']!,
+              //     hintText: parameter.value.parameterName),
+            ]
+          ],
+        );
+      }).toList());
     });
   }
 
