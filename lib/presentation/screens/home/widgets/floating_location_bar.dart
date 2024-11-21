@@ -18,102 +18,128 @@ class FloatingDirectionBar extends StatefulWidget {
 class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<FloatingBarController>(
-        builder: (context, floatingController, _) {
-      return Positioned(
-        top: floatingController.top,
-        left: floatingController.left,
-        child: GestureDetector(
-          onPanUpdate: (details) =>
-              floatingController.onPanUpdate(details, context),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: floatingController.isMinimized ? 60 : null,
-            height: floatingController.isMinimized ? 60 : null,
-            decoration: BoxDecoration(
-              color: Provider.of<LocationService>(context).isNearTarget
+    return Consumer<LocationService>(builder: (context, controller, _) {
+      return Container(
+          width: w(context),
+          padding: EdgeInsets.all(AppDimensions.paddingSize10),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: controller.isNearTarget
                   ? AppColors.kPrimaryColor
                   : AppColors.kRed,
-              borderRadius: BorderRadius.circular(AppDimensions.radiusSize10),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 8,
-                ),
-              ],
             ),
-            child: floatingController.isMinimized
-                ? IconButton(
-                    icon: const Icon(Icons.open_in_full, color: Colors.white),
-                    onPressed: floatingController.minimizeBar)
-                : Consumer<LocationService>(builder: (context, controller, _) {
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: w(context) * .6,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: AppDimensions.paddingSize10),
-                              child: Stack(
-                                children: [
-                                  const Text("Destination",
-                                      style: TextStyle(color: Colors.white)),
-                                  Positioned(
-                                    right: 0,
-                                    child: Row(
-                                      children: [
-                                        InkWell(
-                                            onTap:
-                                                floatingController.minimizeBar,
-                                            child: const Icon(Icons.minimize,
-                                                color: Colors.white)),
-                                        const AppSpacer(
-                                          widthPortion: .04,
-                                        ),
-                                        InkWell(
-                                          child: const Icon(Icons.close,
-                                              color: Colors.white),
-                                          onTap: () {
-                                            controller.showFlaotingLocation(
-                                                false,
-                                                targetLat: null,
-                                                targetLon: null);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(
-                                AppDimensions.paddingSize10),
-                            margin: const EdgeInsets.only(
-                                left: 3, right: 3, bottom: 3),
-                            decoration: BoxDecoration(
-                                color: controller.isNearTarget
-                                    ? AppColors.kBgColor
-                                    : AppColors.kBgColor2,
-                                borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(
-                                        AppDimensions.radiusSize10),
-                                    bottomRight: Radius.circular(
-                                        AppDimensions.radiusSize10))),
-                            child: controller.isNearTarget
-                                ? _buildDestinationReachedUI(controller)
-                                : _buildNavigationUI(controller),
-                          )
-                        ],
-                      ),
-                    );
-                  }),
+            borderRadius: BorderRadius.circular(AppDimensions.radiusSize10),
+            // boxShadow: const [
+            //   BoxShadow(
+            //     color: Colors.black26,
+            //     blurRadius: 8,
+            //   ),
+            // ])
           ),
-        ),
-      );
+          child: Column(
+            children: [
+              controller.isNearTarget
+                  ? _buildDestinationReachedUI(controller)
+                  : _buildNavigationUI(controller)
+            ],
+          ));
     });
+    // return Consumer<FloatingBarController>(
+    //     builder: (context, floatingController, _) {
+    //   return Positioned(
+    //     top: floatingController.top,
+    //     left: floatingController.left,
+    //     child: GestureDetector(
+    //       onPanUpdate: (details) =>
+    //           floatingController.onPanUpdate(details, context),
+    //       child: AnimatedContainer(
+    //         duration: const Duration(milliseconds: 200),
+    //         width: floatingController.isMinimized ? 60 : null,
+    //         height: floatingController.isMinimized ? 60 : null,
+    //         decoration: BoxDecoration(
+    //           color: Provider.of<LocationService>(context).isNearTarget
+    //               ? AppColors.kPrimaryColor
+    //               : AppColors.kRed,
+    //           borderRadius: BorderRadius.circular(AppDimensions.radiusSize10),
+    //           boxShadow: const [
+    //             BoxShadow(
+    //               color: Colors.black26,
+    //               blurRadius: 8,
+    //             ),
+    //           ],
+    //         ),
+    //         child: floatingController.isMinimized
+    //             ? IconButton(
+    //                 icon: const Icon(Icons.open_in_full, color: Colors.white),
+    //                 onPressed: floatingController.minimizeBar)
+    //             : Consumer<LocationService>(builder: (context, controller, _) {
+    //                 return SingleChildScrollView(
+    //                   child: Column(
+    //                     children: [
+    //                       SizedBox(
+    //                         width: w(context) * .6,
+    //                         child: Padding(
+    //                           padding: const EdgeInsets.symmetric(
+    //                               vertical: AppDimensions.paddingSize10),
+    //                           child: Stack(
+    //                             children: [
+    //                               const Text("Destination",
+    //                                   style: TextStyle(color: Colors.white)),
+    //                               Positioned(
+    //                                 right: 0,
+    //                                 child: Row(
+    //                                   children: [
+    //                                     InkWell(
+    //                                         onTap:
+    //                                             floatingController.minimizeBar,
+    //                                         child: const Icon(Icons.minimize,
+    //                                             color: Colors.white)),
+    //                                     const AppSpacer(
+    //                                       widthPortion: .04,
+    //                                     ),
+    //                                     InkWell(
+    //                                       child: const Icon(Icons.close,
+    //                                           color: Colors.white),
+    //                                       onTap: () {
+    //                                         controller.showFlaotingLocation(
+    //                                             false,
+    //                                             targetLat: null,
+    //                                             targetLon: null);
+    //                                       },
+    //                                     ),
+    //                                   ],
+    //                                 ),
+    //                               ),
+    //                             ],
+    //                           ),
+    //                         ),
+    //                       ),
+    //                       Container(
+    //                         padding: const EdgeInsets.all(
+    //                             AppDimensions.paddingSize10),
+    //                         margin: const EdgeInsets.only(
+    //                             left: 3, right: 3, bottom: 3),
+    //                         decoration: BoxDecoration(
+    //                             color: controller.isNearTarget
+    //                                 ? AppColors.kBgColor
+    //                                 : AppColors.kBgColor2,
+    //                             borderRadius: const BorderRadius.only(
+    //                                 bottomLeft: Radius.circular(
+    //                                     AppDimensions.radiusSize10),
+    //                                 bottomRight: Radius.circular(
+    //                                     AppDimensions.radiusSize10))),
+    //                         child: controller.isNearTarget
+    //                             ? _buildDestinationReachedUI(controller)
+    //                             : _buildNavigationUI(controller),
+    //                       )
+    //                     ],
+    //                   ),
+    //                 );
+    //               }),
+    //       ),
+    //     ),
+    //   );
+    // });
   }
 
   Widget _buildNavigationUI(LocationService controller) {

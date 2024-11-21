@@ -55,4 +55,10 @@ class CameraController with ChangeNotifier {
 
     _convertedImageFile = {'fileName': fileName, 'file': converted};
   }
+
+ Future clearCameraData()async {
+    _fileImage = null;
+    _fileName = null;
+    _convertedImageFile = null;
+  }
 }

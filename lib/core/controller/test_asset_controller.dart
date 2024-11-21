@@ -1,6 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:provider/provider.dart';
+import 'package:test_managment/core/alert_message.dart';
+import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/model/db%20models/block_station_model.dart';
 import 'package:test_managment/model/db%20models/entity_profile_model.dart';
 import 'package:test_managment/model/db%20models/parameters_model.dart';
@@ -8,11 +12,24 @@ import 'package:test_managment/model/db%20models/section_model.dart';
 import 'package:test_managment/model/db%20models/station_model.dart';
 
 class TestAssetsController with ChangeNotifier {
+  bool? _isManual;
+  bool? get isManual => _isManual ?? true;
+
+  void onChangeType(bool value) {
+    _isManual = value;
+    showMessage(_isManual == true ? 'MANUAL' : 'AUTO');
+    clearAllData();
+    notifyListeners();
+  }
+
   String? _selectedEntityId;
   String? get selectedEntityId => _selectedEntityId;
 
   String? _selectedEntityType;
   String? get selectedEntityType => _selectedEntityType;
+
+  bool? _showDistance;
+  bool get showDistance => _showDistance ?? false;
 
   bool _pictureIsMandatory = false;
   bool get pictureIsMandatory => _pictureIsMandatory;
@@ -29,8 +46,8 @@ class TestAssetsController with ChangeNotifier {
   String? _selectedBlockId;
   String? get selectedBlockId => _selectedBlockId;
 
-  String? _selectedAssetProfileId;
-  String? get selectedAssetProfileId => _selectedAssetProfileId;
+  String? _selectedEntityProfileId;
+  String? get selectedEntityProfileId => _selectedEntityProfileId;
 
   Future<void> clearAllData() async {
     _selectedEntityId = null;
@@ -39,10 +56,12 @@ class TestAssetsController with ChangeNotifier {
     _selectedSectionID = null;
     _selectedStationId = null;
     _selectedBlockId = null;
-    _selectedAssetProfileId = null;
+    _selectedEntityProfileId = null;
     //----------
     _filterdParameters = null;
     _infinityhelperData = null;
+    _infinityControllers = null;
+    _showDistance = null;
   }
 
   List<Map<String, TextEditingController>>? _textedEditionControllers;
@@ -52,7 +71,7 @@ class TestAssetsController with ChangeNotifier {
   void onChangedAssetGroup(dynamic value) {
     _selectedEntityId = value['id'];
     _selectedEntityType = value['data']['entityType'];
-    if (value['pictureRequired'] == 'YES') {
+    if (value['data']['pictureRequired'] == 'YES') {
       _pictureIsMandatory = true;
     } else {
       _pictureIsMandatory = false;
@@ -62,9 +81,12 @@ class TestAssetsController with ChangeNotifier {
     _selectedSectionID = null;
     _selectedStationId = null;
     _selectedBlockId = null;
-    _selectedAssetProfileId = null;
+    _selectedEntityProfileId = null;
     _filterdParameters = null;
     _infinityhelperData = null;
+    _infinityControllers = null;
+    _showDistance = null;
+
     notifyListeners();
   }
 
@@ -80,9 +102,12 @@ class TestAssetsController with ChangeNotifier {
     _selectedSectionID = null;
     _selectedStationId = null;
     _selectedBlockId = null;
-    _selectedAssetProfileId = null;
+    _selectedEntityProfileId = null;
     _filterdParameters = null;
     _infinityhelperData = null;
+    _infinityControllers = null;
+    _showDistance = null;
+
     notifyListeners();
   }
 
@@ -117,9 +142,12 @@ class TestAssetsController with ChangeNotifier {
 
     _selectedStationId = null;
     _selectedBlockId = null;
-    _selectedAssetProfileId = null;
+    _selectedEntityProfileId = null;
     _filterdParameters = null;
     _infinityhelperData = null;
+    _infinityControllers = null;
+    _showDistance = null;
+
     notifyListeners();
   }
 
@@ -129,29 +157,56 @@ class TestAssetsController with ChangeNotifier {
   void onChangedStations(dynamic value, List<EntityProfileModel> list) {
     _selectedStationId = value['id'];
     _filteredEntityProfiles = list
-        .where((element) => element.stationId == _selectedStationId)
+        .where((element) =>
+            element.entityId == _selectedEntityId &&
+            element.sectionInchargeId == _selectedSectonInchargeId &&
+            element.sectionId == _selectedSectionID &&
+            element.stationId == _selectedStationId)
         .toList();
-    _selectedAssetProfileId = null;
+    _selectedEntityProfileId = null;
     _filterdParameters = null;
     _infinityhelperData = null;
+    _infinityControllers = null;
+    _showDistance = null;
+
     notifyListeners();
   }
 
   void onChangedBlock(dynamic value, List<EntityProfileModel> list) {
     _selectedBlockId = value['id'];
+
     _filteredEntityProfiles = list
-        .where((element) => element.blockSectionId == _selectedBlockId)
+        .where((element) =>
+            element.entityId == _selectedEntityId &&
+            element.sectionInchargeId == _selectedSectonInchargeId &&
+            element.sectionId == _selectedSectionID &&
+            element.blockSectionId == _selectedBlockId)
         .toList();
-    _selectedAssetProfileId = null;
+    _selectedEntityProfileId = null;
     _filterdParameters = null;
     _infinityhelperData = null;
+    _infinityControllers = null;
+    _showDistance = null;
+
     notifyListeners();
   }
 
   List<ParametersModel>? _filterdParameters;
   List<ParametersModel>? get filterdParameters => _filterdParameters;
-  void onChangedAssetsProfile(dynamic value, List<ParametersModel> list) {
-    _selectedAssetProfileId = value['id'];
+
+  EntityProfileModel? _selectedEntityProfileData;
+  EntityProfileModel? get selectedEntityProfileData =>
+      _selectedEntityProfileData;
+
+  void onChangedEntityProfile(
+      dynamic value, List<ParametersModel> list, BuildContext context) {
+    _selectedEntityProfileId = value['id'];
+
+    _selectedEntityProfileData = EntityProfileModel.fromJson(value['data']);
+    // String entityLat = _selectedEntityProfileData!.entityLatt;
+    // String entityLon = _selectedEntityProfileData!.entityLong;
+    _showDistance = true;
+
     _filterdParameters =
         list.where((element) => element.entityId == _selectedEntityId).toList();
 
@@ -176,7 +231,7 @@ class TestAssetsController with ChangeNotifier {
               'parameterValue': null,
               'parameterReasonId': null,
             });
-    log(_infinityhelperData!.length.toString());
+    log('parameters Lenght ${_infinityhelperData!.length.toString()}');
   }
 
   List<Map<String, TextEditingController>>? _infinityControllers;
@@ -207,21 +262,21 @@ class TestAssetsController with ChangeNotifier {
   // }
 
   Future onSubmitTextfield() async {
-    for (var i in _filterdParameters!) {
-      _infinityControllers!.asMap().entries.map(
-        (e) {
-          final index = e.key;
-          final controller = e.value['$index'];
-          if (i.parameterType == 'INPUT') {
-            _infinityhelperData?[index]['parameterId'] = i.parameterId;
-            _infinityhelperData?[index]['parameterValue'] = controller!.text;
-            _infinityhelperData?[index]['parameterReasonId'] = controller!.text;
-          }
-        },
-      );
+    for (var index = 0; index < _filterdParameters!.length; index++) {
+      final parammeter = _filterdParameters![index];
+      if (parammeter.parameterType == 'INPUT') {
+        log(index.toString());
+        _infinityhelperData?[index]['parameterId'] = parammeter.parameterId;
+        _infinityhelperData?[index]['parameterValue'] =
+            _infinityControllers![index]['$index']!.text;
+
+        _infinityhelperData?[index]['parameterReasonId'] =
+            _infinityControllers![index]['$index']!.text;
+
+        log('text field  parameter ID ${_infinityhelperData![index]['parameterId']}');
+        log('text field  parameter Value ID ${_infinityhelperData![index]['parameterValue']}');
+        log('text field  parameterReason ID ${_infinityhelperData![index]['parameterReasonId']}');
+      }
     }
-    log('text field  parameter ID ${_infinityhelperData![0]['parameterId']}');
-    log('text field  parameter Value ID ${_infinityhelperData![0]['parameterValue']}');
-    log('text field  parameterReason ID ${_infinityhelperData![0]['parameterReasonId']}');
   }
 }

@@ -23,7 +23,7 @@ class ApiService {
           .storeUserData(userName, password, devisionId, token);
       showMessage(result.message);
     } else {
-      showMessage(result!.message);
+      showMessage(result!.message, isWarning: true);
     }
   } // ADD ASSET
 
@@ -33,7 +33,7 @@ class ApiService {
     if (result != null && !result.error) {
       showMessage(result.message);
     } else {
-      showMessage(result!.message);
+      showMessage(result!.message, isWarning: true);
     }
   }
 
@@ -44,9 +44,9 @@ class ApiService {
       showMessage(result.message);
       log(result.data.toString());
     } else {
-      showMessage(result!.message);
+      showMessage(result!.message, isWarning: true);
     }
   }
 
-  // db
+  
 }

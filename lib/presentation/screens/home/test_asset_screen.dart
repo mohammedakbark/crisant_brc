@@ -1,7 +1,9 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/core/alert_message.dart';
+import 'package:test_managment/core/components/common_widgets.dart';
 import 'package:test_managment/core/controller/camera_controller.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
@@ -25,6 +27,7 @@ import 'package:test_managment/presentation/screens/home/widgets/additional_ques
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
+import 'package:test_managment/presentation/screens/home/widgets/floating_location_bar.dart';
 
 class TestAssetScreen extends StatefulWidget {
   TestAssetScreen({super.key});
@@ -93,34 +96,71 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                   //   );
                   // }),
 
-                  Container(
-                    margin: const EdgeInsets.symmetric(
+                  // Container(
+                  //   margin: const EdgeInsets.symmetric(
+                  //       vertical: AppDimensions.paddingSize15),
+                  //   decoration: BoxDecoration(
+                  //       border: Border.all(color: AppColors.kPrimaryColor),
+                  //       borderRadius: const BorderRadius.all(
+                  //           Radius.circular(AppDimensions.radiusSize10))),
+                  //   child: const DefaultTabController(
+                  //     length: 2,
+                  //     child: TabBar(
+                  //         labelColor: AppColors.kWhite,
+                  //         labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                  //         unselectedLabelStyle:
+                  //             TextStyle(fontWeight: FontWeight.w500),
+                  //         dividerColor: Colors.transparent,
+                  //         indicatorSize: TabBarIndicatorSize.tab,
+                  //         indicator: BoxDecoration(
+                  //             color: AppColors.kPrimaryColor,
+                  //             borderRadius: BorderRadius.all(
+                  //                 Radius.circular(AppDimensions.radiusSize10))),
+                  //         tabs: [
+                  //           Tab(
+                  //             text: 'Manual',
+                  //           ),
+                  //           Tab(
+                  //             text: 'Automatic',
+                  //           )
+                  //         ]),
+                  //   ),
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
                         vertical: AppDimensions.paddingSize15),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.kPrimaryColor),
-                        borderRadius: const BorderRadius.all(
-                            Radius.circular(AppDimensions.radiusSize10))),
-                    child: const DefaultTabController(
-                      length: 2,
-                      child: TabBar(
-                          labelColor: AppColors.kWhite,
-                          labelStyle: TextStyle(fontWeight: FontWeight.bold),
-                          unselectedLabelStyle:
-                              TextStyle(fontWeight: FontWeight.w500),
-                          dividerColor: Colors.transparent,
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          indicator: BoxDecoration(
-                              color: AppColors.kPrimaryColor,
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(AppDimensions.radiusSize10))),
-                          tabs: [
-                            Tab(
-                              text: 'Manual',
-                            ),
-                            Tab(
-                              text: 'Automatic',
-                            )
-                          ]),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Consumer<TestAssetsController>(
+                            builder: (context, cntr, _) {
+                          return FlutterSwitch(
+                              // toggleColor: AppColors.kPrimaryColor,
+                              activeColor: AppColors.kGrey,
+                              inactiveColor: AppColors.kPrimaryColor,
+                              activeText: "MANUAL",
+                              inactiveText: 'AUTO',
+                              value: cntr.isManual!,
+                              valueFontSize: AppDimensions.fontSize10(context),
+                              width: 60.0,
+                              height: 40.0,
+
+                              // toggleSize: 80.0,
+                              borderRadius: AppDimensions.radiusSize50,
+                              padding: 0,
+                              toggleSize: 40,
+                              showOnOff: false,
+                              activeIcon: Text(
+                                'MANUAL',
+                                textAlign: TextAlign.center,
+                              ),
+                              inactiveIcon: Text(
+                                ' AUTO ',
+                                textAlign: TextAlign.center,
+                              ),
+                              onToggle: cntr.onChangeType);
+                        }),
+                      ],
                     ),
                   ),
                   Consumer2<TestAssetsController, EntiteDb>(
@@ -224,7 +264,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                                           : ctlr.filteredStationList!
                                               .map((e) => {
                                                     'title': e.stationName,
-                                                    'id': e.sectionId,
+                                                    'id': e.stationId,
                                                     'data': e.toJson()
                                                   })
                                               .toList(),
@@ -259,10 +299,27 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                         final list =
                             Provider.of<ParametersDb>(context, listen: false)
                                 .listOfParameters;
-                        ctlr.onChangedAssetsProfile(value, list);
+                        ctlr.onChangedEntityProfile(value, list, context);
                       },
                     );
                   }),
+                  Consumer2<TestAssetsController, LocationService>(
+                    builder: (context, ctrl, loc, child) {
+                      if (ctrl.selectedEntityProfileData != null) {
+                        loc.showFlaotingLocation(ctrl.showDistance,
+                            targetLat: double.parse(
+                                ctrl.selectedEntityProfileData!.entityLatt),
+                            targetLon: double.parse(
+                                ctrl.selectedEntityProfileData!.entityLong));
+                      }
+                      return ctrl.showDistance
+                          ? Visibility(
+                              visible: loc.showFloatingLocation,
+                              child: const FloatingDirectionBar())
+                          : const SizedBox();
+                    },
+                  ),
+                  // Provider.of<LocationService>(context).showFlaotingLocation(true)
                   const AppSpacer(
                     heightPortion: .03,
                   ),
@@ -278,10 +335,16 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                   const AppSpacer(
                     heightPortion: .04,
                   ),
-                  CustomButton(
-                    title: 'SUBMIT',
-                    onTap: handleSubmit,
-                  ),
+                  Consumer<LocationService>(builder: (context, loc, _) {
+                    return CustomButton(
+                      butonColor: loc.isNearTarget ? null : AppColors.kGrey,
+                      textColor: loc.isNearTarget
+                          ? null
+                          : AppColors.kWhite.withOpacity(.7),
+                      title: 'SUBMIT',
+                      onTap: handleSubmit,
+                    );
+                  }),
                   const AppSpacer(
                     heightPortion: .025,
                   ),
@@ -295,43 +358,59 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
   }
 
   Future<void> handleSubmit() async {
-    if (_formkey.currentState!.validate()) {
-      final cameraController =
-          Provider.of<CameraController>(context, listen: false);
-      if (cameraController.convertedImageFile != null) {
+    if (Provider.of<LocationService>(context, listen: false).isNearTarget) {
+      if (_formkey.currentState!.validate()) {
+        final cameraController =
+            Provider.of<CameraController>(context, listen: false);
+        final ctr = Provider.of<TestAssetsController>(context, listen: false);
         final locationProvider =
             Provider.of<LocationService>(context, listen: false);
-        final ctr = Provider.of<TestAssetsController>(context, listen: false);
-
-        await locationProvider.getCurrentLocation();
-        await ctr.onSubmitTextfield();
-        List<TestParametersModel> listOfParameters =
-            ctr.infinityHelperData!.map((element) {
-          return TestParametersModel(
-              parameterId: element['parameterId'] ?? '',
-              parameterValue: element['parameterValue'] ?? '',
-              parameterReasonId: element['parameterReasonId'] ?? '');
-        }).toList();
-        final model = AddNewTestModel(
-            stationId: ctr.selectedStationId,
-            entityId: ctr.selectedEntityId!,
-            sectionInchargeId: ctr.selectedSectonInchargeId!,
-            sectionId: ctr.selectedSectionId!,
-            blockSectionId: ctr.selectedBlockId,
-            entityProfileId: ctr.selectedEntityId!,
-            testLatt: locationProvider.currentLat.toString(),
-            testLong: locationProvider.currentLon.toString(),
-            testMode: 'AUTO',
-            connectivityMode: 'ONLINE',
-            picture: cameraController.convertedImageFile?['file'],
-            parameters: listOfParameters);
-        await ApiService.addNewTest(context, model);
-        await ctr.clearAllData();
-        setState(() {});
-      } else {
-        showMessage('Pick image');
+        if (ctr.pictureIsMandatory) {
+          if (cameraController.convertedImageFile != null) {
+            storeData(locationProvider, ctr, cameraController);
+          } else {
+            showMessage('Picture is required', isWarning: true);
+          }
+        } else {
+          storeData(locationProvider, ctr, cameraController);
+        }
       }
     }
+  }
+
+  bool isLoading = false;
+  void storeData(LocationService locationProvider, TestAssetsController ctr,
+      CameraController cameraController) async {
+    showLoaingIndicator(context);
+    await locationProvider.getCurrentLocation();
+    await ctr.onSubmitTextfield();
+    List<TestParametersModel> listOfParameters =
+        ctr.infinityHelperData!.map((element) {
+      return TestParametersModel(
+          parameterId: element['parameterId'] ?? '',
+          parameterValue: element['parameterValue'] ?? '',
+          parameterReasonId: element['parameterReasonId'] ?? '');
+    }).toList();
+    final model = AddNewTestModel(
+        stationId: ctr.selectedStationId,
+        entityId: ctr.selectedEntityId!,
+        sectionInchargeId: ctr.selectedSectonInchargeId!,
+        sectionId: ctr.selectedSectionId!,
+        blockSectionId: ctr.selectedBlockId,
+        entityProfileId: ctr.selectedEntityProfileId!,
+        testLatt: locationProvider.currentLat.toString(),
+        testLong: locationProvider.currentLon.toString(),
+        testMode: ctr.isManual == true ? "MANUAL" : 'AUTO',
+        connectivityMode: 'ONLINE',
+        picture: cameraController.convertedImageFile?['file'],
+        parameters: listOfParameters);
+    await ApiService.addNewTest(context, model);
+    await ctr.clearAllData();
+    await cameraController.clearCameraData();
+    closeLoadingIndicator(context);
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Widget imagePicker(BuildContext context) {
@@ -339,12 +418,24 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Picture',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Consumer<TestAssetsController>(builder: (context, ctrl, _) {
+            return Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: AppDimensions.paddingSize5),
+                child: RichText(
+                    text: TextSpan(
+                        text: 'Picture',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.kBlack),
+                        children: (!ctrl.pictureIsMandatory)
+                            ? []
+                            : [
+                                const TextSpan(
+                                    text: " *",
+                                    style: TextStyle(color: AppColors.kRed))
+                              ])));
+          }),
           const AppSpacer(
             heightPortion: .015,
           ),

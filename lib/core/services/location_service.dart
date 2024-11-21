@@ -28,6 +28,7 @@ class LocationService with ChangeNotifier {
   double get currentLat => _currentLat ?? 0;
   double get currentLon => _currentLon ?? 0;
   _streamCurrentLocation() {
+    // log('location is stremimg');
     return Geolocator.getCurrentPosition().then((value) {
       _currentLat = value.latitude;
       _currentLon = value.longitude;
@@ -80,13 +81,14 @@ class LocationService with ChangeNotifier {
     _showFloatingLocation = show;
     _targetLat = targetLat;
     _targetLon = targetLon;
-    notifyListeners();
+    // notifyListeners();
   }
 
   _updateLocation() {
     distance = Geolocator.distanceBetween(
         currentLat, currentLon, _targetLat!, _targetLon!);
     isNearTarget = distance <= 5;
+
     notifyListeners(); // Within 5 meters is Nearest
   }
 

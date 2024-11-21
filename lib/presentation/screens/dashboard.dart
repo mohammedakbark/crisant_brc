@@ -80,11 +80,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         body: Stack(
           children: [
             pages[controller.currentScreenIndex],
-            Consumer<LocationService>(builder: (context, controller, _) {
-              return Visibility(
-                  visible: controller.showFloatingLocation,
-                  child: FloatingDirectionBar());
-            }),
+            // Consumer<LocationService>(builder: (context, controller, _) {
+            //   // return Visibility(
+            //   //     visible: controller.showFloatingLocation,
+            //   //     child: FloatingDirectionBar());
+            // }),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(

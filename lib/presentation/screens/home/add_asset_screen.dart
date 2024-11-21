@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/controller/add_asset_controller.dart';
 import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_page_head_text.dart';
@@ -196,7 +197,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
 
   Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
-
+    showLoaingIndicator(context);
     final locationProvider =
         Provider.of<LocationService>(context, listen: false);
     final assetCtrl = Provider.of<AddAssetController>(context, listen: false);
@@ -219,6 +220,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
         .storeEnitityProfile(context);
     await assetCtrl.clearAllData();
     assetIdController.clear();
+    closeLoadingIndicator(context);
     setState(() {});
   }
 }
