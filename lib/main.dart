@@ -1,28 +1,33 @@
+import 'dart:developer';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:provider/provider.dart';
 import 'package:test_managment/core/controller/add_asset_controller.dart';
 import 'package:test_managment/core/controller/parameter_controller.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
+import 'package:test_managment/core/database/offline_db.dart';
 import 'package:test_managment/core/database/parameters_db.dart';
 import 'package:test_managment/core/database/parameters_reason_db.dart';
 import 'package:test_managment/core/database/parameters_value_db.dart';
 import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
-import 'package:test_managment/core/services/api_service.dart';
+
 import 'package:test_managment/core/database/auth_db.dart';
 import 'package:test_managment/core/controller/test_asset_controller.dart';
 import 'package:test_managment/core/controller/camera_controller.dart';
 import 'package:test_managment/core/controller/dashboard_controller.dart';
 import 'package:test_managment/core/controller/floating_bar_controller.dart';
 import 'package:test_managment/core/services/location_service.dart';
+import 'package:test_managment/core/services/network_service.dart';
 
-import 'package:test_managment/presentation/screens/dashboard.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
+import 'package:test_managment/presentation/screens/spash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,21 +94,27 @@ void main() async {
       ChangeNotifierProvider<ParametersReasonDb>(
         create: (context) => ParametersReasonDb(),
       ),
-       ChangeNotifierProvider<EnitityProfileDb>(
+      ChangeNotifierProvider<EnitityProfileDb>(
         create: (context) => EnitityProfileDb(),
       ),
-        ChangeNotifierProvider<ParameterController>(
+      ChangeNotifierProvider<ParameterController>(
         create: (context) => ParameterController(),
+      ),
+      ChangeNotifierProvider<NetworkService>(
+        create: (context) => NetworkService(),
+      ),
+       ChangeNotifierProvider<OfflineDb>(
+        create: (context) => OfflineDb(),
       ),
     ], child: const MyApp()),
   ));
 
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.white,
-      statusBarIconBrightness: Brightness.dark,
-    ),
-  );
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   const SystemUiOverlayStyle(
+  //     statusBarColor: Colors.white,
+  //     statusBarIconBrightness: Brightness.dark,
+  //   ),
+  // );
 }
 
 class MyApp extends StatefulWidget {
@@ -120,8 +131,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _locationProvider.handleLocationPermission();
-//-----------------temporory  login
-    ApiService.loginUser('crisant', 'M@njula1105', 1, context);
+    Provider.of<NetworkService>(context, listen: false)
+        .checkInitialConnection();
   }
 
   @override
@@ -130,7 +141,9 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'BRC',
         theme: ThemeData(
-          appBarTheme: const AppBarTheme(backgroundColor: AppColors.kWhite),
+          appBarTheme: const AppBarTheme(
+              backgroundColor: AppColors.kWhite,
+              surfaceTintColor: AppColors.kWhite),
           scaffoldBackgroundColor: AppColors.kBgColor,
           fontFamily: 'OpenSans',
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.kPrimaryColor),
@@ -139,6 +152,29 @@ class _MyAppState extends State<MyApp> {
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         locale: context.locale,
-        home: const DashboardScreen());
+        home: SpashScreen());
   }
 }
+// StreamBuilder<List<ConnectivityResult>>(
+//         stream: Connectivity().onConnectivityChanged,
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return const SizedBox();
+//           } else {
+//             if (snapshot.hasData || snapshot.data!.isNotEmpty) {
+//               if (snapshot.data!.first == ConnectivityResult.mobile ||
+//                   snapshot.data!.first == ConnectivityResult.wifi) {
+//                 return const MyApp();
+//               } else if (snapshot.data!.first != ConnectivityResult.mobile ||
+//                   snapshot.data!.first != ConnectivityResult.wifi) {
+//                 log('Data is off');
+//                 return const NetworkConnectivityPage();
+//               } else {
+//                 return const NetworkConnectivityPage();
+//               }
+//             } else {
+//               return const NetworkConnectivityPage();
+//             }
+//           }
+//         }),
+//   ));

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
@@ -8,6 +10,7 @@ import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
 import 'package:test_managment/core/database/auth_db.dart';
+import 'package:test_managment/core/database/offline_db.dart';
 import 'package:test_managment/core/database/parameters_db.dart';
 import 'package:test_managment/core/database/parameters_reason_db.dart';
 import 'package:test_managment/core/database/parameters_value_db.dart';
@@ -37,6 +40,14 @@ class LocalDatabaseService {
     if (_initAuthDb != null) return _initAuthDb!;
     _initAuthDb = await _initAuthService();
     return _initAuthDb!;
+  }
+  //--------------
+
+  Database? _initOfflineDb;
+  Future<Database> get initOfflineDb async {
+    if (_initOfflineDb != null) return _initOfflineDb!;
+    _initOfflineDb = await _initOfflienDatabase();
+    return _initOfflineDb!;
   }
 
   Future<Database?> _inittestAssetsDatabase() async {
@@ -104,13 +115,31 @@ class LocalDatabaseService {
         version: 1,
         onCreate: (db, version) {
           db.execute(
-              'CREATE TABLE ${AuthDb.authtableCollection} (userName TEXT PRIMARY KEY, divisionId INTEGER,userPassword TEXT,token TEXT)');
+              'CREATE TABLE IF NOT EXISTS ${AuthDb.authtableCollection} (userName TEXT PRIMARY KEY, divisionId INTEGER,userPassword TEXT,token TEXT)');
 
           log('local ');
         },
       );
     } catch (e) {
       log('exception on initializing AUTH table ${e.toString()}');
+      return null;
+    }
+  }
+
+  Future<Database?> _initOfflienDatabase() async {
+    log('!---------------- auth database initialized ---------------!');
+    try {
+      final path = join(await getDatabasesPath(), 'offlineDatabase.db');
+      return await openDatabase(
+        path,
+        version: 1,
+        onCreate: (db, version) {
+          db.execute(
+              'CREATE TABLE IF NOT EXISTS ${OfflineDb.offlineCollectionTable} (entityIdentifier TEXT PRIMARY KEY, sectionInchargeId TEXT,sectionId TEXT,blockSectionId TEXT,stationId TEXT,stationId TEXT,entityLatt TEXT,entityLong TEXT)');
+        },
+      );
+    } catch (e) {
+      log('exception on initializing offline table ${e.toString()}');
       return null;
     }
   }

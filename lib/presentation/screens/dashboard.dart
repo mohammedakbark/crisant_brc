@@ -75,88 +75,77 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = Provider.of<DashboardController>(context);
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          children: [
-            pages[controller.currentScreenIndex],
-            // Consumer<LocationService>(builder: (context, controller, _) {
-            //   // return Visibility(
-            //   //     visible: controller.showFloatingLocation,
-            //   //     child: FloatingDirectionBar());
-            // }),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: AppColors.kWhite,
-            onTap: controller.onChagePageIndex,
-            currentIndex: controller.currentScreenIndex,
-            selectedLabelStyle: TextStyle(
+    return Scaffold(
+      body: pages[controller.currentScreenIndex],
+      bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: AppColors.kWhite,
+          onTap: controller.onChagePageIndex,
+          currentIndex: controller.currentScreenIndex,
+          selectedLabelStyle: TextStyle(
+            fontSize: AppDimensions.fontSize10(context),
+          ),
+          unselectedLabelStyle: TextStyle(
               fontSize: AppDimensions.fontSize10(context),
-            ),
-            unselectedLabelStyle: TextStyle(
-                fontSize: AppDimensions.fontSize10(context),
-                fontWeight: FontWeight.bold),
-            selectedItemColor: AppColors.kPrimaryColor,
-            unselectedItemColor: AppColors.kGrey,
-            items: const [
-              BottomNavigationBarItem(
-                  label: 'HOME',
-                  icon: Icon(
-                    Icons.home_outlined,
-                  ),
-                  activeIcon: CircleAvatar(
-                      backgroundColor: AppColors.kPrimaryColor,
-                      child: Icon(
-                        Icons.home_outlined,
-                        color: AppColors.kWhite,
-                      ))),
-              BottomNavigationBarItem(
-                  label: 'ADD ASSET',
-                  icon: Icon(
-                    Icons.playlist_add_sharp,
-                  ),
-                  activeIcon: CircleAvatar(
-                      backgroundColor: AppColors.kPrimaryColor,
-                      child: Icon(
-                        Icons.playlist_add_sharp,
-                        color: AppColors.kWhite,
-                      ))),
-              BottomNavigationBarItem(
-                  label: 'TEST ASSET',
-                  icon: Icon(
-                    Icons.playlist_add_check_outlined,
-                  ),
-                  activeIcon: CircleAvatar(
-                      backgroundColor: AppColors.kPrimaryColor,
-                      child: Icon(
-                        Icons.playlist_add_check_outlined,
-                        color: AppColors.kWhite,
-                      ))),
-              BottomNavigationBarItem(
-                  label: 'VIEW TEST ASSET',
-                  icon: Icon(
-                    Icons.file_open_outlined,
-                  ),
-                  activeIcon: CircleAvatar(
+              fontWeight: FontWeight.bold),
+          selectedItemColor: AppColors.kPrimaryColor,
+          unselectedItemColor: AppColors.kGrey,
+          items: const [
+            BottomNavigationBarItem(
+                label: 'HOME',
+                icon: Icon(
+                  Icons.home_outlined,
+                ),
+                activeIcon: CircleAvatar(
                     backgroundColor: AppColors.kPrimaryColor,
                     child: Icon(
-                      Icons.file_open_outlined,
+                      Icons.home_outlined,
                       color: AppColors.kWhite,
-                    ),
-                  ))
-            ]),
-        floatingActionButton: FloatingActionButton(
-          shape: const CircleBorder(),
-          tooltip: 'Download Data',
-          backgroundColor: AppColors.kPrimaryColor,
-          onPressed: () {
-            Navigator.of(context)
-                .push(AppRoutes.createRoute(DownloadDataScreen()));
-          },
-          child: const Icon(color: AppColors.kWhite, Icons.sync),
-        ),
+                    ))),
+            BottomNavigationBarItem(
+                label: 'ADD ASSET',
+                icon: Icon(
+                  Icons.playlist_add_sharp,
+                ),
+                activeIcon: CircleAvatar(
+                    backgroundColor: AppColors.kPrimaryColor,
+                    child: Icon(
+                      Icons.playlist_add_sharp,
+                      color: AppColors.kWhite,
+                    ))),
+            BottomNavigationBarItem(
+                label: 'TEST ASSET',
+                icon: Icon(
+                  Icons.playlist_add_check_outlined,
+                ),
+                activeIcon: CircleAvatar(
+                    backgroundColor: AppColors.kPrimaryColor,
+                    child: Icon(
+                      Icons.playlist_add_check_outlined,
+                      color: AppColors.kWhite,
+                    ))),
+            BottomNavigationBarItem(
+                label: 'VIEW TEST ASSET',
+                icon: Icon(
+                  Icons.file_open_outlined,
+                ),
+                activeIcon: CircleAvatar(
+                  backgroundColor: AppColors.kPrimaryColor,
+                  child: Icon(
+                    Icons.file_open_outlined,
+                    color: AppColors.kWhite,
+                  ),
+                ))
+          ]),
+      floatingActionButton: FloatingActionButton(
+        shape: const CircleBorder(),
+        tooltip: 'Download Data',
+        backgroundColor: AppColors.kPrimaryColor,
+        onPressed: () {
+          Navigator.of(context)
+              .push(AppRoutes.createRoute(DownloadDataScreen()));
+        },
+        child: const Icon(color: AppColors.kWhite, Icons.sync),
       ),
     );
   }

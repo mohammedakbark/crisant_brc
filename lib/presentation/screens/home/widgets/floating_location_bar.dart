@@ -21,12 +21,15 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
     return Consumer<LocationService>(builder: (context, controller, _) {
       return Container(
           width: w(context),
-          padding: EdgeInsets.all(AppDimensions.paddingSize10),
+          padding: const EdgeInsets.symmetric(
+              vertical: AppDimensions.paddingSize15,
+              horizontal: AppDimensions.paddingSize10),
           decoration: BoxDecoration(
             border: Border.all(
+              width: .5,
               color: controller.isNearTarget
                   ? AppColors.kPrimaryColor
-                  : AppColors.kRed,
+                  : AppColors.kGrey,
             ),
             borderRadius: BorderRadius.circular(AppDimensions.radiusSize10),
             // boxShadow: const [
@@ -145,19 +148,19 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
   Widget _buildNavigationUI(LocationService controller) {
     return Column(
       children: [
-        Text(
-          controller.getDirectionGuidance(),
-          style: TextStyle(
-              fontSize: AppDimensions.fontSize18(context),
-              fontWeight: FontWeight.w600),
-          textAlign: TextAlign.center,
-        ),
-        const AppSpacer(
-          heightPortion: .01,
-        ),
+        // Text(
+        //   controller.getDirectionGuidance(),
+        //   style: TextStyle(
+        //       fontSize: AppDimensions.fontSize18(context),
+        //       fontWeight: FontWeight.w600),
+        //   textAlign: TextAlign.center,
+        // ),
+        // const AppSpacer(
+        //   heightPortion: .01,
+        // ),
         RichText(
           text: TextSpan(
-              text: 'Distance:',
+              text: "You are ",
               style: TextStyle(
                   fontSize: AppDimensions.fontSize15(
                     context,
@@ -173,31 +176,34 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
                         context,
                       ),
                       color: AppColors.kBlack),
+                ),
+                const TextSpan(
+                  text: " away from the asset",
                 )
               ]),
         ),
-        const AppSpacer(
-          heightPortion: .01,
-        ),
-        if (controller.isLocationEnabled) ...[
-          Row(
-            children: [
-              const Icon(
-                Icons.location_pin,
-                color: AppColors.kGrey,
-              ),
-              const AppSpacer(
-                widthPortion: .01,
-              ),
-              Text(
-                'Lat: ${controller.currentLat.toStringAsFixed(3)} Lon: ${controller.currentLon.toStringAsFixed(3)}',
-                style: TextStyle(
-                    fontSize: AppDimensions.fontSize15(context),
-                    color: AppColors.kGrey),
-              ),
-            ],
-          )
-        ],
+        // const AppSpacer(
+        //   heightPortion: .01,
+        // ),
+        // if (controller.isLocationEnabled) ...[
+        //   Row(
+        //     children: [
+        //       const Icon(
+        //         Icons.location_pin,
+        //         color: AppColors.kGrey,
+        //       ),
+        //       const AppSpacer(
+        //         widthPortion: .01,
+        //       ),
+        //       Text(
+        //         'Lat: ${controller.currentLat.toStringAsFixed(3)} Lon: ${controller.currentLon.toStringAsFixed(3)}',
+        //         style: TextStyle(
+        //             fontSize: AppDimensions.fontSize15(context),
+        //             color: AppColors.kGrey),
+        //       ),
+        //     ],
+        //   )
+        // ],
       ],
     );
   }
@@ -227,7 +233,7 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
         ),
         RichText(
             text: TextSpan(
-                text: 'You are ',
+                text: "You are ",
                 style: const TextStyle(color: AppColors.kBlack),
                 children: [
               TextSpan(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/core/alert_message.dart';
+import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/model/db%20models/block_station_model.dart';
 import 'package:test_managment/model/db%20models/entity_profile_model.dart';
@@ -17,7 +18,7 @@ class TestAssetsController with ChangeNotifier {
 
   void onChangeType(bool value) {
     _isManual = value;
-    showMessage(_isManual == true ? 'MANUAL' : 'AUTO');
+    showMessage(_isManual == true ? 'MANUAL MODE' : 'AUTO MODE');
     clearAllData();
     notifyListeners();
   }
@@ -62,6 +63,10 @@ class TestAssetsController with ChangeNotifier {
     _infinityhelperData = null;
     _infinityControllers = null;
     _showDistance = null;
+  }
+
+  Future<void> clearAutoMode() async {
+    _isManual = null;
   }
 
   List<Map<String, TextEditingController>>? _textedEditionControllers;
@@ -154,15 +159,34 @@ class TestAssetsController with ChangeNotifier {
   List<EntityProfileModel>? _filteredEntityProfiles;
   List<EntityProfileModel>? get filteredEntityProfiles =>
       _filteredEntityProfiles;
-  void onChangedStations(dynamic value, List<EntityProfileModel> list) {
+  void onChangedStations(
+      context, dynamic value, List<EntityProfileModel> list) async {
     _selectedStationId = value['id'];
-    _filteredEntityProfiles = list
-        .where((element) =>
-            element.entityId == _selectedEntityId &&
-            element.sectionInchargeId == _selectedSectonInchargeId &&
-            element.sectionId == _selectedSectionID &&
-            element.stationId == _selectedStationId)
-        .toList();
+    if (isManual == true) {
+      _filteredEntityProfiles = list
+          .where((element) =>
+              element.entityId == _selectedEntityId &&
+              element.sectionInchargeId == _selectedSectonInchargeId &&
+              element.sectionId == _selectedSectionID &&
+              element.stationId == _selectedStationId)
+          .toList();
+    } else {
+      _filteredEntityProfiles = [];
+      final ref = Provider.of<EnitityProfileDb>(context, listen: false);
+      final nearData = await ref.getNearestEntityProfiles(context);
+      final listOfAuto = nearData
+          .map(
+            (e) => EntityProfileModel.fromJson(e),
+          )
+          .toList();
+      _filteredEntityProfiles = listOfAuto
+          .where((element) =>
+              element.entityId == _selectedEntityId &&
+              element.sectionInchargeId == _selectedSectonInchargeId &&
+              element.sectionId == _selectedSectionID &&
+              element.stationId == _selectedStationId)
+          .toList();
+    }
     _selectedEntityProfileId = null;
     _filterdParameters = null;
     _infinityhelperData = null;
@@ -172,16 +196,34 @@ class TestAssetsController with ChangeNotifier {
     notifyListeners();
   }
 
-  void onChangedBlock(dynamic value, List<EntityProfileModel> list) {
+  void onChangedBlock(
+      context, dynamic value, List<EntityProfileModel> list) async {
     _selectedBlockId = value['id'];
 
-    _filteredEntityProfiles = list
-        .where((element) =>
-            element.entityId == _selectedEntityId &&
-            element.sectionInchargeId == _selectedSectonInchargeId &&
-            element.sectionId == _selectedSectionID &&
-            element.blockSectionId == _selectedBlockId)
-        .toList();
+    if (isManual == true) {
+      _filteredEntityProfiles = list
+          .where((element) =>
+              element.entityId == _selectedEntityId &&
+              element.sectionInchargeId == _selectedSectonInchargeId &&
+              element.sectionId == _selectedSectionID &&
+              element.blockSectionId == _selectedBlockId)
+          .toList();
+    } else {
+      final ref = Provider.of<EnitityProfileDb>(context, listen: false);
+      final nearData = await ref.getNearestEntityProfiles(context);
+      final listOfAuto = nearData
+          .map(
+            (e) => EntityProfileModel.fromJson(e),
+          )
+          .toList();
+      _filteredEntityProfiles = listOfAuto
+          .where((element) =>
+              element.entityId == _selectedEntityId &&
+              element.sectionInchargeId == _selectedSectonInchargeId &&
+              element.sectionId == _selectedSectionID &&
+              element.blockSectionId == _selectedBlockId)
+          .toList();
+    }
     _selectedEntityProfileId = null;
     _filterdParameters = null;
     _infinityhelperData = null;

@@ -18,6 +18,7 @@ import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/services/api_service.dart';
 import 'package:test_managment/core/services/local_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
+import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/add_new_asset_model.dart';
 
 class AddAssetScreen extends StatefulWidget {
@@ -45,52 +46,76 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const AppPageHeadText(title: 'Add Asset'),
-            AppMargin(
-              child: Column(
+    return Scaffold(
+        appBar: AppBar(
+          leadingWidth: 70,
+          leading: Builder(builder: (context) {
+            return Consumer<NetworkService>(builder: (context, net, _) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildEntityDropdown(),
-                  _buildSectionInchargeDropdown(),
-                  _buildSectionDropdown(),
-                  _buildBlockOrStationDropdown(),
-                  CustomFormField(
-                    isRequiredField: true,
-                    controller: assetIdController,
-                    hintText: 'Asset ID / SL#',
-                  ),
-                  const AppSpacer(heightPortion: .05),
-                  CustomButton(
-                    title: 'SUBMIT',
-                    onTap: _handleSubmit,
+                  Text(
+                    net.netisConnected == true ? "ONLINE" : "OFFLINE",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
-              ),
-            ),
-          ],
+              );
+            });
+          }),
+          centerTitle: true,
+          title: const AppPageHeadText(title: 'Add Asset'),
         ),
-      ),
-    );
+        body: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                AppMargin(
+                  child: Column(
+                    children: [
+                      _buildEntityDropdown(),
+                      _buildSectionInchargeDropdown(),
+                      _buildSectionDropdown(),
+                      _buildBlockOrStationDropdown(),
+                      CustomFormField(
+                        isRequiredField: true,
+                        controller: assetIdController,
+                        hintText: 'Asset ID / SL#',
+                      ),
+                      const AppSpacer(heightPortion: .05),
+                      CustomButton(
+                        title: 'SUBMIT',
+                        onTap: _handleSubmit,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 
   Widget _buildEntityDropdown() {
     return Consumer2<AddAssetController, EntiteDb>(
       builder: (context, assetCtrl, entityDb, _) {
-        return CustomDropdownField(
-          onCallBack: assetCtrl.onChangeEnitity,
-          hintText: 'Asset Group',
-          items: entityDb.listOfEntityData.map((entity) {
+        List<Map<String, dynamic>> sortedItems = [];
+        if (entityDb.listOfEntityData != null) {
+          sortedItems = entityDb.listOfEntityData.map((entity) {
             return {
               'title': entity.entityName,
               'id': entity.entityId,
               'entityType': entity.entityType,
             };
-          }).toList(),
-        );
+          }).toList();
+        }
+
+        sortedItems
+            .sort((a, b) => (a['title'] ?? '').compareTo(b['title'] ?? ''));
+        return CustomDropdownField(
+            onCallBack: assetCtrl.onChangeEnitity,
+            hintText: 'Asset Group',
+            items: sortedItems);
       },
     );
   }
@@ -98,6 +123,19 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
   Widget _buildSectionInchargeDropdown() {
     return Consumer2<AddAssetController, SectionInchargeDb>(
       builder: (context, assetCtrl, sectionInchargeDb, _) {
+        List<Map<String, dynamic>> sortedItems = [];
+        if (sectionInchargeDb.listOfSectionIncharge != null) {
+          sortedItems =
+              sectionInchargeDb.listOfSectionIncharge.map((sectionIncharge) {
+            return {
+              'title': sectionIncharge.sectionInchargeName,
+              'id': sectionIncharge.sectionInchargeId,
+            };
+          }).toList();
+        }
+
+        sortedItems
+            .sort((a, b) => (a['title'] ?? '').compareTo(b['title'] ?? ''));
         return CustomDropdownField(
           onCallBack: (value) {
             final sectionList =
@@ -105,14 +143,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
             assetCtrl.onChangedSectionIncharge(value, sectionList);
           },
           hintText: 'Section Incharge',
-          items: assetCtrl.selectedEntityId == null
-              ? []
-              : sectionInchargeDb.listOfSectionIncharge.map((sectionIncharge) {
-                  return {
-                    'title': sectionIncharge.sectionInchargeName,
-                    'id': sectionIncharge.sectionInchargeId,
-                  };
-                }).toList(),
+          items: assetCtrl.selectedEntityId == null ? [] : sortedItems,
         );
       },
     );
@@ -121,6 +152,18 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
   Widget _buildSectionDropdown() {
     return Consumer2<AddAssetController, SectionDb>(
       builder: (context, assetCtrl, sectionDb, _) {
+        List<Map<String, dynamic>> sortedItems = [];
+        if (assetCtrl.listOfDisplaySection != null) {
+          sortedItems = assetCtrl.listOfDisplaySection!.map((section) {
+            return {
+              'title': section.sectionName,
+              'id': section.sectionId,
+              'data': section.toJson(),
+            };
+          }).toList();
+        }
+        sortedItems
+            .sort((a, b) => (a['title'] ?? '').compareTo(b['title'] ?? ''));
         return CustomDropdownField(
           onCallBack: (value) {
             if (assetCtrl.selectedEntityType == 'BLOCK') {
@@ -135,15 +178,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
             }
           },
           hintText: 'Section',
-          items: assetCtrl.selectedSectonInchargeId == null
-              ? []
-              : assetCtrl.listOfDisplaySection!.map((section) {
-                  return {
-                    'title': section.sectionName,
-                    'id': section.sectionId,
-                    'data': section.toJson(),
-                  };
-                }).toList(),
+          items: assetCtrl.selectedSectonInchargeId == null ? [] : sortedItems,
         );
       },
     );
@@ -156,38 +191,47 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
           return const SizedBox();
         }
         if (assetCtrl.selectedEntityType == 'BLOCK') {
+          List<Map<String, dynamic>> sortedItems = [];
+          if (assetCtrl.listOfBlockStation != null) {
+            sortedItems = assetCtrl.listOfBlockStation!.map((block) {
+              return {
+                'title': block.blockSectionName,
+                'id': block.blockSectionId,
+                'data': block.toJson(),
+              };
+            }).toList();
+          }
+
+          sortedItems
+              .sort((a, b) => (a['title'] ?? '').compareTo(b['title'] ?? ''));
           return Consumer<BlockSectionDb>(
             builder: (context, blockDb, _) {
               return CustomDropdownField(
                 onCallBack: assetCtrl.onChangedBlocks,
                 hintText: 'Block',
-                items: assetCtrl.selectedSectionId == null
-                    ? []
-                    : assetCtrl.listOfBlockStation!.map((block) {
-                        return {
-                          'title': block.blockSectionName,
-                          'id': block.blockSectionId,
-                          'data': block.toJson(),
-                        };
-                      }).toList(),
+                items: assetCtrl.selectedSectionId == null ? [] : sortedItems,
               );
             },
           );
         }
         return Consumer<StationDb>(
           builder: (context, stationDb, _) {
+            List<Map<String, dynamic>> sortedItems = [];
+            if (assetCtrl.listOfDispalySation != null) {
+              sortedItems = assetCtrl.listOfDispalySation!.map((station) {
+                return {
+                  'title': station.stationName,
+                  'id': station.stationId,
+                  'data': station.toJson(),
+                };
+              }).toList();
+            }
+            sortedItems
+                .sort((a, b) => (a['title'] ?? '').compareTo(b['title'] ?? ''));
             return CustomDropdownField(
               onCallBack: assetCtrl.onChangedStations,
               hintText: 'Station',
-              items: assetCtrl.selectedSectionId == null
-                  ? []
-                  : assetCtrl.listOfDispalySation!.map((station) {
-                      return {
-                        'title': station.stationName,
-                        'id': station.stationId,
-                        'data': station.toJson(),
-                      };
-                    }).toList(),
+              items: assetCtrl.selectedSectionId == null ? [] : sortedItems,
             );
           },
         );

@@ -2,7 +2,7 @@ class ResponseModel {
   int status;
   String message;
   bool error;
-  Object data;
+  Object? data;
 
   ResponseModel(
       {required this.data,

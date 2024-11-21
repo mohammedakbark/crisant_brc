@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 import 'package:test_managment/core/services/local_service.dart';
 
@@ -14,7 +15,9 @@ class AuthDb with ChangeNotifier {
   Future<void> storeUserData(
       String name, String password, int id, String token) async {
     final db = await LocalDatabaseService().initAuthDb;
-   await clearAuthtable();
+    // if (await checkUserTableExist()) {
+    await clearAuthtable();
+    // }
     try {
       await db.rawInsert(
           'INSERT INTO $authtableCollection(userName,divisionId,userPassword,token) VALUES(?,?,?,?)',
@@ -25,9 +28,9 @@ class AuthDb with ChangeNotifier {
     }
   }
 
- Future clearAuthtable() async {
+  Future clearAuthtable() async {
     try {
-    final db = await LocalDatabaseService().initAuthDb;
+      final db = await LocalDatabaseService().initAuthDb;
 
       await db.delete(authtableCollection);
     } catch (e) {
@@ -37,10 +40,9 @@ class AuthDb with ChangeNotifier {
 
   Future<String> getUserData() async {
     try {
-          final db = await LocalDatabaseService().initAuthDb;
+      final db = await LocalDatabaseService().initAuthDb;
 
-      final datas =
-          await db.rawQuery('SELECT * FROM $authtableCollection');
+      final datas = await db.rawQuery('SELECT * FROM $authtableCollection');
       final data = datas.first;
       _token = data['token'] as String;
       _userName = data['userName'] as String;
@@ -50,6 +52,33 @@ class AuthDb with ChangeNotifier {
     } catch (e) {
       log('exception on getting data from table ${e.toString()}');
       return '';
+    }
+  }
+
+  // Future<void> deleteTable() async {
+  //   try {
+  //     final db = await LocalDatabaseService().initAuthDb;
+
+  //     await db.execute('DROP TABLE IF EXISTS $authtableCollection');
+  //     log('LOGOUT');
+  //   } catch (e) {
+  //     log('exception on deleting  table  ${e.toString()}');
+  //   }
+  // }
+
+  Future<bool> checkUserTableExist() async {
+    try {
+      final db = await LocalDatabaseService().initAuthDb;
+      final result = await db
+          .rawQuery('SELECT COUNT(*) as count FROM $authtableCollection');
+      int count = Sqflite.firstIntValue(result) ?? 0;
+      if (count > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
     }
   }
 }

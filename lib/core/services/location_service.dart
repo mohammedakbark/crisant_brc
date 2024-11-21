@@ -130,7 +130,11 @@ class LocationService with ChangeNotifier {
 
   @override
   void dispose() {
-    _locationCheckTimer?.cancel();
-    super.dispose();
+    try {
+      _locationCheckTimer?.cancel();
+      super.dispose();
+    } catch (e) {
+      log('dispose error while timer ${e}');
+    }
   }
 }

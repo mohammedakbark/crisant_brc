@@ -21,6 +21,7 @@ import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/custom_button.dart';
 import 'package:test_managment/core/components/custom_dropdown_field.dart';
 import 'package:test_managment/core/controller/test_asset_controller.dart';
+import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/entity_profile_model.dart';
 import 'package:test_managment/model/reposrts%20models/test_report_add_model.dart';
 import 'package:test_managment/presentation/screens/home/widgets/additional_question_view.dart';
@@ -63,319 +64,346 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
   void initState() {
     super.initState();
     Provider.of<TestAssetsController>(context, listen: false).clearAllData();
+    Provider.of<TestAssetsController>(context, listen: false).clearAutoMode();
+
     LocalDatabaseService().fetchAllDatabases(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const AppPageHeadText(title: 'Test Asset'),
-          AppMargin(
-            child: Form(
-              key: _formkey,
-              child: Column(
+    return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          leadingWidth: 70,
+          leading: Builder(builder: (context) {
+            return Consumer<NetworkService>(builder: (context, net, _) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Consumer<LocationService>(builder: (context, controller, _) {
-                  //   return Column(
-                  //     children: [
-                  //       TextButton(
-                  //           onPressed: () {
-                  //             if (controller.showFloatingLocation) {
-                  //               controller.showFlaotingLocation(false,
-                  //                   targetLat: null, targetLon: null);
-                  //             } else {
-                  //               controller.showFlaotingLocation(true,
-                  //                   targetLat: 12.306598756316292,
-                  //                   targetLon: 76.64572844249811);
-                  //             }
-                  //           },
-                  //           child: const Text('Show')),
-                  //     ],
-                  //   );
-                  // }),
-
-                  // Container(
-                  //   margin: const EdgeInsets.symmetric(
-                  //       vertical: AppDimensions.paddingSize15),
-                  //   decoration: BoxDecoration(
-                  //       border: Border.all(color: AppColors.kPrimaryColor),
-                  //       borderRadius: const BorderRadius.all(
-                  //           Radius.circular(AppDimensions.radiusSize10))),
-                  //   child: const DefaultTabController(
-                  //     length: 2,
-                  //     child: TabBar(
-                  //         labelColor: AppColors.kWhite,
-                  //         labelStyle: TextStyle(fontWeight: FontWeight.bold),
-                  //         unselectedLabelStyle:
-                  //             TextStyle(fontWeight: FontWeight.w500),
-                  //         dividerColor: Colors.transparent,
-                  //         indicatorSize: TabBarIndicatorSize.tab,
-                  //         indicator: BoxDecoration(
-                  //             color: AppColors.kPrimaryColor,
-                  //             borderRadius: BorderRadius.all(
-                  //                 Radius.circular(AppDimensions.radiusSize10))),
-                  //         tabs: [
-                  //           Tab(
-                  //             text: 'Manual',
-                  //           ),
-                  //           Tab(
-                  //             text: 'Automatic',
-                  //           )
-                  //         ]),
-                  //   ),
-                  // ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: AppDimensions.paddingSize15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Consumer<TestAssetsController>(
-                            builder: (context, cntr, _) {
-                          return FlutterSwitch(
-                              // toggleColor: AppColors.kPrimaryColor,
-                              activeColor: AppColors.kGrey,
-                              inactiveColor: AppColors.kPrimaryColor,
-                              activeText: "MANUAL",
-                              inactiveText: 'AUTO',
-                              value: cntr.isManual!,
-                              valueFontSize: AppDimensions.fontSize10(context),
-                              width: 60.0,
-                              height: 40.0,
-
-                              // toggleSize: 80.0,
-                              borderRadius: AppDimensions.radiusSize50,
-                              padding: 0,
-                              toggleSize: 40,
-                              showOnOff: false,
-                              activeIcon: Text(
-                                'MANUAL',
-                                textAlign: TextAlign.center,
-                              ),
-                              inactiveIcon: Text(
-                                ' AUTO ',
-                                textAlign: TextAlign.center,
-                              ),
-                              onToggle: cntr.onChangeType);
-                        }),
-                      ],
-                    ),
+                  Text(
+                    net.netisConnected == true ? "ONLINE" : "OFFLINE",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Consumer2<TestAssetsController, EntiteDb>(
-                      builder: (context, ctlr, ctrl2, _) {
-                    return CustomDropdownField(
-                      onCallBack: ctlr.onChangedAssetGroup,
-                      hintText: 'Asset Group',
-                      items: ctrl2.listOfEntityData
-                          .map((e) => {
-                                'title': e.entityName,
-                                'id': e.entityId,
-                                'data': e.toJson()
-                              })
-                          .toList(),
-                    );
-                  }),
-                  Consumer2<TestAssetsController, SectionInchargeDb>(
-                      builder: (context, ctlr, ctrl2, _) {
-                    return CustomDropdownField(
-                      hintText: 'Section Incharge',
-                      items: ctlr.selectedEntityId == null
-                          ? []
-                          : ctrl2.listOfSectionIncharge
+                ],
+              );
+            });
+          }),
+          title: const AppPageHeadText(title: 'Test Asset'),
+          actions: [
+            Consumer<TestAssetsController>(builder: (context, cntr, _) {
+              return FlutterSwitch(
+                  // toggleColor: AppColors.kPrimaryColor,
+                  activeColor: AppColors.kGrey,
+                  inactiveColor: AppColors.kPrimaryColor,
+                  activeText: "MANUAL",
+                  inactiveText: 'AUTO',
+                  value: cntr.isManual!,
+                  valueFontSize: AppDimensions.fontSize10(context),
+                  width: 50.0,
+                  height: 30.0,
+
+                  // toggleSize: 80.0,
+                  borderRadius: AppDimensions.radiusSize50,
+                  padding: 0,
+                  toggleSize: 30,
+                  showOnOff: false,
+                  activeIcon: const Text(
+                    'MANUAL',
+                    textAlign: TextAlign.center,
+                  ),
+                  inactiveIcon: const Text(
+                    ' AUTO ',
+                    textAlign: TextAlign.center,
+                  ),
+                  onToggle: cntr.onChangeType);
+            }),
+            const AppSpacer(
+              widthPortion: .04,
+            )
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              AppMargin(
+                child: Form(
+                  key: _formkey,
+                  child: Column(
+                    children: [
+                      Consumer2<TestAssetsController, EntiteDb>(
+                          builder: (context, ctlr, ctrl2, _) {
+                        List<Map<String, dynamic>> sortedItems =
+                            ctrl2.listOfEntityData
+                                .map((e) => {
+                                      'title': e.entityName,
+                                      'id': e.entityId,
+                                      'data': e.toJson(),
+                                    })
+                                .toList();
+
+                        // Ensure sorting works as expected
+                        sortedItems.sort((a, b) =>
+                            (a['title'] ?? '').compareTo(b['title'] ?? ''));
+                        return CustomDropdownField(
+                            onCallBack: ctlr.onChangedAssetGroup,
+                            hintText: 'Asset Group',
+                            items: sortedItems);
+                      }),
+                      Consumer2<TestAssetsController, SectionInchargeDb>(
+                          builder: (context, ctlr, ctrl2, _) {
+                        List<Map<String, dynamic>> sortedItems = ctrl2
+                            .listOfSectionIncharge
+                            .map((e) => {
+                                  'title': e.sectionInchargeName,
+                                  'id': e.sectionInchargeId,
+                                  'data': e.toJson()
+                                })
+                            .toList();
+
+                        // Ensure sorting works as expected
+                        sortedItems.sort((a, b) =>
+                            (a['title'] ?? '').compareTo(b['title'] ?? ''));
+
+                        return CustomDropdownField(
+                          hintText: 'Section Incharge',
+                          items:
+                              ctlr.selectedEntityId == null ? [] : sortedItems,
+                          onCallBack: (value) {
+                            final sectionList =
+                                Provider.of<SectionDb>(context, listen: false)
+                                    .listOfSection;
+                            ctlr.onChangedSectionIncharge(value, sectionList);
+                          },
+                        );
+                      }),
+                      Consumer2<TestAssetsController, SectionDb>(
+                          builder: (context, ctlr, ctrl2, _) {
+                        List<Map<String, dynamic>> sortedItems = [];
+                        if (ctlr.filterdSectionList != null) {
+                          sortedItems = ctlr.filterdSectionList!
                               .map((e) => {
-                                    'title': e.sectionInchargeName,
-                                    'id': e.sectionInchargeId,
+                                    'title': e.sectionName,
+                                    'id': e.sectionId,
                                     'data': e.toJson()
                                   })
-                              .toList(),
-                      onCallBack: (value) {
-                        final sectionList =
-                            Provider.of<SectionDb>(context, listen: false)
-                                .listOfSection;
-                        ctlr.onChangedSectionIncharge(value, sectionList);
-                      },
-                    );
-                  }),
-                  Consumer2<TestAssetsController, SectionDb>(
-                      builder: (context, ctlr, ctrl2, _) {
-                    return CustomDropdownField(
-                        hintText: 'Section',
-                        items: ctlr.selectedSectonInchargeId == null
-                            ? []
-                            : ctlr.filterdSectionList!
-                                .map((e) => {
-                                      'title': e.sectionName,
-                                      'id': e.sectionId,
-                                      'data': e.toJson()
-                                    })
-                                .toList(),
-                        onCallBack: (value) {
-                          if (ctlr.selectedEntityType == 'BLOCK') {
-                            final blockList = Provider.of<BlockSectionDb>(
-                                    context,
-                                    listen: false)
-                                .listOfBlockSections;
-                            ctlr.onChangedSection(value, blockList: blockList);
-                          } else {
-                            final stationList =
-                                Provider.of<StationDb>(context, listen: false)
+                              .toList();
+                        }
+
+                        // Ensure sorting works as expected
+                        sortedItems.sort((a, b) =>
+                            (a['title'] ?? '').compareTo(b['title'] ?? ''));
+                        return CustomDropdownField(
+                            hintText: 'Section',
+                            items: ctlr.selectedSectonInchargeId == null
+                                ? []
+                                : sortedItems,
+                            onCallBack: (value) {
+                              if (ctlr.selectedEntityType == 'BLOCK') {
+                                final blockList = Provider.of<BlockSectionDb>(
+                                        context,
+                                        listen: false)
+                                    .listOfBlockSections;
+                                ctlr.onChangedSection(value,
+                                    blockList: blockList);
+                              } else {
+                                final stationList = Provider.of<StationDb>(
+                                        context,
+                                        listen: false)
                                     .listOfStationModel;
-                            ctlr.onChangedSection(value,
-                                stationList: stationList);
-                          }
-                        });
-                  }),
-                  Consumer<TestAssetsController>(builder: (context, ctlr, _) {
-                    return ctlr.selectedEntityType != null
-                        ? Column(
-                            children: [
-                              if (ctlr.selectedEntityType == 'BLOCK')
-                                Consumer<BlockSectionDb>(
-                                    builder: (context, ctrl2, _) {
-                                  return CustomDropdownField(
-                                      hintText: 'Block',
-                                      items: ctlr.selectedSectionId == null
-                                          ? []
-                                          : ctlr.filterdBlockSectionList!
-                                              .map((e) => {
-                                                    'title': e.blockSectionName,
-                                                    'id': e.blockSectionId,
-                                                    'data': e.toJson()
-                                                  })
-                                              .toList(),
-                                      onCallBack: (value) {
-                                        final list =
-                                            Provider.of<EnitityProfileDb>(
-                                                    context,
-                                                    listen: false)
-                                                .listOfEnitityProfiles;
-                                        ctlr.onChangedBlock(value, list);
-                                      });
-                                }),
-                              if (ctlr.selectedEntityType == 'STATION')
-                                Consumer<StationDb>(
-                                    builder: (context, ctrl2, _) {
-                                  return CustomDropdownField(
-                                      hintText: 'Station',
-                                      items: ctlr.selectedSectionId == null
-                                          ? []
-                                          : ctlr.filteredStationList!
-                                              .map((e) => {
-                                                    'title': e.stationName,
-                                                    'id': e.stationId,
-                                                    'data': e.toJson()
-                                                  })
-                                              .toList(),
-                                      onCallBack: (value) {
-                                        final list =
-                                            Provider.of<EnitityProfileDb>(
-                                                    context,
-                                                    listen: false)
-                                                .listOfEnitityProfiles;
-                                        ctlr.onChangedStations(value, list);
-                                      });
-                                })
-                            ],
-                          )
-                        : const SizedBox();
-                  }),
-                  Consumer2<TestAssetsController, EnitityProfileDb>(
-                      builder: (context, ctlr, ctrl2, _) {
-                    return CustomDropdownField(
-                      hintText: 'Entity Profile',
-                      items: (ctlr.selectedStationId == null) &&
-                              (ctlr.selectedBlockId == null)
-                          ? []
-                          : ctlr.filteredEntityProfiles!
+                                ctlr.onChangedSection(value,
+                                    stationList: stationList);
+                              }
+                            });
+                      }),
+                      Consumer<TestAssetsController>(
+                          builder: (context, ctlr, _) {
+                        return ctlr.selectedEntityType != null
+                            ? Column(
+                                children: [
+                                  if (ctlr.selectedEntityType == 'BLOCK')
+                                    Consumer<BlockSectionDb>(
+                                        builder: (context, ctrl2, _) {
+                                      List<Map<String, dynamic>> sortedItems =
+                                          [];
+                                      if (ctlr.filterdBlockSectionList !=
+                                          null) {
+                                        sortedItems = ctlr
+                                            .filterdBlockSectionList!
+                                            .map((e) => {
+                                                  'title': e.blockSectionName,
+                                                  'id': e.blockSectionId,
+                                                  'data': e.toJson()
+                                                })
+                                            .toList();
+                                      }
+
+                                      // Ensure sorting works as expected
+                                      sortedItems.sort((a, b) =>
+                                          (a['title'] ?? '')
+                                              .compareTo(b['title'] ?? ''));
+                                      return CustomDropdownField(
+                                          hintText: 'Block',
+                                          items: ctlr.selectedSectionId == null
+                                              ? []
+                                              : sortedItems,
+                                          onCallBack: (value) {
+                                            final list =
+                                                Provider.of<EnitityProfileDb>(
+                                                        context,
+                                                        listen: false)
+                                                    .listOfEnitityProfiles;
+                                            ctlr.onChangedBlock(
+                                                context, value, list);
+                                          });
+                                    }),
+                                  if (ctlr.selectedEntityType == 'STATION')
+                                    Consumer<StationDb>(
+                                        builder: (context, ctrl2, _) {
+                                      List<Map<String, dynamic>> sortedItems =
+                                          [];
+                                      if (ctlr.filteredStationList != null) {
+                                        sortedItems = ctlr.filteredStationList!
+                                            .map((e) => {
+                                                  'title': e.stationName,
+                                                  'id': e.stationId,
+                                                  'data': e.toJson()
+                                                })
+                                            .toList();
+                                      }
+
+                                      // Ensure sorting works as expected
+                                      sortedItems.sort((a, b) =>
+                                          (a['title'] ?? '')
+                                              .compareTo(b['title'] ?? ''));
+                                      return CustomDropdownField(
+                                          hintText: 'Station',
+                                          items: ctlr.selectedSectionId == null
+                                              ? []
+                                              : sortedItems,
+                                          onCallBack: (value) {
+                                            final list =
+                                                Provider.of<EnitityProfileDb>(
+                                                        context,
+                                                        listen: false)
+                                                    .listOfEnitityProfiles;
+                                            ctlr.onChangedStations(
+                                                context, value, list);
+                                          });
+                                    })
+                                ],
+                              )
+                            : const SizedBox();
+                      }),
+                      Consumer2<TestAssetsController, EnitityProfileDb>(
+                          builder: (context, ctlr, ctrl2, _) {
+                        List<Map<String, dynamic>> sortedItems = [];
+                        if (ctlr.filteredEntityProfiles != null) {
+                          sortedItems = ctlr.filteredEntityProfiles!
                               .map((e) => {
                                     'title': e.entityIdentifier,
                                     'id': e.entityProfileId,
                                     'data': e.toJson()
                                   })
-                              .toList(),
-                      onCallBack: (value) {
-                        final list =
-                            Provider.of<ParametersDb>(context, listen: false)
+                              .toList();
+                        }
+
+                        // Ensure sorting works as expected
+                        sortedItems.sort((a, b) =>
+                            (a['title'] ?? '').compareTo(b['title'] ?? ''));
+                        return CustomDropdownField(
+                          hintText: 'Entity Profile',
+                          items: (ctlr.selectedStationId == null) &&
+                                  (ctlr.selectedBlockId == null)
+                              ? []
+                              : sortedItems,
+                          onCallBack: (value) {
+                            final list = Provider.of<ParametersDb>(context,
+                                    listen: false)
                                 .listOfParameters;
-                        ctlr.onChangedEntityProfile(value, list, context);
-                      },
-                    );
-                  }),
-                  Consumer2<TestAssetsController, LocationService>(
-                    builder: (context, ctrl, loc, child) {
-                      if (ctrl.selectedEntityProfileData != null) {
-                        loc.showFlaotingLocation(ctrl.showDistance,
-                            targetLat: double.parse(
-                                ctrl.selectedEntityProfileData!.entityLatt),
-                            targetLon: double.parse(
-                                ctrl.selectedEntityProfileData!.entityLong));
-                      }
-                      return ctrl.showDistance
-                          ? Visibility(
+                            ctlr.onChangedEntityProfile(value, list, context);
+                          },
+                        );
+                      }),
+
+                      Consumer2<TestAssetsController, LocationService>(
+                        builder: (context, ctrl, loc, child) {
+                          if (ctrl.selectedEntityProfileData != null) {
+                            loc.showFlaotingLocation(ctrl.showDistance,
+                                targetLat: double.parse(
+                                    ctrl.selectedEntityProfileData!.entityLatt),
+                                targetLon: double.parse(ctrl
+                                    .selectedEntityProfileData!.entityLong));
+                          }
+                          return Visibility(
                               visible: loc.showFloatingLocation,
-                              child: const FloatingDirectionBar())
-                          : const SizedBox();
-                    },
+                              child: const Column(
+                                children: [
+                                  AppSpacer(
+                                    heightPortion: .02,
+                                  ),
+                                  FloatingDirectionBar(),
+                                ],
+                              ));
+                        },
+                      ),
+                      // Provider.of<LocationService>(context).showFlaotingLocation(true)
+                      const AppSpacer(
+                        heightPortion: .02,
+                      ),
+                      imagePicker(context),
+                      const AppSpacer(
+                        heightPortion: .015,
+                      ),
+                      Consumer<TestAssetsController>(
+                          builder: (context, ctlr, _) {
+                        return ctlr.filterdParameters == null
+                            ? const SizedBox()
+                            : const AdditionalQuestionView();
+                      }),
+                      const AppSpacer(
+                        heightPortion: .04,
+                      ),
+                      Consumer<LocationService>(builder: (context, loc, _) {
+                        return CustomButton(
+                          // butonColor: loc.isNearTarget ? null : AppColors.kGrey,
+                          // textColor: loc.isNearTarget
+                          //     ? null
+                          //     : AppColors.kWhite.withOpacity(.7),
+                          title: 'SUBMIT',
+                          onTap: handleSubmit,
+                        );
+                      }),
+                      const AppSpacer(
+                        heightPortion: .025,
+                      ),
+                    ],
                   ),
-                  // Provider.of<LocationService>(context).showFlaotingLocation(true)
-                  const AppSpacer(
-                    heightPortion: .03,
-                  ),
-                  imagePicker(context),
-                  const AppSpacer(
-                    heightPortion: .015,
-                  ),
-                  Consumer<TestAssetsController>(builder: (context, ctlr, _) {
-                    return ctlr.filterdParameters == null
-                        ? const SizedBox()
-                        : const AdditionalQuestionView();
-                  }),
-                  const AppSpacer(
-                    heightPortion: .04,
-                  ),
-                  Consumer<LocationService>(builder: (context, loc, _) {
-                    return CustomButton(
-                      butonColor: loc.isNearTarget ? null : AppColors.kGrey,
-                      textColor: loc.isNearTarget
-                          ? null
-                          : AppColors.kWhite.withOpacity(.7),
-                      title: 'SUBMIT',
-                      onTap: handleSubmit,
-                    );
-                  }),
-                  const AppSpacer(
-                    heightPortion: .025,
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 
   Future<void> handleSubmit() async {
-    if (Provider.of<LocationService>(context, listen: false).isNearTarget) {
-      if (_formkey.currentState!.validate()) {
-        final cameraController =
-            Provider.of<CameraController>(context, listen: false);
-        final ctr = Provider.of<TestAssetsController>(context, listen: false);
-        final locationProvider =
-            Provider.of<LocationService>(context, listen: false);
-        if (ctr.pictureIsMandatory) {
-          if (cameraController.convertedImageFile != null) {
-            storeData(locationProvider, ctr, cameraController);
-          } else {
-            showMessage('Picture is required', isWarning: true);
-          }
-        } else {
+    // if (Provider.of<LocationService>(context, listen: false).isNearTarget) {
+    if (_formkey.currentState!.validate()) {
+      final cameraController =
+          Provider.of<CameraController>(context, listen: false);
+      final ctr = Provider.of<TestAssetsController>(context, listen: false);
+      final locationProvider =
+          Provider.of<LocationService>(context, listen: false);
+      if (ctr.pictureIsMandatory) {
+        if (cameraController.convertedImageFile != null) {
           storeData(locationProvider, ctr, cameraController);
+        } else {
+          showMessage('Picture is required', isWarning: true);
         }
+      } else {
+        storeData(locationProvider, ctr, cameraController);
       }
     }
+    // }
   }
 
   bool isLoading = false;

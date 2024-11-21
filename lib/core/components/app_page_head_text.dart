@@ -9,18 +9,11 @@ class AppPageHeadText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      color: AppColors.kWhite,
-      padding:
-          const EdgeInsets.symmetric(vertical: AppDimensions.paddingSize15),
-      width: w(context),
-      child: Text(
-        title,
-        style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: AppDimensions.fontSize18(context)),
-      ),
+    return Text(
+      title,
+      style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: AppDimensions.fontSize18(context)),
     );
   }
 }
