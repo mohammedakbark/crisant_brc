@@ -15,41 +15,42 @@ class EntiteDb with ChangeNotifier {
   List<EntityModel> get listOfEntityData => _listOfEntityData;
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
-  Future storeEntity(BuildContext context) async {
+  Future storeEntity(BuildContext context, {bool? dontList}) async {
     try {
       if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
           true) {
-            _isDownloading = true;
-      notifyListeners();
+        _isDownloading = true;
+        if (dontList == null) {
+          notifyListeners();
+        }
+        final db = await LocalDatabaseService().initDb;
 
-      final db = await LocalDatabaseService().initDb;
+        await _clearTable();
+        final result = await FetchEntityRepo().fetchEntities(context);
+        List data = result!.data as List;
+        List<EntityModel> listOFEntity =
+            data.map((e) => EntityModel.fromJson(e)).toList();
 
-      await _clearTable();
-      final result = await FetchEntityRepo().fetchEntities(context);
-      List data = result!.data as List;
-      List<EntityModel> listOFEntity =
-          data.map((e) => EntityModel.fromJson(e)).toList();
+        for (var entity in listOFEntity) {
+          await db.insert(
+            entitiesCollection,
+            entity.toJson(),
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+          // await db.rawInsert(
+          //     'INSERT INTO $entitiesCollection(entityId,entityName,pictureRequired,periodicity,entityType) VALUES(?,?,?,?,?)',
+          //     [
+          //       entity.entityId,
+          //       entity.entityName,
+          //       entity.pictureRequired,
+          //       entity.periodicity,
+          //       entity.entityType
+          //     ]);
+        }
 
-      for (var entity in listOFEntity) {
-        await db.insert(
-          entitiesCollection,
-          entity.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-        // await db.rawInsert(
-        //     'INSERT INTO $entitiesCollection(entityId,entityName,pictureRequired,periodicity,entityType) VALUES(?,?,?,?,?)',
-        //     [
-        //       entity.entityId,
-        //       entity.entityName,
-        //       entity.pictureRequired,
-        //       entity.periodicity,
-        //       entity.entityType
-        //     ]);
-      }
-
-      log('Entity Downloaded Successful');
-      await getAllEntities();
-      _isDownloading = false;
+        log('Entity Downloaded Successful');
+        await getAllEntities();
+        _isDownloading = false;
       } else {
         showMessage(
           'Please Check Your Internet Connection',
@@ -60,7 +61,9 @@ class EntiteDb with ChangeNotifier {
 
       log('exception on adding data in to table ${e.toString()}');
     }
-    notifyListeners();
+    if (dontList == null) {
+      notifyListeners();
+    }
   }
 
   Future getAllEntities() async {

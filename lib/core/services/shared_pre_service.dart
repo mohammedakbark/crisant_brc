@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,11 +13,14 @@ class SharedPreService with ChangeNotifier {
     return _dataisUpdated!;
   }
 
-  Future setDataStorageStatus(bool vaue) async {
+  Future setDataStorageStatus(bool vaue, {bool? dontlistern}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     final data = await preferences.setBool(key, vaue);
     _dataisUpdated = data;
-    notifyListeners();
+    log('Dowloaded');
+    if (dontlistern == null) {
+      notifyListeners();
+    }
   }
 
   deletedData() async {

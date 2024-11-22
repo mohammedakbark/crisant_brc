@@ -19,12 +19,14 @@ class ParametersDb with ChangeNotifier {
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
 
-  Future storeParameters(BuildContext context) async {
+  Future storeParameters(BuildContext context, {bool? dontList}) async {
     try {
       if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
           true) {
         _isDownloading = true;
-        notifyListeners();
+        if (dontList == null) {
+          notifyListeners();
+        }
         final db = await LocalDatabaseService().initDb;
 
         await _clearTable();
@@ -41,13 +43,17 @@ class ParametersDb with ChangeNotifier {
         _isDownloading = false;
         await getAllParameters();
       } else {
-        showMessage('Please Check Your Internet Connection',);
+        showMessage(
+          'Please Check Your Internet Connection',
+        );
       }
     } catch (e) {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
-    notifyListeners();
+    if (dontList == null) {
+      notifyListeners();
+    }
   }
 
   Future getAllParameters() async {

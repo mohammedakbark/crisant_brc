@@ -8,6 +8,7 @@ import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/common_widgets.dart';
 import 'package:test_managment/core/controller/dashboard_controller.dart';
 import 'package:test_managment/core/database/auth_db.dart';
+import 'package:test_managment/core/services/local_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/components/overlay_location_banner.dart';
 import 'package:test_managment/core/services/shared_pre_service.dart';
@@ -89,44 +90,50 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final c = Provider.of<SharedPreService>(
       context,
     );
-    return FutureBuilder(
-        future: c.dataisUpdated,
-        builder: (context, snapshot) {
-          // if (snapshot.data == null || snapshot.data == false) {
-          //   return Scaffold(
-          //     appBar: const HomeAppBar(),
-          //     body: const Center(
-          //       child: Row(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: [
-          //           AppLoadingIndicator(),
-          //           AppSpacer(
-          //             widthPortion: .06,
-          //           ),
-          //           Text(
-          //             'Please wait until Downloading complete',
-          //             style: TextStyle(fontWeight: FontWeight.w500),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //     bottomNavigationBar: bottomNav(controller, functioning: true),
-          //   );
-          // }
-          return Scaffold(
-              body: pages[controller.currentScreenIndex],
-              bottomNavigationBar: bottomNav(controller)
-              // floatingActionButton: FloatingActionButton(
-              //   shape: const CircleBorder(),
-              //   tooltip: 'Download Data',
-              //   backgroundColor: AppColors.kPrimaryColor,
-              //   onPressed: () {
+    // return FutureBuilder(
+    //     future: c.dataisUpdated,
+    //     builder: (context, snapshot) {
+    //       if (snapshot.data == null || snapshot.data == false) {
+    //         return Builder(builder: (context) {
+    //           // LocalDatabaseService().dowloadAllData(context, dontListen: true);
+    //           // Provider.of<SharedPreService>(context, listen: false)
+    //           //     .setDataStorageStatus(true);
 
-              //   },
-              //   child: const Icon(color: AppColors.kWhite, Icons.sync),
-              // ),
-              );
-        });
+    //           return Scaffold(
+    //             appBar: const HomeAppBar(),
+    //             body: const Center(
+    //               child: Column(
+    //                 mainAxisAlignment: MainAxisAlignment.center,
+    //                 children: [
+    //                   Text(
+    //                     'Please wait until the download is complete',
+    //                     style: TextStyle(fontWeight: FontWeight.w500),
+    //                   ),
+    //                   AppSpacer(
+    //                     heightPortion: .06,
+    //                   ),
+    //                   AppLoadingIndicator(),
+    //                 ],
+    //               ),
+    //             ),
+    //             bottomNavigationBar: bottomNav(controller, functioning: true),
+    //           );
+    //         });
+    //       }
+    return Scaffold(
+        body: pages[controller.currentScreenIndex],
+        bottomNavigationBar: bottomNav(controller)
+        // floatingActionButton: FloatingActionButton(
+        //   shape: const CircleBorder(),
+        //   tooltip: 'Download Data',
+        //   backgroundColor: AppColors.kPrimaryColor,
+        //   onPressed: () {
+
+        //   },
+        //   child: const Icon(color: AppColors.kWhite, Icons.sync),
+        // ),
+        );
+    // });
   }
 
   Widget bottomNav(DashboardController controller, {bool? functioning}) =>

@@ -33,12 +33,14 @@ class OfflineAddEntityDb with ChangeNotifier {
     }
   }
 
-  Future getAllOfflineAddEntityDb() async {
+  Future getAllOfflineAddEntityDb({bool? dontList}) async {
     final db = await LocalDatabaseService().initOfflineAddEntityDb;
 
     try {
       _isDownloading = true;
-      notifyListeners();
+     if (dontList == null) {
+        notifyListeners();
+      }
       final dataofPentitles =
           await db.rawQuery('SELECT * FROM $offlineCollectionTable');
 
@@ -47,11 +49,15 @@ class OfflineAddEntityDb with ChangeNotifier {
             dataofPentitles.map((e) => AddNewAssetModel.fromJson(e)).toList();
       }
       _isDownloading = false;
-      notifyListeners();
+     if (dontList == null) {
+        notifyListeners();
+      }
       log('Parameters Fetched');
     } catch (e) {
       _isDownloading = false;
-      notifyListeners();
+   if (dontList == null) {
+        notifyListeners();
+      }
       log('exception on getting data from table ${e.toString()}');
     }
   }

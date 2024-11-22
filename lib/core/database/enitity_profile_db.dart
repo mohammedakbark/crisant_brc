@@ -17,13 +17,14 @@ class EnitityProfileDb with ChangeNotifier {
   List<EntityProfileModel> get listOfEnitityProfiles => _listOfEnitityProfiles;
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
-  Future<void> storeEnitityProfile(BuildContext context) async {
+  Future<void> storeEnitityProfile(BuildContext context,{bool? dontList}) async {
     try {
       if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
           true) {
         _isDownloading = true;
+if (dontList == null) {
         notifyListeners();
-        final db = await LocalDatabaseService().initDb;
+      }        final db = await LocalDatabaseService().initDb;
 
         await _clearTable();
         final result =

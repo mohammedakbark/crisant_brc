@@ -17,12 +17,14 @@ class StationDb with ChangeNotifier {
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
 
-  Future storeStations(BuildContext context) async {
+  Future storeStations(BuildContext context, {bool? dontList}) async {
     try {
       if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
           true) {
         _isDownloading = true;
-        notifyListeners();
+        if (dontList == null) {
+          notifyListeners();
+        }
         final db = await LocalDatabaseService().initDb;
 
         await _clearTable();
@@ -52,7 +54,9 @@ class StationDb with ChangeNotifier {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
-    notifyListeners();
+    if (dontList == null) {
+      notifyListeners();
+    }
   }
 
   Future getAllSectionIncharges() async {

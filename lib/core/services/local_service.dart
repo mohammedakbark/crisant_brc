@@ -234,31 +234,37 @@ class LocalDatabaseService with ChangeNotifier {
       if (dontListen == null) {
         notifyListeners();
       }
-      await Provider.of<EntiteDb>(context, listen: false).storeEntity(context);
+      await Provider.of<EntiteDb>(context, listen: false)
+          .storeEntity(context, dontList: dontListen);
       await Provider.of<SectionInchargeDb>(context, listen: false)
-          .storeSectionIncharges(context);
+          .storeSectionIncharges(context, dontList: dontListen);
       await Provider.of<SectionDb>(context, listen: false)
-          .storeSection(context);
+          .storeSection(context, dontList: dontListen);
       await Provider.of<BlockSectionDb>(context, listen: false)
-          .storeBlockSections(context);
+          .storeBlockSections(context, dontList: dontListen);
       await Provider.of<StationDb>(context, listen: false)
-          .storeStations(context);
+          .storeStations(context, dontList: dontListen);
       await Provider.of<ParametersDb>(context, listen: false)
-          .storeParameters(context);
+          .storeParameters(context, dontList: dontListen);
       await Provider.of<ParametersValueDb>(context, listen: false)
-          .storeParametersValues(context);
+          .storeParametersValues(context, dontList: dontListen);
       await Provider.of<ParametersReasonDb>(context, listen: false)
-          .storeParameterReson(context);
+          .storeParameterReson(context, dontList: dontListen);
       await Provider.of<EnitityProfileDb>(context, listen: false)
-          .storeEnitityProfile(context);
+          .storeEnitityProfile(context, dontList: dontListen);
       await Provider.of<OfflineAddEntityDb>(context, listen: false)
-          .getAllOfflineAddEntityDb();
+          .getAllOfflineAddEntityDb(dontList: dontListen);
       await Provider.of<OfflineTestEntityDb>(context, listen: false)
-          .getAllPendingOfflineTest();
+          .getAllPendingOfflineTest(dontListen: dontListen);
+      //-------------sharepreferece
+      await Provider.of<SharedPreService>(context, listen: false)
+          .setDataStorageStatus(true, dontlistern: dontListen);
+      //-------------sharepreferece
       _isDownloading = false;
       if (dontListen == null) {
         notifyListeners();
       }
+
       return true;
       //         .deletedData();
     } catch (e) {

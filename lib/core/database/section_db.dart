@@ -17,13 +17,14 @@ class SectionDb with ChangeNotifier {
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
 
-  Future storeSection(BuildContext context) async {
+  Future storeSection(BuildContext context,{bool? dontList}) async {
     try {
       if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
           true) {
         _isDownloading = true;
+if (dontList == null) {
         notifyListeners();
-        final db = await LocalDatabaseService().initDb;
+      }        final db = await LocalDatabaseService().initDb;
 
         await _clearTable();
         final result = await FetchSectionRepo().fetchSection(context);
@@ -56,8 +57,9 @@ class SectionDb with ChangeNotifier {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
-    notifyListeners();
-  }
+if (dontList == null) {
+        notifyListeners();
+      }  }
 
   Future getAllSections() async {
     final db = await LocalDatabaseService().initDb;

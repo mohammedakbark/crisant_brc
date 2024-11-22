@@ -16,12 +16,14 @@ class ParametersValueDb with ChangeNotifier {
       _listOfParametersValues;
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
-  Future storeParametersValues(BuildContext context) async {
+  Future storeParametersValues(BuildContext context, {bool? dontList}) async {
     try {
       if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
           true) {
         _isDownloading = true;
-        notifyListeners();
+        if (dontList == null) {
+          notifyListeners();
+        }
         final db = await LocalDatabaseService().initDb;
 
         await _clearTable();
@@ -57,8 +59,9 @@ class ParametersValueDb with ChangeNotifier {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
-    notifyListeners();
-  }
+if (dontList == null) {
+        notifyListeners();
+      }  }
 
   Future getAllParametersValues() async {
     final db = await LocalDatabaseService().initDb;
