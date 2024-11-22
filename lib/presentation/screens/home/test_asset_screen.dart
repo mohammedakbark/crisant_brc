@@ -30,6 +30,7 @@ import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
 import 'package:test_managment/presentation/screens/home/widgets/floating_location_bar.dart';
+import 'package:test_managment/presentation/screens/home/widgets/home_drawer.dart';
 
 class TestAssetScreen extends StatefulWidget {
   TestAssetScreen({super.key});
@@ -54,22 +55,26 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: const HomeDrawer(),
         appBar: AppBar(
+          leading: const DrawerButton(
+            color: AppColors.kBlack,
+          ),
           centerTitle: true,
           leadingWidth: 70,
-          leading: Builder(builder: (context) {
-            return Consumer<NetworkService>(builder: (context, net, _) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    net.netisConnected == true ? "ONLINE" : "OFFLINE",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              );
-            });
-          }),
+          // leading: Builder(builder: (context) {
+          //   return Consumer<NetworkService>(builder: (context, net, _) {
+          //     return Column(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Text(
+          //           net.netisConnected == true ? "ONLINE" : "OFFLINE",
+          //           style: const TextStyle(fontWeight: FontWeight.bold),
+          //         ),
+          //       ],
+          //     );
+          //   });
+          // }),
           title: const AppPageHeadText(title: 'Test Asset'),
           actions: [
             Consumer<TestAssetsController>(builder: (context, cntr, _) {
@@ -112,6 +117,9 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                   key: _formkey,
                   child: Column(
                     children: [
+                      AppSpacer(
+                        heightPortion: .01,
+                      ),
                       Consumer2<TestAssetsController, EntiteDb>(
                           builder: (context, ctlr, ctrl2, _) {
                         List<Map<String, dynamic>> sortedItems =
@@ -128,7 +136,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                             (a['title'] ?? '').compareTo(b['title'] ?? ''));
                         return CustomDropdownField(
                             onCallBack: ctlr.onChangedAssetGroup,
-                            hintText: 'Asset Group',
+                            hintText: 'Asset Type',
                             items: sortedItems);
                       }),
                       Consumer2<TestAssetsController, SectionInchargeDb>(
@@ -406,7 +414,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                         //   ],
                         // );
                         return CustomDropdownField(
-                          hintText: 'Entity Profile',
+                          hintText: 'Asset Profile',
                           items: (ctlr.selectedStationId == null) &&
                                   (ctlr.selectedBlockId == null)
                               ? []
@@ -464,7 +472,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                           // textColor: loc.isNearTarget
                           //     ? null
                           //     : AppColors.kWhite.withOpacity(.7),
-                          title: 'SUBMIT',
+                          title: 'SUBMIT TEST REPORT',
                           onTap: handleSubmit,
                         );
                       }),
@@ -612,11 +620,13 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                                   fontWeight: FontWeight.w600,
                                   fontSize: AppDimensions.fontSize24(context)),
                             ),
-                            _diologueButton(context, () {
-                              controller.onPickImage();
+                            _diologueButton(context, () async {
+                              await controller.onPickImage();
+                              Navigator.pop(context);
                             }, 'Take Photo'),
-                            _diologueButton(context, () {}, 'Cancel',
-                                color: AppColors.kRed)
+                            _diologueButton(context, () {
+                              Navigator.pop(context);
+                            }, 'Cancel', color: AppColors.kRed)
                           ],
                         ),
                       ),

@@ -1,42 +1,45 @@
 class TestReportsModel {
-  String testReportId;
-  String entityId;
-  String entityProfileId;
-  String divisionId;
-  String sectionInchargeId;
-  String sectionId;
-  String? blockSectionId;
-  String? stationId;
-  String testLatt;
-  String testLong;
-  String distance;
-  dynamic testroomNotes;
-  String testConfirmed;
-  String testMode;
-  String connectivityMode;
-  dynamic picture;
+    String testReportId;
+    String entityId;
+    String entityProfileId;
+    String divisionId;
+    String sectionInchargeId;
+    String sectionId;
+    String? blockSectionId;
+    String? stationId;
+    String testLatt;
+    String testLong;
+    String distance;
+    dynamic testroomNotes;
+    String testConfirmed;
+    String testMode;
+    String connectivityMode;
+    dynamic picture;
+    DateTime createdDate;
+    DateTime modifiedDate;
 
-  TestReportsModel({
-    required this.testReportId,
-    required this.entityId,
-    required this.entityProfileId,
-    required this.divisionId,
-    required this.sectionInchargeId,
-    required this.sectionId,
-    required this.blockSectionId,
-    required this.stationId,
-    required this.testLatt,
-    required this.testLong,
-    required this.distance,
-    required this.testroomNotes,
-    required this.testConfirmed,
-    required this.testMode,
-    required this.connectivityMode,
-    required this.picture,
-  });
+    TestReportsModel({
+        required this.testReportId,
+        required this.entityId,
+        required this.entityProfileId,
+        required this.divisionId,
+        required this.sectionInchargeId,
+        required this.sectionId,
+        required this.blockSectionId,
+        required this.stationId,
+        required this.testLatt,
+        required this.testLong,
+        required this.distance,
+        required this.testroomNotes,
+        required this.testConfirmed,
+        required this.testMode,
+        required this.connectivityMode,
+        required this.picture,
+        required this.createdDate,
+        required this.modifiedDate,
+    });
 
-  factory TestReportsModel.fromJson(Map<String, dynamic> json) =>
-      TestReportsModel(
+    factory TestReportsModel.fromJson(Map<String, dynamic> json) => TestReportsModel(
         testReportId: json["testReportId"],
         entityId: json["entityId"],
         entityProfileId: json["entityProfileId"],
@@ -53,9 +56,11 @@ class TestReportsModel {
         testMode: json["testMode"],
         connectivityMode: json["connectivityMode"],
         picture: json["picture"],
-      );
+        createdDate: DateTime.parse(json["createdDate"]),
+        modifiedDate: DateTime.parse(json["modifiedDate"]),
+    );
 
-  Map<String, dynamic> toJson() => {
+    Map<String, dynamic> toJson() => {
         "testReportId": testReportId,
         "entityId": entityId,
         "entityProfileId": entityProfileId,
@@ -72,5 +77,7 @@ class TestReportsModel {
         "testMode": testMode,
         "connectivityMode": connectivityMode,
         "picture": picture,
-      };
+        "createdDate": createdDate.toIso8601String(),
+        "modifiedDate": modifiedDate.toIso8601String(),
+    };
 }

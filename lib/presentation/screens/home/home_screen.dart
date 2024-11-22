@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:test_managment/core/database/auth_db.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/components/common_widgets.dart';
+import 'package:test_managment/presentation/screens/home/widgets/home_app_bar.dart';
 import 'package:test_managment/presentation/screens/home/widgets/home_drawer.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
@@ -23,47 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.kWhite,
-        leading: const DrawerButton(
-          color: AppColors.kBlack,
-        ),
-        title: Text(
-          'Hi ${Provider.of<AuthDb>(context, listen: false).userName}',
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.kBlack,
-              fontSize: AppDimensions.fontSize18(context)),
-        ),
-        actions: [
-          PopupMenuButton(
-            color: AppColors.kBgColor,
-            initialValue: 'English',
-            tooltip: 'Language',
-            icon: Row(
-              children: [
-                Text(
-                  context.locale.languageCode == 'en' ? 'English' : 'हिन्दी',
-                  style: const TextStyle(color: AppColors.kBlack),
-                ),
-                const Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  color: AppColors.kBlack,
-                )
-              ],
-            ),
-            onSelected: (value) {
-              context.setLocale(Locale(value));
-            },
-            itemBuilder: (context) {
-              return [
-                const PopupMenuItem(value: 'en', child: Text('English')),
-                const PopupMenuItem(value: 'hi', child: Text('हिन्दी'))
-              ];
-            },
-          ),
-        ],
-      ),
+      appBar: HomeAppBar(),
       drawer: const HomeDrawer(),
       body: Consumer<LocationService>(builder: (context, controller, _) {
         if (controller.currentLat != 0 || controller.currentLon != 0) {

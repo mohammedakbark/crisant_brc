@@ -22,7 +22,11 @@ import 'package:test_managment/core/services/api_service.dart';
 import 'package:test_managment/core/services/local_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/services/network_service.dart';
+import 'package:test_managment/core/utils/app_colors.dart';
+import 'package:test_managment/core/utils/app_dimentions.dart';
+import 'package:test_managment/core/utils/responsive_helper.dart';
 import 'package:test_managment/model/add_new_asset_model.dart';
+import 'package:test_managment/presentation/screens/home/widgets/home_drawer.dart';
 
 class AddAssetScreen extends StatefulWidget {
   const AddAssetScreen({Key? key}) : super(key: key);
@@ -50,21 +54,25 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: const HomeDrawer(),
         appBar: AppBar(
           leadingWidth: 70,
-          leading: Builder(builder: (context) {
-            return Consumer<NetworkService>(builder: (context, net, _) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    net.netisConnected == true ? "ONLINE" : "OFFLINE",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              );
-            });
-          }),
+          // leading: Builder(builder: (context) {
+          //   return Consumer<NetworkService>(builder: (context, net, _) {
+          //     return Column(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Text(
+          //           net.netisConnected == true ? "ONLINE" : "OFFLINE",
+          //           style: const TextStyle(fontWeight: FontWeight.bold),
+          //         ),
+          //       ],
+          //     );
+          //   });
+          // }),
+          leading: const DrawerButton(
+            color: AppColors.kBlack,
+          ),
           centerTitle: true,
           title: const AppPageHeadText(title: 'Add Asset'),
         ),
@@ -75,20 +83,32 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
               children: [
                 AppMargin(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      AppSpacer(
+                        heightPortion: .01,
+                      ),
                       _buildEntityDropdown(),
                       _buildSectionInchargeDropdown(),
                       _buildSectionDropdown(),
                       _buildBlockOrStationDropdown(),
+                      Text(
+                        'Asset ID',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.kBlack),
+                      ),
                       CustomFormField(
                         isRequiredField: true,
                         controller: assetIdController,
                         hintText: 'Asset ID / SL#',
                       ),
                       const AppSpacer(heightPortion: .05),
-                      CustomButton(
-                        title: 'SUBMIT',
-                        onTap: _handleSubmit,
+                      Center(
+                        child: CustomButton(
+                          title: 'ADD ASSET',
+                          onTap: _handleSubmit,
+                        ),
                       ),
                     ],
                   ),
@@ -117,7 +137,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
             .sort((a, b) => (a['title'] ?? '').compareTo(b['title'] ?? ''));
         return CustomDropdownField(
             onCallBack: assetCtrl.onChangeEnitity,
-            hintText: 'Asset Group',
+            hintText: 'Asset Type',
             items: sortedItems);
       },
     );
@@ -284,6 +304,5 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
   Future offlineDataEntry(AddNewAssetModel assetModel) async {
     await Provider.of<OfflineAddEntityDb>(context, listen: false)
         .addToOfflineAddEntityDb(assetModel);
-    
   }
 }

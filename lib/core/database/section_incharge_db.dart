@@ -1,9 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_section_incharge_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/section_incharge_model.dart';
 
 class SectionInchargeDb with ChangeNotifier {
@@ -15,9 +18,10 @@ class SectionInchargeDb with ChangeNotifier {
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
 
-  void storeSectionIncharges(BuildContext context) async {
+  Future storeSectionIncharges(BuildContext context) async {
     try {
-      _isDownloading = true;
+     if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
+          true) {  _isDownloading = true;
       notifyListeners();
       final db = await LocalDatabaseService().initDb;
 
@@ -45,7 +49,9 @@ class SectionInchargeDb with ChangeNotifier {
 
       log('Section Incharge Downloaded Successful');
       await getAllSectionIncharges();
-      _isDownloading = false;
+      _isDownloading = false; } else {
+        showMessage('Please Check Your Internet Connection');
+      }
     } catch (e) {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');

@@ -4,9 +4,11 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_entity_profile_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
+import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/entity_profile_model.dart';
 
 class EnitityProfileDb with ChangeNotifier {
@@ -17,52 +19,60 @@ class EnitityProfileDb with ChangeNotifier {
   bool? get isDownloading => _isDownloading;
   Future<void> storeEnitityProfile(BuildContext context) async {
     try {
-      _isDownloading = true;
-      notifyListeners();
-      final db = await LocalDatabaseService().initDb;
+      if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
+          true) {
+        _isDownloading = true;
+        notifyListeners();
+        final db = await LocalDatabaseService().initDb;
 
-      await _clearTable();
-      final result = await FetchEntityProfileRepo().fetchEntityProfile(context);
-      List data = result!.data as List;
-      List<EntityProfileModel> listOfEnitityProfile =
-          data.map((e) => EntityProfileModel.fromJson(e)).toList();
+        await _clearTable();
+        final result =
+            await FetchEntityProfileRepo().fetchEntityProfile(context);
+        List data = result!.data as List;
+        List<EntityProfileModel> listOfEnitityProfile =
+            data.map((e) => EntityProfileModel.fromJson(e)).toList();
 
-      for (var enitityProfile in listOfEnitityProfile) {
-        await db.insert(
-          entityProfileCollection,
-          enitityProfile.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
+        for (var enitityProfile in listOfEnitityProfile) {
+          await db.insert(
+            entityProfileCollection,
+            enitityProfile.toJson(),
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+          // await db.rawInsert(
+          //     'INSERT INTO $entityProfileCollection(entityProfileId,divisionId,sectionInchargeId,sectionId,blockSectionId,stationId,entityId,entityIdentifier,entityLatt,entityLong,entityStatus,entityConfirmed,status,userId,modifiedDate) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+          //     [
+          //       enitityProfile.entityProfileId,
+          //       enitityProfile.divisionId,
+          //       enitityProfile.sectionInchargeId,
+          //       enitityProfile.sectionId,
+          //       enitityProfile.blockSectionId,
+          //       enitityProfile.stationId,
+          //       enitityProfile.entityId,
+          //       enitityProfile.entityIdentifier,
+          //       enitityProfile.entityLatt,
+          //       enitityProfile.entityLong,
+          //       enitityProfile.entityStatus,
+          //       enitityProfile.entityConfirmed,
+          //       enitityProfile.status,
+          //       enitityProfile.userId,
+          //       enitityProfile.modifiedDate
+          //     ]);
+        }
+
+        print('Enitity Profile  Downloaded Successful');
+        await getAllEnitityProfile();
+        _isDownloading = false;
+      } else {
+        showMessage(
+          'Please Check Your Internet Connection',
         );
-        // await db.rawInsert(
-        //     'INSERT INTO $entityProfileCollection(entityProfileId,divisionId,sectionInchargeId,sectionId,blockSectionId,stationId,entityId,entityIdentifier,entityLatt,entityLong,entityStatus,entityConfirmed,status,userId,modifiedDate) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-        //     [
-        //       enitityProfile.entityProfileId,
-        //       enitityProfile.divisionId,
-        //       enitityProfile.sectionInchargeId,
-        //       enitityProfile.sectionId,
-        //       enitityProfile.blockSectionId,
-        //       enitityProfile.stationId,
-        //       enitityProfile.entityId,
-        //       enitityProfile.entityIdentifier,
-        //       enitityProfile.entityLatt,
-        //       enitityProfile.entityLong,
-        //       enitityProfile.entityStatus,
-        //       enitityProfile.entityConfirmed,
-        //       enitityProfile.status,
-        //       enitityProfile.userId,
-        //       enitityProfile.modifiedDate
-        //     ]);
       }
-
-      print('Enitity Profile  Downloaded Successful');
-      await getAllEnitityProfile();
-      _isDownloading = false;
     } catch (e) {
       _isDownloading = false;
 
       print('exception on adding data in to table ${e.toString()}');
     }
-      notifyListeners();
+    notifyListeners();
   }
 
   Future getAllEnitityProfile() async {

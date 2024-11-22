@@ -24,8 +24,10 @@ import 'package:test_managment/core/controller/test_asset_controller.dart';
 import 'package:test_managment/core/controller/camera_controller.dart';
 import 'package:test_managment/core/controller/dashboard_controller.dart';
 import 'package:test_managment/core/controller/floating_bar_controller.dart';
+import 'package:test_managment/core/services/local_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/services/network_service.dart';
+import 'package:test_managment/core/services/shared_pre_service.dart';
 
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/presentation/screens/spash_screen.dart';
@@ -67,6 +69,9 @@ class _ProviderMainState extends State<ProviderMain> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
+       ChangeNotifierProvider<SharedPreService>(
+        create: (context) => SharedPreService(),
+      ),
       ChangeNotifierProvider<LocationService>(
         create: (context) => LocationService(),
       ),
@@ -78,6 +83,9 @@ class _ProviderMainState extends State<ProviderMain> {
       ),
       ChangeNotifierProvider<FloatingBarController>(
         create: (context) => FloatingBarController(),
+      ),
+       ChangeNotifierProvider<LocalDatabaseService>(
+        create: (context) => LocalDatabaseService(),
       ),
       ChangeNotifierProvider<TestAssetsController>(
         create: (context) => TestAssetsController(),
@@ -93,6 +101,7 @@ class _ProviderMainState extends State<ProviderMain> {
       ChangeNotifierProvider<AuthDb>(
         create: (context) => AuthDb(),
       ),
+       
       ChangeNotifierProvider<SectionInchargeDb>(
         create: (context) => SectionInchargeDb(),
       ),
@@ -168,29 +177,6 @@ class _MyAppState extends State<MyApp> {
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         locale: context.locale,
-        home: SpashScreen());
+        home: const SpashScreen());
   }
 }
-// StreamBuilder<List<ConnectivityResult>>(
-//         stream: Connectivity().onConnectivityChanged,
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return const SizedBox();
-//           } else {
-//             if (snapshot.hasData || snapshot.data!.isNotEmpty) {
-//               if (snapshot.data!.first == ConnectivityResult.mobile ||
-//                   snapshot.data!.first == ConnectivityResult.wifi) {
-//                 return const MyApp();
-//               } else if (snapshot.data!.first != ConnectivityResult.mobile ||
-//                   snapshot.data!.first != ConnectivityResult.wifi) {
-//                 log('Data is off');
-//                 return const NetworkConnectivityPage();
-//               } else {
-//                 return const NetworkConnectivityPage();
-//               }
-//             } else {
-//               return const NetworkConnectivityPage();
-//             }
-//           }
-//         }),
-//   ));

@@ -49,6 +49,8 @@ dependencies:
   internet_connection_checker: ^1.0.0+1
   connectivity_plus: ^6.0.5
   flutter_image_compress: ^2.3.0
+  package_info_plus: ^8.1.1
+  shared_preferences: ^2.3.3
 
 dev_dependencies:
   flutter_test:

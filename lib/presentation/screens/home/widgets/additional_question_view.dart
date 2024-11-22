@@ -88,6 +88,7 @@ class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
                         isRequired:
                             parameter.mandatory == 'YES' ? true : false),
                     CustomDropdownField(
+                        dontShowTitle: true,
                         items: getfilterParametsrValue(parameter),
                         onCallBack: (p0) {
                           final data =

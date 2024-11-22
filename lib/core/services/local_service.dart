@@ -18,8 +18,9 @@ import 'package:test_managment/core/database/parameters_value_db.dart';
 import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
+import 'package:test_managment/core/services/shared_pre_service.dart';
 
-class LocalDatabaseService {
+class LocalDatabaseService with ChangeNotifier {
   static final LocalDatabaseService _instance =
       LocalDatabaseService._internal();
   factory LocalDatabaseService() => _instance;
@@ -154,18 +155,19 @@ class LocalDatabaseService {
   }
 
   Future<Database?> _initOfflineTestEntityDatabase() async {
-  log('!---------------- OFFLINE Test Entity database initialized ---------------!');
-  try {
-    final path = join(await getDatabasesPath(), 'offlineTestEntityDatabase.db');
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: (db, version) {
-        // Enable foreign key constraints
-        db.execute('PRAGMA foreign_keys = ON');
+    log('!---------------- OFFLINE Test Entity database initialized ---------------!');
+    try {
+      final path =
+          join(await getDatabasesPath(), 'offlineTestEntityDatabase.db');
+      return await openDatabase(
+        path,
+        version: 1,
+        onCreate: (db, version) {
+          // Enable foreign key constraints
+          db.execute('PRAGMA foreign_keys = ON');
 
-        // Create Table 1
-        db.execute('''
+          // Create Table 1
+          db.execute('''
           CREATE TABLE IF NOT EXISTS ${OfflineTestEntityDb.testEntityOfflineCollection} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             entityId TEXT,
@@ -182,8 +184,8 @@ class LocalDatabaseService {
           )
         ''');
 
-        // Create Table 2 with a Foreign Key
-        db.execute('''
+          // Create Table 2 with a Foreign Key
+          db.execute('''
           CREATE TABLE IF NOT EXISTS ${OfflineTestEntityDb.testEntityParameterCollection} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             parameterId TEXT,
@@ -193,13 +195,13 @@ class LocalDatabaseService {
             FOREIGN KEY (testEntityId) REFERENCES ${OfflineTestEntityDb.testEntityOfflineCollection}(id) ON DELETE CASCADE ON UPDATE NO ACTION
           )
         ''');
-      },
-    );
-  } catch (e) {
-    log('Exception on initializing offline for Test Entity table: ${e.toString()}');
-    return null;
+        },
+      );
+    } catch (e) {
+      log('Exception on initializing offline for Test Entity table: ${e.toString()}');
+      return null;
+    }
   }
-}
 
   void fetchAllDatabases(BuildContext context) async {
     await Provider.of<EntiteDb>(context, listen: false).getAllEntities();
@@ -219,7 +221,52 @@ class LocalDatabaseService {
         .getAllEnitityProfile();
     await Provider.of<OfflineAddEntityDb>(context, listen: false)
         .getAllOfflineAddEntityDb();
-          await Provider.of<OfflineTestEntityDb>(context, listen: false)
+    await Provider.of<OfflineTestEntityDb>(context, listen: false)
         .getAllPendingOfflineTest();
+  }
+
+  bool? _isDownloading;
+  bool get isDownloading => _isDownloading ?? false;
+
+  Future<bool> dowloadAllData(BuildContext context, {bool? dontListen}) async {
+    try {
+      _isDownloading = true;
+      if (dontListen == null) {
+        notifyListeners();
+      }
+      await Provider.of<EntiteDb>(context, listen: false).storeEntity(context);
+      await Provider.of<SectionInchargeDb>(context, listen: false)
+          .storeSectionIncharges(context);
+      await Provider.of<SectionDb>(context, listen: false)
+          .storeSection(context);
+      await Provider.of<BlockSectionDb>(context, listen: false)
+          .storeBlockSections(context);
+      await Provider.of<StationDb>(context, listen: false)
+          .storeStations(context);
+      await Provider.of<ParametersDb>(context, listen: false)
+          .storeParameters(context);
+      await Provider.of<ParametersValueDb>(context, listen: false)
+          .storeParametersValues(context);
+      await Provider.of<ParametersReasonDb>(context, listen: false)
+          .storeParameterReson(context);
+      await Provider.of<EnitityProfileDb>(context, listen: false)
+          .storeEnitityProfile(context);
+      await Provider.of<OfflineAddEntityDb>(context, listen: false)
+          .getAllOfflineAddEntityDb();
+      await Provider.of<OfflineTestEntityDb>(context, listen: false)
+          .getAllPendingOfflineTest();
+      _isDownloading = false;
+      if (dontListen == null) {
+        notifyListeners();
+      }
+      return true;
+      //         .deletedData();
+    } catch (e) {
+      _isDownloading = false;
+      if (dontListen == null) {
+        notifyListeners();
+      }
+      return false;
+    }
   }
 }

@@ -42,8 +42,10 @@ class OfflineAddEntityDb with ChangeNotifier {
       final dataofPentitles =
           await db.rawQuery('SELECT * FROM $offlineCollectionTable');
 
-      _listOfflineEntitites =
-          dataofPentitles.map((e) => AddNewAssetModel.fromJson(e)).toList();
+      if (dataofPentitles.isNotEmpty) {
+        _listOfflineEntitites =
+            dataofPentitles.map((e) => AddNewAssetModel.fromJson(e)).toList();
+      }
       _isDownloading = false;
       notifyListeners();
       log('Parameters Fetched');

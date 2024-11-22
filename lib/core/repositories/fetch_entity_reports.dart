@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,6 +23,7 @@ class FetchEntityReports {
           }));
 
       final decodedata = jsonDecode(response.toString());
+      // log(decodedata.toString());
 
       if (decodedata['status'] == 200) {
         return ResponseModel.fromJson(decodedata);

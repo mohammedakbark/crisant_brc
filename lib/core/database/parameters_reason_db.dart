@@ -1,9 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_parameter_reason_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/parameter_reson_model.dart';
 
 class ParametersReasonDb with ChangeNotifier {
@@ -15,9 +18,10 @@ class ParametersReasonDb with ChangeNotifier {
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
 
-  void storeParameterReson(BuildContext context) async {
+  Future storeParameterReson(BuildContext context) async {
     try {
-      _isDownloading = true;
+      if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
+          true) {_isDownloading = true;
       notifyListeners();
       final db = await LocalDatabaseService().initDb;
 
@@ -45,7 +49,9 @@ class ParametersReasonDb with ChangeNotifier {
 
       log('Parameter Reson Downloaded Successful');
       await getAllParameterReson();
-      _isDownloading = false;
+      _isDownloading = false;  } else {
+        showMessage('Please Check Your Internet Connection');
+      }
     } catch (e) {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');

@@ -70,12 +70,14 @@ class OfflineTestEntityDb with ChangeNotifier {
     }
   }
 
-  Future getAllPendingOfflineTest() async {
+  Future getAllPendingOfflineTest({bool? dontListen}) async {
     try {
       _listOfflineEntitites = [];
 
       _isDownloading = true;
-      notifyListeners();
+      if (dontListen == null) {
+        notifyListeners();
+      }
       final db = await LocalDatabaseService().initOfflinTestEntityDb;
       final dataOfEntitiesEntryd =
           await db.rawQuery('SELECT * FROM $testEntityOfflineCollection');
@@ -132,10 +134,14 @@ class OfflineTestEntityDb with ChangeNotifier {
       log('Offline Enitity Test Fetched');
 
       _isDownloading = false;
-      notifyListeners();
+      if (dontListen == null) {
+        notifyListeners();
+      }
     } catch (e) {
       _isDownloading = false;
-      notifyListeners();
+      if (dontListen == null) {
+        notifyListeners();
+      }
       log('exception on ftething pending offline test data from table ${e.toString()}');
     }
   }

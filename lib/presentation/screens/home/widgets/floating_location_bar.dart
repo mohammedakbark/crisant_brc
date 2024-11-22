@@ -42,7 +42,7 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
           child: Column(
             children: [
               controller.isNearTarget
-                  ? _buildDestinationReachedUI(controller)
+                  ? _buildNavigationUI(controller)
                   : _buildNavigationUI(controller)
             ],
           ));
@@ -175,7 +175,9 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
                       fontSize: AppDimensions.fontSize15(
                         context,
                       ),
-                      color: AppColors.kBlack),
+                      color: (controller.distance / 1000) > 1
+                          ? AppColors.kRed
+                          : AppColors.kBlack),
                 ),
                 const TextSpan(
                   text: " away from the asset",
@@ -208,46 +210,46 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
     );
   }
 
-  Widget _buildDestinationReachedUI(LocationService controller) {
-    return Column(
-      children: [
-        const Icon(
-          Icons.location_on,
-          size: 50,
-          color: Colors.green,
-        ),
-        const AppSpacer(
-          heightPortion: .01,
-        ),
-        Text(
-          'You have reached your destination!',
-          style: TextStyle(
-            fontSize: AppDimensions.fontSize16(context),
-            fontWeight: FontWeight.bold,
-            color: Colors.green,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const AppSpacer(
-          heightPortion: .03,
-        ),
-        RichText(
-            text: TextSpan(
-                text: "You are ",
-                style: const TextStyle(color: AppColors.kBlack),
-                children: [
-              TextSpan(
-                text: '${(controller.distance / 1000).toStringAsFixed(3)} Km',
-                style: const TextStyle(
-                    color: AppColors.kBlack, fontWeight: FontWeight.bold),
-              ),
-              const TextSpan(text: ' from the target')
-            ]))
-        // Text(
-        //   'You are ${(controller.distance / 1000).toStringAsFixed(4)} Km from the target',
-        //   style: TextStyle(fontSize: AppDimensions.fontSize13(context)),
-        // ),
-      ],
-    );
-  }
+  // Widget _buildDestinationReachedUI(LocationService controller) {
+  //   return Column(
+  //     children: [
+  //       const Icon(
+  //         Icons.location_on,
+  //         size: 50,
+  //         color: Colors.green,
+  //       ),
+  //       const AppSpacer(
+  //         heightPortion: .01,
+  //       ),
+  //       Text(
+  //         'You have reached your destination!',
+  //         style: TextStyle(
+  //           fontSize: AppDimensions.fontSize16(context),
+  //           fontWeight: FontWeight.bold,
+  //           color: Colors.green,
+  //         ),
+  //         textAlign: TextAlign.center,
+  //       ),
+  //       const AppSpacer(
+  //         heightPortion: .03,
+  //       ),
+  //       RichText(
+  //           text: TextSpan(
+  //               text: "You are ",
+  //               style: const TextStyle(color: AppColors.kBlack),
+  //               children: [
+  //             TextSpan(
+  //               text: '${(controller.distance / 1000).toStringAsFixed(3)} Km',
+  //               style: const TextStyle(
+  //                   color: AppColors.kBlack, fontWeight: FontWeight.bold),
+  //             ),
+  //             const TextSpan(text: ' from the target')
+  //           ]))
+  //       // Text(
+  //       //   'You are ${(controller.distance / 1000).toStringAsFixed(4)} Km from the target',
+  //       //   style: TextStyle(fontSize: AppDimensions.fontSize13(context)),
+  //       // ),
+  //     ],
+  //   );
+  // }
 }

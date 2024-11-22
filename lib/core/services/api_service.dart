@@ -8,6 +8,7 @@ import 'package:test_managment/core/repositories/add_new_test_repo.dart';
 import 'package:test_managment/core/repositories/auth_repo.dart';
 import 'package:test_managment/core/database/auth_db.dart';
 import 'package:test_managment/core/repositories/fetch_entity_reports.dart';
+import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/add_new_asset_model.dart';
 import 'package:test_managment/model/reposrts%20models/test_report_add_model.dart';
 import 'package:test_managment/model/test_report_model.dart';
@@ -63,24 +64,32 @@ class ApiService {
 
   static Future<List<TestReportsModel>> getAllTestReports(
       BuildContext context) async {
-    final result = await FetchEntityReports().fetchEntitiesTestReports(context);
-    if (result != null) {
-      if (!result.error) {
-        final data = result.data as List;
-        List<TestReportsModel> lis = data
-            .map(
-              (e) => TestReportsModel.fromJson(e),
-            )
-            .toList();
-        // showMessage(result.message);
-        log(lis.length.toString());
-        return lis;
+    if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
+        true) {
+      final result =
+          await FetchEntityReports().fetchEntitiesTestReports(context);
+      if (result != null) {
+        if (!result.error) {
+          final data = result.data as List;
+          List<TestReportsModel> lis = data
+              .map(
+                (e) => TestReportsModel.fromJson(e),
+              )
+              .toList();
+          log(lis.length.toString());
+          // Sort in descending order by createdDate
+          lis.sort((a, b) => (b.createdDate).compareTo(a.createdDate));
+          return lis;
+        } else {
+          showMessage(result.message, isWarning: true);
+          return [];
+        }
       } else {
-        showMessage(result.message, isWarning: true);
+        showMessage('Test Report Feching Failed', isWarning: true);
         return [];
       }
     } else {
-      showMessage('Test Report Feching Failed', isWarning: true);
+      showMessage('Please Check Your Internet Connection');
       return [];
     }
   }

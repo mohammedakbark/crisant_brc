@@ -1,9 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_entity_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/entity_model.dart';
 
 class EntiteDb with ChangeNotifier {
@@ -12,9 +15,11 @@ class EntiteDb with ChangeNotifier {
   List<EntityModel> get listOfEntityData => _listOfEntityData;
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
-  void storeEntity(BuildContext context) async {
+  Future storeEntity(BuildContext context) async {
     try {
-      _isDownloading = true;
+      if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
+          true) {
+            _isDownloading = true;
       notifyListeners();
 
       final db = await LocalDatabaseService().initDb;
@@ -45,12 +50,17 @@ class EntiteDb with ChangeNotifier {
       log('Entity Downloaded Successful');
       await getAllEntities();
       _isDownloading = false;
+      } else {
+        showMessage(
+          'Please Check Your Internet Connection',
+        );
+      }
     } catch (e) {
       _isDownloading = false;
 
       log('exception on adding data in to table ${e.toString()}');
     }
-      notifyListeners();
+    notifyListeners();
   }
 
   Future getAllEntities() async {

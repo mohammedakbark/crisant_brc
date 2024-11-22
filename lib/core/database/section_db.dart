@@ -1,9 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_section_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/section_model.dart';
 
 class SectionDb with ChangeNotifier {
@@ -14,41 +17,46 @@ class SectionDb with ChangeNotifier {
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
 
-  void storeSection(BuildContext context) async {
+  Future storeSection(BuildContext context) async {
     try {
-      _isDownloading = true;
-      notifyListeners();
-      final db = await LocalDatabaseService().initDb;
+      if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
+          true) {
+        _isDownloading = true;
+        notifyListeners();
+        final db = await LocalDatabaseService().initDb;
 
-      await _clearTable();
-      final result = await FetchSectionRepo().fetchSection(context);
-      List data = result!.data as List;
-      List<SectionModel> listOfSection =
-          data.map((e) => SectionModel.fromJson(e)).toList();
+        await _clearTable();
+        final result = await FetchSectionRepo().fetchSection(context);
+        List data = result!.data as List;
+        List<SectionModel> listOfSection =
+            data.map((e) => SectionModel.fromJson(e)).toList();
 
-      for (var section in listOfSection) {
-        await db.insert(
-          sectionCollection,
-          section.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-        // await db.rawInsert(
-        //     'INSERT INTO $sectionCollection(sectionId,sectionName,sectionInchargeId) VALUES(?,?,?)',
-        //     [
-        //       section.sectionId,
-        //       section.sectionName,
-        //       section.sectionInchargeId
-        //     ]);
+        for (var section in listOfSection) {
+          await db.insert(
+            sectionCollection,
+            section.toJson(),
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+          // await db.rawInsert(
+          //     'INSERT INTO $sectionCollection(sectionId,sectionName,sectionInchargeId) VALUES(?,?,?)',
+          //     [
+          //       section.sectionId,
+          //       section.sectionName,
+          //       section.sectionInchargeId
+          //     ]);
+        }
+
+        log('Section  Downloaded Successful');
+        await getAllSections();
+        _isDownloading = false;
+      } else {
+        showMessage('Please Check Your Internet Connection');
       }
-
-      log('Section  Downloaded Successful');
-      await getAllSections();
-      _isDownloading = false;
     } catch (e) {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
-      notifyListeners();
+    notifyListeners();
   }
 
   Future getAllSections() async {

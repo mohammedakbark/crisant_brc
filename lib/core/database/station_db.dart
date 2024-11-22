@@ -1,9 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_station_repo.dart';
 import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/station_model.dart';
 
 class StationDb with ChangeNotifier {
@@ -14,32 +17,37 @@ class StationDb with ChangeNotifier {
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
 
-  void storeStations(BuildContext context) async {
+  Future storeStations(BuildContext context) async {
     try {
-      _isDownloading = true;
-      notifyListeners();
-      final db = await LocalDatabaseService().initDb;
+      if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
+          true) {
+        _isDownloading = true;
+        notifyListeners();
+        final db = await LocalDatabaseService().initDb;
 
-      await _clearTable();
-      final result = await FetchStationRepo().fetchStation(context);
-      List data = result!.data as List;
-      List<StationModel> listOfStations =
-          data.map((e) => StationModel.fromJson(e)).toList();
+        await _clearTable();
+        final result = await FetchStationRepo().fetchStation(context);
+        List data = result!.data as List;
+        List<StationModel> listOfStations =
+            data.map((e) => StationModel.fromJson(e)).toList();
 
-      for (var stations in listOfStations) {
-        await db.insert(
-          stationCollection,
-          stations.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-        // await db.rawInsert(
-        //     'INSERT INTO $stationCollection(stationId,stationName,sectionId) VALUES(?,?,?)',
-        //     [stations.stationId, stations.stationName, stations.sectionId]);
+        for (var stations in listOfStations) {
+          await db.insert(
+            stationCollection,
+            stations.toJson(),
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+          // await db.rawInsert(
+          //     'INSERT INTO $stationCollection(stationId,stationName,sectionId) VALUES(?,?,?)',
+          //     [stations.stationId, stations.stationName, stations.sectionId]);
+        }
+
+        log('Stations Downloaded Successful');
+        await getAllSectionIncharges();
+        _isDownloading = false;
+      } else {
+        showMessage('Please Check Your Internet Connection');
       }
-
-      log('Stations Downloaded Successful');
-      await getAllSectionIncharges();
-      _isDownloading = false;
     } catch (e) {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
