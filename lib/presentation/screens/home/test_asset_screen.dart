@@ -8,6 +8,7 @@ import 'package:test_managment/core/controller/camera_controller.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
+import 'package:test_managment/core/database/offline_test_entity_db.dart';
 import 'package:test_managment/core/database/parameters_db.dart';
 import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
@@ -290,133 +291,133 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                         // Ensure sorting works as expected
                         sortedItems.sort((a, b) =>
                             (a['title'] ?? '').compareTo(b['title'] ?? ''));
-                        return Stack(
-                          children: [
-                            Container(
-                              width: w(context),
-                              height: 56,
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: AppDimensions.paddingSize5),
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(AppDimensions.radiusSize5),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    spreadRadius: 1,
-                                    color: AppColors.kBlack.withOpacity(0.2),
-                                    blurRadius: 2,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: AppDimensions.paddingSize5),
-                              child: TextFormField(
-                                style: TextStyle(
-                                  fontSize: AppDimensions.fontSize16(context),
-                                ),
-                                controller: entityIdController,
-                                decoration: InputDecoration(
-                                    hintText: 'Search Entity Profile',
-                                    hintStyle: TextStyle(
-                                      fontSize:
-                                          AppDimensions.fontSize16(context),
-                                      color: AppColors.kGrey,
-                                    ),
-                                    fillColor: AppColors.kWhite,
-                                    filled: true,
-                                    errorStyle:
-                                        const TextStyle(color: AppColors.kRed),
-                                    focusedErrorBorder:
-                                        const OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: AppColors.kRed),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(
-                                            AppDimensions.radiusSize5),
-                                      ),
-                                    ),
-                                    errorBorder: const OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: AppColors.kRed),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(
-                                            AppDimensions.radiusSize5),
-                                      ),
-                                    ),
-                                    border: const OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(
-                                            AppDimensions.radiusSize5),
-                                      ),
-                                    ),
-                                    suffixIcon: PopupMenuButton(
-                                        shadowColor: AppColors.kWhite,
-                                        surfaceTintColor: AppColors.kWhite,
-                                        color: AppColors.kWhite,
-                                        onSelected: (value) {
-                                          Map daata = value as Map;
-                                          entityIdController.text =
-                                              daata['title'];
+                        // return Stack(
+                        //   children: [
+                        //     Container(
+                        //       width: w(context),
+                        //       height: 56,
+                        //       margin: const EdgeInsets.symmetric(
+                        //           vertical: AppDimensions.paddingSize5),
+                        //       decoration: BoxDecoration(
+                        //         borderRadius: const BorderRadius.all(
+                        //           Radius.circular(AppDimensions.radiusSize5),
+                        //         ),
+                        //         boxShadow: [
+                        //           BoxShadow(
+                        //             spreadRadius: 1,
+                        //             color: AppColors.kBlack.withOpacity(0.2),
+                        //             blurRadius: 2,
+                        //             offset: const Offset(0, 1),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //     Padding(
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: AppDimensions.paddingSize5),
+                        //       child: TextFormField(
+                        //         style: TextStyle(
+                        //           fontSize: AppDimensions.fontSize16(context),
+                        //         ),
+                        //         controller: entityIdController,
+                        //         decoration: InputDecoration(
+                        //             hintText: 'Search Entity Profile',
+                        //             hintStyle: TextStyle(
+                        //               fontSize:
+                        //                   AppDimensions.fontSize16(context),
+                        //               color: AppColors.kGrey,
+                        //             ),
+                        //             fillColor: AppColors.kWhite,
+                        //             filled: true,
+                        //             errorStyle:
+                        //                 const TextStyle(color: AppColors.kRed),
+                        //             focusedErrorBorder:
+                        //                 const OutlineInputBorder(
+                        //               borderSide:
+                        //                   BorderSide(color: AppColors.kRed),
+                        //               borderRadius: BorderRadius.all(
+                        //                 Radius.circular(
+                        //                     AppDimensions.radiusSize5),
+                        //               ),
+                        //             ),
+                        //             errorBorder: const OutlineInputBorder(
+                        //               borderSide:
+                        //                   BorderSide(color: AppColors.kRed),
+                        //               borderRadius: BorderRadius.all(
+                        //                 Radius.circular(
+                        //                     AppDimensions.radiusSize5),
+                        //               ),
+                        //             ),
+                        //             border: const OutlineInputBorder(
+                        //               borderSide: BorderSide.none,
+                        //               borderRadius: BorderRadius.all(
+                        //                 Radius.circular(
+                        //                     AppDimensions.radiusSize5),
+                        //               ),
+                        //             ),
+                        //             suffixIcon: PopupMenuButton(
+                        //                 shadowColor: AppColors.kWhite,
+                        //                 surfaceTintColor: AppColors.kWhite,
+                        //                 color: AppColors.kWhite,
+                        //                 onSelected: (value) {
+                        //                   Map daata = value as Map;
+                        //                   entityIdController.text =
+                        //                       daata['title'];
 
-                                          final list =
-                                              Provider.of<ParametersDb>(context,
-                                                      listen: false)
-                                                  .listOfParameters;
-                                          ctlr.onChangedEntityProfile(
-                                              value, list, context);
-                                        },
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: (ctlr.selectedStationId ==
-                                                      null) &&
-                                                  (ctlr.selectedBlockId == null)
-                                              ? Colors.grey.shade400
-                                              : null,
-                                        ),
-                                        itemBuilder: (context) => (ctlr
-                                                        .selectedStationId ==
-                                                    null) &&
-                                                (ctlr.selectedBlockId == null)
-                                            ? []
-                                            : sortedItems
-                                                .asMap()
-                                                .entries
-                                                .map(
-                                                  (e) => PopupMenuItem(
-                                                    value: e.value,
-                                                    child: Text(
-                                                      e.value['title'],
-                                                      style: TextStyle(
-                                                        fontSize: AppDimensions
-                                                            .fontSize16(
-                                                                context),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                                .toList())),
-                              ),
-                            ),
-                          ],
-                        );
-                        // return CustomDropdownField(
-                        //   hintText: 'Entity Profile',
-                        //   items: (ctlr.selectedStationId == null) &&
-                        //           (ctlr.selectedBlockId == null)
-                        //       ? []
-                        //       : sortedItems,
-                        //   onCallBack: (value) {
-                        //     final list = Provider.of<ParametersDb>(context,
-                        //             listen: false)
-                        //         .listOfParameters;
-                        //     ctlr.onChangedEntityProfile(value, list, context);
-                        //   },
+                        //                   final list =
+                        //                       Provider.of<ParametersDb>(context,
+                        //                               listen: false)
+                        //                           .listOfParameters;
+                        //                   ctlr.onChangedEntityProfile(
+                        //                       value, list, context);
+                        //                 },
+                        //                 icon: Icon(
+                        //                   Icons.keyboard_arrow_down_rounded,
+                        //                   color: (ctlr.selectedStationId ==
+                        //                               null) &&
+                        //                           (ctlr.selectedBlockId == null)
+                        //                       ? Colors.grey.shade400
+                        //                       : null,
+                        //                 ),
+                        //                 itemBuilder: (context) => (ctlr
+                        //                                 .selectedStationId ==
+                        //                             null) &&
+                        //                         (ctlr.selectedBlockId == null)
+                        //                     ? []
+                        //                     : sortedItems
+                        //                         .asMap()
+                        //                         .entries
+                        //                         .map(
+                        //                           (e) => PopupMenuItem(
+                        //                             value: e.value,
+                        //                             child: Text(
+                        //                               e.value['title'],
+                        //                               style: TextStyle(
+                        //                                 fontSize: AppDimensions
+                        //                                     .fontSize16(
+                        //                                         context),
+                        //                               ),
+                        //                             ),
+                        //                           ),
+                        //                         )
+                        //                         .toList())),
+                        //       ),
+                        //     ),
+                        //   ],
                         // );
+                        return CustomDropdownField(
+                          hintText: 'Entity Profile',
+                          items: (ctlr.selectedStationId == null) &&
+                                  (ctlr.selectedBlockId == null)
+                              ? []
+                              : sortedItems,
+                          onCallBack: (value) {
+                            final list = Provider.of<ParametersDb>(context,
+                                    listen: false)
+                                .listOfParameters;
+                            ctlr.onChangedEntityProfile(value, list, context);
+                          },
+                        );
                       }),
 
                       Consumer2<TestAssetsController, LocationService>(
@@ -532,7 +533,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
     if (isOnline == true) {
       await onlineSubmit(model);
     } else {
-      await offlineSubmit();
+      await offlineSubmit(model);
     }
     await ctr.clearAllData();
     await cameraController.clearCameraData();
@@ -542,12 +543,13 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
     });
   }
 
-  onlineSubmit(AddNewTestModel model) async {
+  Future onlineSubmit(AddNewTestModel model) async {
     await ApiService.addNewTest(context, model);
   }
 
-  offlineSubmit() {
-    log('Offline Submit');
+  Future offlineSubmit(AddNewTestModel model) async {
+    await Provider.of<OfflineTestEntityDb>(context, listen: false)
+        .storeTestEntityOffline(model);
   }
 
   Widget imagePicker(BuildContext context) {

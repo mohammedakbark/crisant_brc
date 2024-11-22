@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 
@@ -47,7 +49,15 @@ class CameraController with ChangeNotifier {
   Map<String, dynamic>? get convertedImageFile => _convertedImageFile;
 
   _convartImageFileToBase65Formate(File file) async {
-    final bytes = await file.readAsBytes();
+    final compressedImage = await FlutterImageCompress.compressAndGetFile(
+      file.path, // Input file path
+      '${file.path}${DateTime.timestamp()}.jpg', // Output file path
+      quality: 80, // Quality: 0-100 (lower = more compression, less quality)
+      minWidth: 800, // Resize width
+      minHeight: 800, // Resize height
+    );
+    final newFile = File(compressedImage!.path);
+    final bytes = await newFile.readAsBytes();
     final converted = base64Encode(bytes);
     final fileName = path.basename(file.path);
     log(converted);
@@ -56,9 +66,17 @@ class CameraController with ChangeNotifier {
     _convertedImageFile = {'fileName': fileName, 'file': converted};
   }
 
- Future clearCameraData()async {
+  Future clearCameraData() async {
     _fileImage = null;
     _fileName = null;
     _convertedImageFile = null;
+  }
+
+  static Uint8List base64ToBlob(String base64String) {
+    return base64Decode(base64String);
+  }
+
+  static String blobToBase64(Uint8List blob) {
+    return base64Encode(blob);
   }
 }

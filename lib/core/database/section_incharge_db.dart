@@ -50,6 +50,7 @@ class SectionInchargeDb with ChangeNotifier {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
+      notifyListeners();
   }
 
   Future getAllSectionIncharges() async {

@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
-import 'package:test_managment/core/database/offline_db.dart';
+import 'package:test_managment/core/database/offline_add_entity_db.dart';
+import 'package:test_managment/core/database/offline_test_entity_db.dart';
 import 'package:test_managment/core/database/parameters_db.dart';
 import 'package:test_managment/core/database/parameters_reason_db.dart';
 import 'package:test_managment/core/database/parameters_value_db.dart';
@@ -162,11 +163,18 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                       }, dbController.isDownloading ?? false),
                       Text(dbController.listOfEnitityProfiles.length.toString())
                     ])),
-            Consumer<OfflineDb>(
+            Consumer<OfflineAddEntityDb>(
                 builder: (context, dbController, _) => Column(children: [
-                      _buildTile('Entity Profile in Queue', '12-12-2024',
+                      _buildTile('Entity Profile in Queue', '12-12-2024', () {
+                        dbController.getAllOfflineAddEntityDb();
+                      }, dbController.isDownloading ?? false),
+                      Text(dbController.listOfflineEntitites!.length.toString())
+                    ])),
+            Consumer<OfflineTestEntityDb>(
+                builder: (context, dbController, _) => Column(children: [
+                      _buildTile('Entity Test in Queue', '12-12-2024',
                           hideDevider: true, () {
-                        dbController.getAllOFFlineDb();
+                        dbController.getAllPendingOfflineTest();
                       }, dbController.isDownloading ?? false),
                       Text(dbController.listOfflineEntitites!.length.toString())
                     ])),

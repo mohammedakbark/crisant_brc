@@ -62,6 +62,7 @@ class EnitityProfileDb with ChangeNotifier {
 
       print('exception on adding data in to table ${e.toString()}');
     }
+      notifyListeners();
   }
 
   Future getAllEnitityProfile() async {

@@ -10,7 +10,8 @@ import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
 import 'package:test_managment/core/database/auth_db.dart';
-import 'package:test_managment/core/database/offline_db.dart';
+import 'package:test_managment/core/database/offline_add_entity_db.dart';
+import 'package:test_managment/core/database/offline_test_entity_db.dart';
 import 'package:test_managment/core/database/parameters_db.dart';
 import 'package:test_managment/core/database/parameters_reason_db.dart';
 import 'package:test_managment/core/database/parameters_value_db.dart';
@@ -43,11 +44,19 @@ class LocalDatabaseService {
   }
   //--------------
 
-  Database? _initOfflineDb;
-  Future<Database> get initOfflineDb async {
-    if (_initOfflineDb != null) return _initOfflineDb!;
-    _initOfflineDb = await _initOfflienDatabase();
-    return _initOfflineDb!;
+  Database? _initOfflineAddEntityDb;
+  Future<Database> get initOfflineAddEntityDb async {
+    if (_initOfflineAddEntityDb != null) return _initOfflineAddEntityDb!;
+    _initOfflineAddEntityDb = await _initOfflineAddEntityDatabase();
+    return _initOfflineAddEntityDb!;
+  }
+
+  //---------------
+  Database? _initOfflinTestEntityDb;
+  Future<Database> get initOfflinTestEntityDb async {
+    if (_initOfflinTestEntityDb != null) return _initOfflinTestEntityDb!;
+    _initOfflinTestEntityDb = await _initOfflineTestEntityDatabase();
+    return _initOfflinTestEntityDb!;
   }
 
   Future<Database?> _inittestAssetsDatabase() async {
@@ -126,8 +135,8 @@ class LocalDatabaseService {
     }
   }
 
-  Future<Database?> _initOfflienDatabase() async {
-    log('!---------------- auth database initialized ---------------!');
+  Future<Database?> _initOfflineAddEntityDatabase() async {
+    log('!---------------- OFFLINE Add Entity database initialized ---------------!');
     try {
       final path = join(await getDatabasesPath(), 'offlineDatabase.db');
       return await openDatabase(
@@ -135,7 +144,7 @@ class LocalDatabaseService {
         version: 1,
         onCreate: (db, version) {
           db.execute(
-              'CREATE TABLE IF NOT EXISTS ${OfflineDb.offlineCollectionTable} (entityIdentifier TEXT PRIMARY KEY, sectionInchargeId TEXT,sectionId TEXT,blockSectionId TEXT,stationId TEXT,entityId TEXT,entityLatt TEXT,entityLong TEXT)');
+              'CREATE TABLE IF NOT EXISTS ${OfflineAddEntityDb.offlineCollectionTable} (id INTEGER PRIMARY KEY AUTOINCREMENT,entityIdentifier TEXT , sectionInchargeId TEXT,sectionId TEXT,blockSectionId TEXT,stationId TEXT,entityId TEXT,entityLatt TEXT,entityLong TEXT)');
         },
       );
     } catch (e) {
@@ -143,6 +152,54 @@ class LocalDatabaseService {
       return null;
     }
   }
+
+  Future<Database?> _initOfflineTestEntityDatabase() async {
+  log('!---------------- OFFLINE Test Entity database initialized ---------------!');
+  try {
+    final path = join(await getDatabasesPath(), 'offlineTestEntityDatabase.db');
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) {
+        // Enable foreign key constraints
+        db.execute('PRAGMA foreign_keys = ON');
+
+        // Create Table 1
+        db.execute('''
+          CREATE TABLE IF NOT EXISTS ${OfflineTestEntityDb.testEntityOfflineCollection} (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            entityId TEXT,
+            sectionInchargeId TEXT,
+            sectionId TEXT,
+            blockSectionId TEXT,
+            stationId TEXT,
+            entityProfileId TEXT,
+            testLatt TEXT,
+            testLong TEXT,
+            testMode TEXT,
+            connectivityMode TEXT,
+            picture blob
+          )
+        ''');
+
+        // Create Table 2 with a Foreign Key
+        db.execute('''
+          CREATE TABLE IF NOT EXISTS ${OfflineTestEntityDb.testEntityParameterCollection} (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            parameterId TEXT,
+            parameterValue TEXT,
+            parameterReasonId TEXT,
+            testEntityId INTEGER,
+            FOREIGN KEY (testEntityId) REFERENCES ${OfflineTestEntityDb.testEntityOfflineCollection}(id) ON DELETE CASCADE ON UPDATE NO ACTION
+          )
+        ''');
+      },
+    );
+  } catch (e) {
+    log('Exception on initializing offline for Test Entity table: ${e.toString()}');
+    return null;
+  }
+}
 
   void fetchAllDatabases(BuildContext context) async {
     await Provider.of<EntiteDb>(context, listen: false).getAllEntities();
@@ -160,7 +217,9 @@ class LocalDatabaseService {
         .getAllParameterReson();
     await Provider.of<EnitityProfileDb>(context, listen: false)
         .getAllEnitityProfile();
-         await Provider.of<OfflineDb>(context, listen: false)
-        .getAllOFFlineDb();
+    await Provider.of<OfflineAddEntityDb>(context, listen: false)
+        .getAllOfflineAddEntityDb();
+          await Provider.of<OfflineTestEntityDb>(context, listen: false)
+        .getAllPendingOfflineTest();
   }
 }

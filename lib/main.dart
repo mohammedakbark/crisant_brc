@@ -10,7 +10,8 @@ import 'package:test_managment/core/controller/parameter_controller.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
-import 'package:test_managment/core/database/offline_db.dart';
+import 'package:test_managment/core/database/offline_add_entity_db.dart';
+import 'package:test_managment/core/database/offline_test_entity_db.dart';
 import 'package:test_managment/core/database/parameters_db.dart';
 import 'package:test_managment/core/database/parameters_reason_db.dart';
 import 'package:test_managment/core/database/parameters_value_db.dart';
@@ -34,20 +35,18 @@ void main() async {
   await EasyLocalization.ensureInitialized();
 
   runApp(EasyLocalization(
-    supportedLocales: const [
-      Locale('en'),
-      Locale(
-        'hi',
-      )
-    ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale(
+          'hi',
+        )
+      ],
+      fallbackLocale: const Locale(
+        'en',
+      ), // Default language,
 
-    fallbackLocale: const Locale(
-      'en',
-    ), // Default language,
-
-    path: 'assets/language', // Path to your language files
-    child: ProviderMain()
-  ));
+      path: 'assets/language', // Path to your language files
+      child: ProviderMain()));
 
   // SystemChrome.setSystemUIOverlayStyle(
   //   const SystemUiOverlayStyle(
@@ -118,8 +117,11 @@ class _ProviderMainState extends State<ProviderMain> {
       ChangeNotifierProvider<EnitityProfileDb>(
         create: (context) => EnitityProfileDb(),
       ),
-        ChangeNotifierProvider<OfflineDb>(
-        create: (context) => OfflineDb(),
+      ChangeNotifierProvider<OfflineTestEntityDb>(
+        create: (context) => OfflineTestEntityDb(),
+      ),
+      ChangeNotifierProvider<OfflineAddEntityDb>(
+        create: (context) => OfflineAddEntityDb(),
       ),
       ChangeNotifierProvider<ParameterController>(
         create: (context) => ParameterController(),
@@ -127,7 +129,6 @@ class _ProviderMainState extends State<ProviderMain> {
       ChangeNotifierProvider<NetworkService>(
         create: (context) => NetworkService(context),
       ),
-     
     ], child: const MyApp());
   }
 }

@@ -61,7 +61,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   void dispose() {
-    _locationProvider.dispose();
+    // _locationProvider.dispose();
     _removeLocationBanner();
     super.dispose();
   }

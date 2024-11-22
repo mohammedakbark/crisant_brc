@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/custom_button.dart';
@@ -76,11 +77,13 @@ class LoginScreen extends StatelessWidget {
                   onTap: () async {
                     print('object');
                     if (_formKey.currentState!.validate()) {
+                      showLoaingIndicator(context);
                       final response = await ApiService.loginUser(
                           usernameController.text,
                           passwordController.text,
                           1,
                           context);
+                      closeLoadingIndicator(context);
                       if (response) {
                         Navigator.of(context).pushAndRemoveUntil(
                           AppRoutes.createRoute(const DashboardScreen()),

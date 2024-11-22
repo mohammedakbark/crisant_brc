@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/common_widgets.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
@@ -32,6 +33,9 @@ showLoaingIndicator(BuildContext context) {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             AppLoadingIndicator(),
+            AppSpacer(
+              widthPortion: .02,
+            ),
             Text(
               'Please wait a moment..',
               style: TextStyle(fontWeight: FontWeight.w500),

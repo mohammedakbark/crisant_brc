@@ -50,6 +50,7 @@ class EntiteDb with ChangeNotifier {
 
       log('exception on adding data in to table ${e.toString()}');
     }
+      notifyListeners();
   }
 
   Future getAllEntities() async {

@@ -14,7 +14,7 @@ import 'package:test_managment/core/components/custom_form_field.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
-import 'package:test_managment/core/database/offline_db.dart';
+import 'package:test_managment/core/database/offline_add_entity_db.dart';
 import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
@@ -275,13 +275,15 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
     setState(() {});
   }
 
-  onlineDataEntry(AddNewAssetModel assetModel) async {
+  Future onlineDataEntry(AddNewAssetModel assetModel) async {
     await ApiService.addNewAsset(context, assetModel);
     await Provider.of<EnitityProfileDb>(context, listen: false)
         .storeEnitityProfile(context);
   }
 
-  offlineDataEntry(AddNewAssetModel assetModel) async {
-    Provider.of<OfflineDb>(context, listen: false).addToOfflineDb(assetModel);
+  Future offlineDataEntry(AddNewAssetModel assetModel) async {
+    await Provider.of<OfflineAddEntityDb>(context, listen: false)
+        .addToOfflineAddEntityDb(assetModel);
+    
   }
 }

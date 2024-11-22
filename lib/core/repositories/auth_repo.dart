@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/model/response_model.dart';
 import 'package:test_managment/core/utils/app_const.dart';
 
@@ -12,8 +13,8 @@ class AuthRepo {
       String userName, String password, int devisionId) async {
     try {
       final response = await dio.post(url, data: {
-        "userName": userName,
-        "userPassword": password,
+        "userName": userName.trim(),
+        "userPassword": password.trim(),
         "divisionId": devisionId
       });
 
@@ -25,6 +26,7 @@ class AuthRepo {
         return ResponseModel.fromJson(decodedata);
       }
     } catch (e) {
+      showMessage('Please Check Your Internet Connection', isWarning: true);
       log(e.toString());
       return null;
     }

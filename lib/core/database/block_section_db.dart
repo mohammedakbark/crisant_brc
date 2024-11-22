@@ -48,6 +48,7 @@ class BlockSectionDb with ChangeNotifier {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
+      notifyListeners();
   }
 
   Future getAllBlockSections() async {

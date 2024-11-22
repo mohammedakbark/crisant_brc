@@ -50,6 +50,7 @@ class ParametersReasonDb with ChangeNotifier {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
+      notifyListeners();
   }
 
   Future getAllParameterReson() async {

@@ -4,7 +4,8 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:test_managment/core/database/offline_db.dart';
+import 'package:test_managment/core/database/offline_add_entity_db.dart';
+import 'package:test_managment/core/database/offline_test_entity_db.dart';
 
 class NetworkService with ChangeNotifier {
   final Connectivity _connectivity = Connectivity();
@@ -31,7 +32,9 @@ class NetworkService with ChangeNotifier {
           (result) {
             if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
               _netisConnected = true; // Internet is available
-              Provider.of<OfflineDb>(context, listen: false)
+              Provider.of<OfflineAddEntityDb>(context, listen: false)
+                  .storeAllOfflineDataToServer(context);
+              Provider.of<OfflineTestEntityDb>(context, listen: false)
                   .storeAllOfflineDataToServer(context);
             } else {
               _netisConnected = false;

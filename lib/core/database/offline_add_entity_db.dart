@@ -1,58 +1,61 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/alert_message.dart';
+import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/services/api_service.dart';
 import 'package:test_managment/core/services/local_service.dart';
 import 'package:test_managment/model/add_new_asset_model.dart';
 import 'package:test_managment/model/db%20models/entity_profile_model.dart';
 
-
-
-class OfflineDb with ChangeNotifier {
+class OfflineAddEntityDb with ChangeNotifier {
   static const offlineCollectionTable = 'offline_collection';
 
   List<AddNewAssetModel>? _listOfflineEntitites;
   List<AddNewAssetModel>? get listOfflineEntitites =>
       _listOfflineEntitites ?? [];
-bool? _isDownloading;
-bool? get isDownloading => _isDownloading;
-  Future<void> addToOfflineDb(AddNewAssetModel model) async {
+  bool? _isDownloading;
+  bool? get isDownloading => _isDownloading;
+  Future<void> addToOfflineAddEntityDb(AddNewAssetModel model) async {
     try {
-      _isDownloading = true;
-      notifyListeners();
-      final db = await LocalDatabaseService().initOfflineDb;
+      final db = await LocalDatabaseService().initOfflineAddEntityDb;
 
       await db.insert(offlineCollectionTable, model.toJson(),
           conflictAlgorithm: ConflictAlgorithm.replace);
 
-      await getAllOFFlineDb();
-      _isDownloading = false;
+      await getAllOfflineAddEntityDb();
+      showMessage('Entity added successfully (OFFLINE)');
     } catch (e) {
-      _isDownloading = false;
+      showMessage('Entity added Failed (OFFLINE)', isWarning: true);
       log('exception on adding data in to table ${e.toString()}');
     }
   }
 
-  Future getAllOFFlineDb() async {
-    final db = await LocalDatabaseService().initOfflineDb;
+  Future getAllOfflineAddEntityDb() async {
+    final db = await LocalDatabaseService().initOfflineAddEntityDb;
 
     try {
+      _isDownloading = true;
+      notifyListeners();
       final dataofPentitles =
           await db.rawQuery('SELECT * FROM $offlineCollectionTable');
 
       _listOfflineEntitites =
           dataofPentitles.map((e) => AddNewAssetModel.fromJson(e)).toList();
+      _isDownloading = false;
       notifyListeners();
       log('Parameters Fetched');
     } catch (e) {
+      _isDownloading = false;
+      notifyListeners();
       log('exception on getting data from table ${e.toString()}');
     }
   }
 
   Future _clearTable() async {
-    final db = await LocalDatabaseService().initOfflineDb;
+    final db = await LocalDatabaseService().initOfflineAddEntityDb;
 
     try {
       await db.delete(offlineCollectionTable);
@@ -72,8 +75,10 @@ bool? get isDownloading => _isDownloading;
             await ApiService.addNewAsset(context, i);
             showMessage('Storing Offline assessment to server');
           }
-          _clearTable();
-          getAllOFFlineDb();
+          await _clearTable();
+          await getAllOfflineAddEntityDb();
+          await Provider.of<EnitityProfileDb>(context, listen: false)
+              .storeEnitityProfile(context);
         }
       }
     } catch (e) {
