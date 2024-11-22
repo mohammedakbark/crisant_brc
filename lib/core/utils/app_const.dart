@@ -1,5 +1,5 @@
 class AppConst {
-  static const baseURL = 'https://crisantdemo.in/ecsocket/api/';
+  static const baseURL = 'https://app.testmanagement.in/api/';
   static const entityURL = '/masters/entities';
   static const devisionURL = '/masters/divisions';
   static const sectionInchargeURL = '/masters/sectionincharge';

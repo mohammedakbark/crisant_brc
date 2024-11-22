@@ -46,7 +46,28 @@ void main() async {
     ), // Default language,
 
     path: 'assets/language', // Path to your language files
-    child: MultiProvider(providers: [
+    child: ProviderMain()
+  ));
+
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   const SystemUiOverlayStyle(
+  //     statusBarColor: Colors.white,
+  //     statusBarIconBrightness: Brightness.dark,
+  //   ),
+  // );
+}
+
+class ProviderMain extends StatefulWidget {
+  const ProviderMain({super.key});
+
+  @override
+  State<ProviderMain> createState() => _ProviderMainState();
+}
+
+class _ProviderMainState extends State<ProviderMain> {
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(providers: [
       ChangeNotifierProvider<LocationService>(
         create: (context) => LocationService(),
       ),
@@ -97,24 +118,18 @@ void main() async {
       ChangeNotifierProvider<EnitityProfileDb>(
         create: (context) => EnitityProfileDb(),
       ),
+        ChangeNotifierProvider<OfflineDb>(
+        create: (context) => OfflineDb(),
+      ),
       ChangeNotifierProvider<ParameterController>(
         create: (context) => ParameterController(),
       ),
       ChangeNotifierProvider<NetworkService>(
-        create: (context) => NetworkService(),
+        create: (context) => NetworkService(context),
       ),
-       ChangeNotifierProvider<OfflineDb>(
-        create: (context) => OfflineDb(),
-      ),
-    ], child: const MyApp()),
-  ));
-
-  // SystemChrome.setSystemUIOverlayStyle(
-  //   const SystemUiOverlayStyle(
-  //     statusBarColor: Colors.white,
-  //     statusBarIconBrightness: Brightness.dark,
-  //   ),
-  // );
+     
+    ], child: const MyApp());
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -132,7 +147,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _locationProvider.handleLocationPermission();
     Provider.of<NetworkService>(context, listen: false)
-        .checkInitialConnection();
+        .checkInitialConnection(context);
   }
 
   @override

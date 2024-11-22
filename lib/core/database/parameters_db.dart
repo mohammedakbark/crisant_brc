@@ -13,8 +13,13 @@ class ParametersDb with ChangeNotifier {
   List<ParametersModel> _listOfParameters = [];
   List<ParametersModel> get listOfParameters => _listOfParameters;
 
+  bool? _isDownloading;
+  bool? get isDownloading => _isDownloading;
+
   void storeParameters(BuildContext context) async {
     try {
+      _isDownloading = true;
+      notifyListeners();
       final db = await LocalDatabaseService().initDb;
 
       await _clearTable();
@@ -28,8 +33,10 @@ class ParametersDb with ChangeNotifier {
       }
 
       log('Parameters  Downloaded Successful');
+      _isDownloading = false;
       await getAllParameters();
     } catch (e) {
+      _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
   }
@@ -38,14 +45,18 @@ class ParametersDb with ChangeNotifier {
     final db = await LocalDatabaseService().initDb;
 
     try {
+      _isDownloading = true;
+      notifyListeners();
       final dataofParameters =
           await db.rawQuery('SELECT * FROM $parametersCollection');
 
       _listOfParameters =
           dataofParameters.map((e) => ParametersModel.fromJson(e)).toList();
       notifyListeners();
+      _isDownloading = false;
       log('Parameters Fetched');
     } catch (e) {
+      _isDownloading = false;
       log('exception on getting data from table ${e.toString()}');
     }
   }

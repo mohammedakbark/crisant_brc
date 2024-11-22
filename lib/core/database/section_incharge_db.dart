@@ -12,8 +12,13 @@ class SectionInchargeDb with ChangeNotifier {
   List<SectionInchargeModel> get listOfSectionIncharge =>
       _listOfSectionIncharge;
 
+  bool? _isDownloading;
+  bool? get isDownloading => _isDownloading;
+
   void storeSectionIncharges(BuildContext context) async {
     try {
+      _isDownloading = true;
+      notifyListeners();
       final db = await LocalDatabaseService().initDb;
 
       await _clearTable();
@@ -40,7 +45,9 @@ class SectionInchargeDb with ChangeNotifier {
 
       log('Section Incharge Downloaded Successful');
       await getAllSectionIncharges();
+      _isDownloading = false;
     } catch (e) {
+      _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
   }

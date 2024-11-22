@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:test_managment/core/database/offline_db.dart';
 
 class NetworkService with ChangeNotifier {
   final Connectivity _connectivity = Connectivity();
@@ -11,15 +13,15 @@ class NetworkService with ChangeNotifier {
 
   Stream<bool> get connectionStream => _connectionController.stream;
 
-  NetworkService() {
+  NetworkService(BuildContext context) {
     _connectivity.onConnectivityChanged.listen((result) {
       log('checking internet');
-      _connectionController.add(isNetworkAvailable(result[0]));
+      _connectionController.add(isNetworkAvailable(result[0], context));
       notifyListeners();
     });
   }
 
-  bool isNetworkAvailable(ConnectivityResult result) {
+  bool isNetworkAvailable(ConnectivityResult result, BuildContext context) {
     final connection = result == ConnectivityResult.mobile ||
         result == ConnectivityResult.wifi;
     if (connection) {
@@ -29,6 +31,8 @@ class NetworkService with ChangeNotifier {
           (result) {
             if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
               _netisConnected = true; // Internet is available
+              Provider.of<OfflineDb>(context, listen: false)
+                  .storeAllOfflineDataToServer(context);
             } else {
               _netisConnected = false;
             }
@@ -42,14 +46,14 @@ class NetworkService with ChangeNotifier {
       _netisConnected = false;
     }
     notifyListeners();
-    return _netisConnected??false;
+    return _netisConnected ?? false;
   }
 
   bool? _netisConnected;
-  bool? get netisConnected => _netisConnected;
-  Future<bool> checkInitialConnection() async {
+  bool? get netisConnected => _netisConnected ?? false;
+  Future<bool> checkInitialConnection(BuildContext context) async {
     final result = await _connectivity.checkConnectivity();
-    return isNetworkAvailable(result[0]);
+    return isNetworkAvailable(result[0], context);
   }
 
   void dispose() {

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
+import 'package:test_managment/core/database/offline_db.dart';
 import 'package:test_managment/core/database/parameters_db.dart';
 import 'package:test_managment/core/database/parameters_reason_db.dart';
 import 'package:test_managment/core/database/parameters_value_db.dart';
@@ -86,16 +87,10 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
             Consumer<EntiteDb>(builder: (context, dbController, _) {
               return Column(
                 children: [
-                  _buildTile(
-                    'Entities',
-                    '12-12-2024',
-                    () async {
-                      log('dowload');
-
+                  _buildTile('Entities', '12-12-2024', () async {
 //
-                      dbController.storeEntity(context);
-                    },
-                  ),
+                    dbController.storeEntity(context);
+                  }, dbController.isDownloading ?? false),
                   Text(dbController.listOfEntityData.length.toString())
                 ],
               );
@@ -105,7 +100,7 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                 children: [
                   _buildTile('Section Incharge', '12-12-2024', () async {
                     dbController.storeSectionIncharges(context);
-                  }),
+                  }, dbController.isDownloading ?? false),
                   Text(dbController.listOfSectionIncharge.length.toString())
                 ],
               );
@@ -115,7 +110,7 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                 children: [
                   _buildTile('Section', '12-12-2024', () {
                     dbController.storeSection(context);
-                  }),
+                  }, dbController.isDownloading ?? false),
                   Text(dbController.listOfSection.length.toString())
                 ],
               ),
@@ -125,7 +120,7 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                 children: [
                   _buildTile('Block Section', '12-12-2024', () {
                     dbController.storeBlockSections(context);
-                  }),
+                  }, dbController.isDownloading ?? false),
                   Text(dbController.listOfBlockSections.length.toString())
                 ],
               ),
@@ -134,21 +129,21 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                 builder: (context, dbController, _) => Column(children: [
                       _buildTile('Station', '12-12-2024', () {
                         dbController.storeStations(context);
-                      }),
+                      }, dbController.isDownloading ?? false),
                       Text(dbController.listOfStationModel.length.toString())
                     ])),
             Consumer<ParametersDb>(
                 builder: (context, dbController, _) => Column(children: [
                       _buildTile('Parameters', '12-12-2024', () {
                         dbController.storeParameters(context);
-                      }),
+                      }, dbController.isDownloading ?? false),
                       Text(dbController.listOfParameters.length.toString())
                     ])),
             Consumer<ParametersValueDb>(
                 builder: (context, dbController, _) => Column(children: [
                       _buildTile('Parameters Value', '12-12-2024', () {
                         dbController.storeParametersValues(context);
-                      }),
+                      }, dbController.isDownloading ?? false),
                       Text(
                           dbController.listOfParametersValues.length.toString())
                     ])),
@@ -156,17 +151,24 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                 builder: (context, dbController, _) => Column(children: [
                       _buildTile('Parameters Reason', '12-12-2024', () {
                         dbController.storeParameterReson(context);
-                      }),
+                      }, dbController.isDownloading ?? false),
                       Text(
                           dbController.listOfParametersResons.length.toString())
                     ])),
             Consumer<EnitityProfileDb>(
                 builder: (context, dbController, _) => Column(children: [
-                      _buildTile('Entity Profile', '12-12-2024',
-                          hideDevider: true, () {
+                      _buildTile('Entity Profile', '12-12-2024', () {
                         dbController.storeEnitityProfile(context);
-                      }),
+                      }, dbController.isDownloading ?? false),
                       Text(dbController.listOfEnitityProfiles.length.toString())
+                    ])),
+            Consumer<OfflineDb>(
+                builder: (context, dbController, _) => Column(children: [
+                      _buildTile('Entity Profile in Queue', '12-12-2024',
+                          hideDevider: true, () {
+                        dbController.getAllOFFlineDb();
+                      }, dbController.isDownloading ?? false),
+                      Text(dbController.listOfflineEntitites!.length.toString())
                     ])),
             const AppSpacer(
               heightPortion: .02,
@@ -177,7 +179,8 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
     );
   }
 
-  Widget _buildTile(String title, String date, void Function()? onPressed,
+  Widget _buildTile(
+      String title, String date, void Function()? onPressed, bool loading,
       {bool? hideDevider}) {
     return Column(
       children: [
@@ -223,12 +226,25 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                   ),
                 ],
               ),
-              trailing: IconButton(
-                  onPressed: onPressed,
-                  icon: const Icon(
-                    Icons.download_for_offline,
-                    color: AppColors.kWhite,
-                  )),
+              trailing: loading
+                  ? IconButton(
+                      onPressed: () {},
+                      icon: const SizedBox(
+                        height: 5,
+                        width: 5,
+                        child: CircularProgressIndicator(
+                          color: AppColors.kWhite,
+                          strokeAlign: 2,
+                          strokeWidth: 3,
+                        ),
+                      ),
+                    )
+                  : IconButton(
+                      onPressed: onPressed,
+                      icon: const Icon(
+                        Icons.download_for_offline,
+                        color: AppColors.kWhite,
+                      )),
             ),
           ),
         ),

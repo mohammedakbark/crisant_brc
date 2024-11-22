@@ -11,9 +11,12 @@ class ParametersValueDb with ChangeNotifier {
   List<ParameterValuesModel> _listOfParametersValues = [];
   List<ParameterValuesModel> get listOfParametersValues =>
       _listOfParametersValues;
-
+  bool? _isDownloading;
+  bool? get isDownloading => _isDownloading;
   void storeParametersValues(BuildContext context) async {
     try {
+      _isDownloading = true;
+      notifyListeners();
       final db = await LocalDatabaseService().initDb;
 
       await _clearTable();
@@ -41,7 +44,9 @@ class ParametersValueDb with ChangeNotifier {
 
       log('Parameters Values  Downloaded Successful');
       await getAllParametersValues();
+      _isDownloading = false;
     } catch (e) {
+      _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
   }

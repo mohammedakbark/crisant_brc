@@ -12,8 +12,13 @@ class ParametersReasonDb with ChangeNotifier {
   List<ParameterReasonModel> get listOfParametersResons =>
       _listOfParametersResons;
 
+  bool? _isDownloading;
+  bool? get isDownloading => _isDownloading;
+
   void storeParameterReson(BuildContext context) async {
     try {
+      _isDownloading = true;
+      notifyListeners();
       final db = await LocalDatabaseService().initDb;
 
       await _clearTable();
@@ -40,7 +45,9 @@ class ParametersReasonDb with ChangeNotifier {
 
       log('Parameter Reson Downloaded Successful');
       await getAllParameterReson();
+      _isDownloading = false;
     } catch (e) {
+      _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
   }
@@ -49,6 +56,7 @@ class ParametersReasonDb with ChangeNotifier {
     final db = await LocalDatabaseService().initDb;
 
     try {
+      
       final data =
           await db.rawQuery('SELECT * FROM $parametersReasonCollection');
       _listOfParametersResons =

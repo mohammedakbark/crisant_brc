@@ -135,7 +135,7 @@ class LocalDatabaseService {
         version: 1,
         onCreate: (db, version) {
           db.execute(
-              'CREATE TABLE IF NOT EXISTS ${OfflineDb.offlineCollectionTable} (entityIdentifier TEXT PRIMARY KEY, sectionInchargeId TEXT,sectionId TEXT,blockSectionId TEXT,stationId TEXT,stationId TEXT,entityLatt TEXT,entityLong TEXT)');
+              'CREATE TABLE IF NOT EXISTS ${OfflineDb.offlineCollectionTable} (entityIdentifier TEXT PRIMARY KEY, sectionInchargeId TEXT,sectionId TEXT,blockSectionId TEXT,stationId TEXT,entityId TEXT,entityLatt TEXT,entityLong TEXT)');
         },
       );
     } catch (e) {
@@ -160,5 +160,7 @@ class LocalDatabaseService {
         .getAllParameterReson();
     await Provider.of<EnitityProfileDb>(context, listen: false)
         .getAllEnitityProfile();
+         await Provider.of<OfflineDb>(context, listen: false)
+        .getAllOFFlineDb();
   }
 }

@@ -10,10 +10,13 @@ class EntiteDb with ChangeNotifier {
   static const entitiesCollection = 'entities';
   List<EntityModel> _listOfEntityData = [];
   List<EntityModel> get listOfEntityData => _listOfEntityData;
-  bool isDowloading = false;
-
+  bool? _isDownloading;
+  bool? get isDownloading => _isDownloading;
   void storeEntity(BuildContext context) async {
     try {
+      _isDownloading = true;
+      notifyListeners();
+
       final db = await LocalDatabaseService().initDb;
 
       await _clearTable();
@@ -41,7 +44,10 @@ class EntiteDb with ChangeNotifier {
 
       log('Entity Downloaded Successful');
       await getAllEntities();
+      _isDownloading = false;
     } catch (e) {
+      _isDownloading = false;
+
       log('exception on adding data in to table ${e.toString()}');
     }
   }

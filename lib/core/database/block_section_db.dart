@@ -11,8 +11,13 @@ class BlockSectionDb with ChangeNotifier {
   List<BlockSectionModel> _listOfBlockSections = [];
   List<BlockSectionModel> get listOfBlockSections => _listOfBlockSections;
 
+  bool? _isDownloading;
+  bool? get isDownloading => _isDownloading;
+
   void storeBlockSections(BuildContext context) async {
     try {
+      _isDownloading = true;
+      notifyListeners();
       final db = await LocalDatabaseService().initDb;
 
       await _clearTable();
@@ -38,7 +43,9 @@ class BlockSectionDb with ChangeNotifier {
 
       log('Block Section Downloaded Successful');
       await getAllBlockSections();
+      _isDownloading = false;
     } catch (e) {
+      _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
   }

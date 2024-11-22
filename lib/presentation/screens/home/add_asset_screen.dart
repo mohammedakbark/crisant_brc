@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +14,7 @@ import 'package:test_managment/core/components/custom_form_field.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
+import 'package:test_managment/core/database/offline_db.dart';
 import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
@@ -245,7 +248,8 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
     final locationProvider =
         Provider.of<LocationService>(context, listen: false);
     final assetCtrl = Provider.of<AddAssetController>(context, listen: false);
-
+    final isOnline =
+        Provider.of<NetworkService>(context, listen: false).netisConnected;
     await locationProvider.getCurrentLocation();
 
     final assetModel = AddNewAssetModel(
@@ -258,13 +262,26 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
       stationId: assetCtrl.selectedStationId,
       blockSectionId: assetCtrl.selectedBlockId,
     );
+// ignore: use_build_context_synchronously
+    if (isOnline == true) {
+      onlineDataEntry(assetModel);
+    } else {
+      offlineDataEntry(assetModel);
+    }
 
-    await ApiService.addNewAsset(context, assetModel);
-    await Provider.of<EnitityProfileDb>(context, listen: false)
-        .storeEnitityProfile(context);
     await assetCtrl.clearAllData();
     assetIdController.clear();
     closeLoadingIndicator(context);
     setState(() {});
+  }
+
+  onlineDataEntry(AddNewAssetModel assetModel) async {
+    await ApiService.addNewAsset(context, assetModel);
+    await Provider.of<EnitityProfileDb>(context, listen: false)
+        .storeEnitityProfile(context);
+  }
+
+  offlineDataEntry(AddNewAssetModel assetModel) async {
+    Provider.of<OfflineDb>(context, listen: false).addToOfflineDb(assetModel);
   }
 }

@@ -11,8 +11,13 @@ class SectionDb with ChangeNotifier {
   List<SectionModel> _listOfSection = [];
   List<SectionModel> get listOfSection => _listOfSection;
 
+  bool? _isDownloading;
+  bool? get isDownloading => _isDownloading;
+
   void storeSection(BuildContext context) async {
     try {
+      _isDownloading = true;
+      notifyListeners();
       final db = await LocalDatabaseService().initDb;
 
       await _clearTable();
@@ -38,7 +43,9 @@ class SectionDb with ChangeNotifier {
 
       log('Section  Downloaded Successful');
       await getAllSections();
+      _isDownloading = false;
     } catch (e) {
+      _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
   }
@@ -47,10 +54,8 @@ class SectionDb with ChangeNotifier {
     final db = await LocalDatabaseService().initDb;
 
     try {
-      final data =
-          await db.rawQuery('SELECT * FROM $sectionCollection');
-      _listOfSection =
-          data.map((e) => SectionModel.fromJson(e)).toList();
+      final data = await db.rawQuery('SELECT * FROM $sectionCollection');
+      _listOfSection = data.map((e) => SectionModel.fromJson(e)).toList();
       notifyListeners();
       log('Section Fetched');
     } catch (e) {

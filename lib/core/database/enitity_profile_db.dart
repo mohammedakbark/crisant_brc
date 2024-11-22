@@ -13,9 +13,12 @@ class EnitityProfileDb with ChangeNotifier {
   static const entityProfileCollection = 'entity_profile';
   List<EntityProfileModel> _listOfEnitityProfiles = [];
   List<EntityProfileModel> get listOfEnitityProfiles => _listOfEnitityProfiles;
-
+  bool? _isDownloading;
+  bool? get isDownloading => _isDownloading;
   Future<void> storeEnitityProfile(BuildContext context) async {
     try {
+      _isDownloading = true;
+      notifyListeners();
       final db = await LocalDatabaseService().initDb;
 
       await _clearTable();
@@ -53,7 +56,10 @@ class EnitityProfileDb with ChangeNotifier {
 
       print('Enitity Profile  Downloaded Successful');
       await getAllEnitityProfile();
+      _isDownloading = false;
     } catch (e) {
+      _isDownloading = false;
+
       print('exception on adding data in to table ${e.toString()}');
     }
   }

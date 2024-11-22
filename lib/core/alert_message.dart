@@ -31,11 +31,11 @@ showLoaingIndicator(BuildContext context) {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            AppLoadingIndicator(),
             Text(
-              'Please wait...',
+              'Please wait a moment..',
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
-            AppLoadingIndicator()
           ],
         ),
       );

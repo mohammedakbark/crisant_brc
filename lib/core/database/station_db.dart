@@ -11,8 +11,13 @@ class StationDb with ChangeNotifier {
   List<StationModel> _listOfStationModel = [];
   List<StationModel> get listOfStationModel => _listOfStationModel;
 
+  bool? _isDownloading;
+  bool? get isDownloading => _isDownloading;
+
   void storeStations(BuildContext context) async {
     try {
+      _isDownloading = true;
+      notifyListeners();
       final db = await LocalDatabaseService().initDb;
 
       await _clearTable();
@@ -34,7 +39,9 @@ class StationDb with ChangeNotifier {
 
       log('Stations Downloaded Successful');
       await getAllSectionIncharges();
+      _isDownloading = false;
     } catch (e) {
+      _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
   }
