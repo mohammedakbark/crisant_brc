@@ -176,7 +176,7 @@ class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
                 text: title,
                 style: const TextStyle(
                     fontWeight: FontWeight.bold, color: AppColors.kBlack),
-                children: (isRequired == null)
+                children: (isRequired == null||isRequired == false)
                     ? []
                     : [
                         const TextSpan(
