@@ -8,7 +8,7 @@ import 'package:test_managment/core/database/auth_db.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/components/common_widgets.dart';
 import 'package:test_managment/presentation/screens/home/widgets/home_app_bar.dart';
-import 'package:test_managment/presentation/screens/home/widgets/home_drawer.dart';
+import 'package:test_managment/presentation/screens/home/widgets/app_drawer.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HomeAppBar(),
+      appBar: const HomeAppBar(),
       drawer: const HomeDrawer(),
       body: Consumer<LocationService>(builder: (context, controller, _) {
         if (controller.currentLat != 0 || controller.currentLon != 0) {

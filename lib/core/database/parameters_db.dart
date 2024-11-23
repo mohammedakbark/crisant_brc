@@ -2,10 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_parameters_repo.dart';
-import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/parameters_model.dart';
 
@@ -18,6 +19,21 @@ class ParametersDb with ChangeNotifier {
 
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
+
+  Future<void> setlastSync() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final today = "${now.day}-${now.month}-${now.year}";
+    await pre.setString(parametersCollection, today);
+    await _getLastSyncData();
+  }
+
+  String? _lastSyncData;
+  String get lastSyncData => _lastSyncData ?? '-';
+  Future _getLastSyncData() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    _lastSyncData = pre.getString(parametersCollection) ?? '-';
+  }
 
   Future storeParameters(BuildContext context, {bool? dontList}) async {
     try {
@@ -40,8 +56,10 @@ class ParametersDb with ChangeNotifier {
         }
 
         log('Parameters  Downloaded Successful');
-        _isDownloading = false;
+
+        await setlastSync();
         await getAllParameters();
+        _isDownloading = false;
       } else {
         showMessage(
           'Please Check Your Internet Connection',

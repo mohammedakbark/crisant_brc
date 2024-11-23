@@ -24,7 +24,8 @@ import 'package:test_managment/core/controller/test_asset_controller.dart';
 import 'package:test_managment/core/controller/camera_controller.dart';
 import 'package:test_managment/core/controller/dashboard_controller.dart';
 import 'package:test_managment/core/controller/floating_bar_controller.dart';
-import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/lang_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/core/services/shared_pre_service.dart';
@@ -36,19 +37,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
 
-  runApp(EasyLocalization(
-      supportedLocales: const [
-        Locale('en'),
-        Locale(
-          'hi',
-        )
-      ],
-      fallbackLocale: const Locale(
-        'en',
-      ), // Default language,
-
-      path: 'assets/language', // Path to your language files
-      child: ProviderMain()));
+  runApp(ProviderMain());
 
   // SystemChrome.setSystemUIOverlayStyle(
   //   const SystemUiOverlayStyle(
@@ -68,77 +57,95 @@ class ProviderMain extends StatefulWidget {
 class _ProviderMainState extends State<ProviderMain> {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(providers: [
-       ChangeNotifierProvider<SharedPreService>(
-        create: (context) => SharedPreService(),
-      ),
-      ChangeNotifierProvider<LocationService>(
-        create: (context) => LocationService(),
-      ),
-      ChangeNotifierProvider<DashboardController>(
-        create: (context) => DashboardController(),
-      ),
-      ChangeNotifierProvider<CameraController>(
-        create: (context) => CameraController(),
-      ),
-      ChangeNotifierProvider<FloatingBarController>(
-        create: (context) => FloatingBarController(),
-      ),
-       ChangeNotifierProvider<LocalDatabaseService>(
-        create: (context) => LocalDatabaseService(),
-      ),
-      ChangeNotifierProvider<TestAssetsController>(
-        create: (context) => TestAssetsController(),
-      ),
-      ChangeNotifierProvider<AddAssetController>(
-        create: (context) => AddAssetController(),
-      ),
+    return MultiProvider(
+        providers: [
+           ChangeNotifierProvider<LanguageService>(
+            create: (context) => LanguageService(),
+          ),
+          ChangeNotifierProvider<SharedPreService>(
+            create: (context) => SharedPreService(),
+          ),
+          ChangeNotifierProvider<LocationService>(
+            create: (context) => LocationService(),
+          ),
+          ChangeNotifierProvider<DashboardController>(
+            create: (context) => DashboardController(),
+          ),
+          ChangeNotifierProvider<CameraController>(
+            create: (context) => CameraController(),
+          ),
+          ChangeNotifierProvider<FloatingBarController>(
+            create: (context) => FloatingBarController(),
+          ),
+          ChangeNotifierProvider<LocalDatabaseService>(
+            create: (context) => LocalDatabaseService(),
+          ),
+          ChangeNotifierProvider<TestAssetsController>(
+            create: (context) => TestAssetsController(),
+          ),
+          ChangeNotifierProvider<AddAssetController>(
+            create: (context) => AddAssetController(),
+          ),
 
-      //  db Poviders
-      ChangeNotifierProvider<EntiteDb>(
-        create: (context) => EntiteDb(),
-      ),
-      ChangeNotifierProvider<AuthDb>(
-        create: (context) => AuthDb(),
-      ),
-       
-      ChangeNotifierProvider<SectionInchargeDb>(
-        create: (context) => SectionInchargeDb(),
-      ),
-      ChangeNotifierProvider<SectionDb>(
-        create: (context) => SectionDb(),
-      ),
-      ChangeNotifierProvider<BlockSectionDb>(
-        create: (context) => BlockSectionDb(),
-      ),
-      ChangeNotifierProvider<StationDb>(
-        create: (context) => StationDb(),
-      ),
-      ChangeNotifierProvider<ParametersDb>(
-        create: (context) => ParametersDb(),
-      ),
-      ChangeNotifierProvider<ParametersValueDb>(
-        create: (context) => ParametersValueDb(),
-      ),
-      ChangeNotifierProvider<ParametersReasonDb>(
-        create: (context) => ParametersReasonDb(),
-      ),
-      ChangeNotifierProvider<EnitityProfileDb>(
-        create: (context) => EnitityProfileDb(),
-      ),
-      ChangeNotifierProvider<OfflineTestEntityDb>(
-        create: (context) => OfflineTestEntityDb(),
-      ),
-      ChangeNotifierProvider<OfflineAddEntityDb>(
-        create: (context) => OfflineAddEntityDb(),
-      ),
-      ChangeNotifierProvider<ParameterController>(
-        create: (context) => ParameterController(),
-      ),
-      ChangeNotifierProvider<NetworkService>(
-        create: (context) => NetworkService(context),
-      ),
-    ], child: const MyApp());
+          //  db Poviders
+          ChangeNotifierProvider<EntiteDb>(
+            create: (context) => EntiteDb(),
+          ),
+          ChangeNotifierProvider<AuthDb>(
+            create: (context) => AuthDb(),
+          ),
+
+          ChangeNotifierProvider<SectionInchargeDb>(
+            create: (context) => SectionInchargeDb(),
+          ),
+          ChangeNotifierProvider<SectionDb>(
+            create: (context) => SectionDb(),
+          ),
+          ChangeNotifierProvider<BlockSectionDb>(
+            create: (context) => BlockSectionDb(),
+          ),
+          ChangeNotifierProvider<StationDb>(
+            create: (context) => StationDb(),
+          ),
+          ChangeNotifierProvider<ParametersDb>(
+            create: (context) => ParametersDb(),
+          ),
+          ChangeNotifierProvider<ParametersValueDb>(
+            create: (context) => ParametersValueDb(),
+          ),
+          ChangeNotifierProvider<ParametersReasonDb>(
+            create: (context) => ParametersReasonDb(),
+          ),
+          ChangeNotifierProvider<EnitityProfileDb>(
+            create: (context) => EnitityProfileDb(),
+          ),
+          ChangeNotifierProvider<OfflineTestEntityDb>(
+            create: (context) => OfflineTestEntityDb(),
+          ),
+          ChangeNotifierProvider<OfflineAddEntityDb>(
+            create: (context) => OfflineAddEntityDb(),
+          ),
+          ChangeNotifierProvider<ParameterController>(
+            create: (context) => ParameterController(),
+          ),
+          ChangeNotifierProvider<NetworkService>(
+            create: (context) => NetworkService(context),
+          ),
+        ],
+        child: EasyLocalization(
+            supportedLocales: const [
+              Locale('en'),
+              Locale('ka'),
+              Locale(
+                'hi',
+              ),
+            ],
+            fallbackLocale: const Locale(
+              'en',
+            ), // Default language,
+
+            path: 'assets/language', // Path to your language files
+            child: const MyApp()));
   }
 }
 

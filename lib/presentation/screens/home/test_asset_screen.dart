@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +15,7 @@ import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/services/api_service.dart';
-import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_page_head_text.dart';
@@ -30,7 +31,8 @@ import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
 import 'package:test_managment/presentation/screens/home/widgets/floating_location_bar.dart';
-import 'package:test_managment/presentation/screens/home/widgets/home_drawer.dart';
+import 'package:test_managment/presentation/screens/home/widgets/app_drawer.dart';
+import 'package:test_managment/presentation/screens/home/widgets/home_app_bar.dart';
 
 class TestAssetScreen extends StatefulWidget {
   TestAssetScreen({super.key});
@@ -62,28 +64,15 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
           ),
           centerTitle: true,
           leadingWidth: 70,
-          // leading: Builder(builder: (context) {
-          //   return Consumer<NetworkService>(builder: (context, net, _) {
-          //     return Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Text(
-          //           net.netisConnected == true ? "ONLINE" : "OFFLINE",
-          //           style: const TextStyle(fontWeight: FontWeight.bold),
-          //         ),
-          //       ],
-          //     );
-          //   });
-          // }),
-          title: const AppPageHeadText(title: 'Test Asset'),
+          title: AppPageHeadText(title: 'testAsset'.tr()),
           actions: [
             Consumer<TestAssetsController>(builder: (context, cntr, _) {
               return FlutterSwitch(
                   // toggleColor: AppColors.kPrimaryColor,
                   activeColor: AppColors.kGrey,
                   inactiveColor: AppColors.kPrimaryColor,
-                  activeText: "MANUAL",
-                  inactiveText: 'AUTO',
+                  activeText: "manual".tr(),
+                  inactiveText: 'auto'.tr(),
                   value: cntr.isManual!,
                   valueFontSize: AppDimensions.fontSize10(context),
                   width: 50.0,
@@ -94,12 +83,12 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                   padding: 0,
                   toggleSize: 30,
                   showOnOff: false,
-                  activeIcon: const Text(
-                    'MANUAL',
+                  activeIcon: Text(
+                    "manual".tr(),
                     textAlign: TextAlign.center,
                   ),
-                  inactiveIcon: const Text(
-                    ' AUTO ',
+                  inactiveIcon: Text(
+                    'auto'.tr(),
                     textAlign: TextAlign.center,
                   ),
                   onToggle: cntr.onChangeType);
@@ -117,7 +106,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                   key: _formkey,
                   child: Column(
                     children: [
-                      AppSpacer(
+                      const AppSpacer(
                         heightPortion: .01,
                       ),
                       Consumer2<TestAssetsController, EntiteDb>(
@@ -136,7 +125,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                             (a['title'] ?? '').compareTo(b['title'] ?? ''));
                         return CustomDropdownField(
                             onCallBack: ctlr.onChangedAssetGroup,
-                            hintText: 'Asset Type',
+                            hintText: 'assetType'.tr(),
                             items: sortedItems);
                       }),
                       Consumer2<TestAssetsController, SectionInchargeDb>(
@@ -155,7 +144,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                             (a['title'] ?? '').compareTo(b['title'] ?? ''));
 
                         return CustomDropdownField(
-                          hintText: 'Section Incharge',
+                          hintText: 'sectionIncharge'.tr(),
                           items:
                               ctlr.selectedEntityId == null ? [] : sortedItems,
                           onCallBack: (value) {
@@ -183,7 +172,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                         sortedItems.sort((a, b) =>
                             (a['title'] ?? '').compareTo(b['title'] ?? ''));
                         return CustomDropdownField(
-                            hintText: 'Section',
+                            hintText: 'section'.tr(),
                             items: ctlr.selectedSectonInchargeId == null
                                 ? []
                                 : sortedItems,
@@ -232,7 +221,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                                           (a['title'] ?? '')
                                               .compareTo(b['title'] ?? ''));
                                       return CustomDropdownField(
-                                          hintText: 'Block',
+                                          hintText: 'block'.tr(),
                                           items: ctlr.selectedSectionId == null
                                               ? []
                                               : sortedItems,
@@ -266,7 +255,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                                           (a['title'] ?? '')
                                               .compareTo(b['title'] ?? ''));
                                       return CustomDropdownField(
-                                          hintText: 'Station',
+                                          hintText: 'Station'.tr(),
                                           items: ctlr.selectedSectionId == null
                                               ? []
                                               : sortedItems,
@@ -414,7 +403,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                         //   ],
                         // );
                         return CustomDropdownField(
-                          hintText: 'Asset Profile',
+                          hintText: 'assetProfile'.tr(),
                           items: (ctlr.selectedStationId == null) &&
                                   (ctlr.selectedBlockId == null)
                               ? []
@@ -472,7 +461,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                           // textColor: loc.isNearTarget
                           //     ? null
                           //     : AppColors.kWhite.withOpacity(.7),
-                          title: 'SUBMIT TEST REPORT',
+                          title: 'submitTestReport'.tr(),
                           onTap: handleSubmit,
                         );
                       }),
@@ -571,7 +560,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                     vertical: AppDimensions.paddingSize5),
                 child: RichText(
                     text: TextSpan(
-                        text: 'Picture',
+                        text: 'picture'.tr(),
                         style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.kBlack),
@@ -615,7 +604,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Add photo',
+                              'addPhoto'.tr(),
                               style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: AppDimensions.fontSize24(context)),
@@ -623,10 +612,10 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                             _diologueButton(context, () async {
                               await controller.onPickImage();
                               Navigator.pop(context);
-                            }, 'Take Photo'),
+                            }, 'takePhoto'.tr()),
                             _diologueButton(context, () {
                               Navigator.pop(context);
-                            }, 'Cancel', color: AppColors.kRed)
+                            }, 'cancel'.tr(), color: AppColors.kRed)
                           ],
                         ),
                       ),
@@ -637,9 +626,9 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                     width: w(context) * .25,
                     height: h(context) * .07,
                     decoration: const BoxDecoration(color: Colors.blue),
-                    child: const Text(
-                      'Capture',
-                      style: TextStyle(
+                    child: Text(
+                      'capture'.tr(),
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold, color: AppColors.kWhite),
                     ),
                   ),
@@ -653,8 +642,8 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
                     decoration: const BoxDecoration(color: AppColors.kWhite),
                     child: Text(
                       controller.fileImage != null
-                          ? 'Image Captured'
-                          : 'No File Selected',
+                          ? 'imageCaptured'.tr()
+                          : 'nofileSecledted'.tr(),
                       style: const TextStyle(color: AppColors.kGrey),
                     ),
                   ),

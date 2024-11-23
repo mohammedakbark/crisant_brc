@@ -2,10 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_station_repo.dart';
-import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/station_model.dart';
 
@@ -16,6 +17,21 @@ class StationDb with ChangeNotifier {
 
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
+
+  Future<void> setlastSync() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final today = "${now.day}-${now.month}-${now.year}";
+    await pre.setString(stationCollection, today);
+    await _getLastSyncData();
+  }
+
+  String? _lastSyncData;
+  String get lastSyncData => _lastSyncData ?? '-';
+  Future _getLastSyncData() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    _lastSyncData = pre.getString(stationCollection) ?? '-';
+  }
 
   Future storeStations(BuildContext context, {bool? dontList}) async {
     try {
@@ -45,6 +61,7 @@ class StationDb with ChangeNotifier {
         }
 
         log('Stations Downloaded Successful');
+        await setlastSync();
         await getAllSectionIncharges();
         _isDownloading = false;
       } else {

@@ -1,27 +1,22 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/common_widgets.dart';
 import 'package:test_managment/core/controller/dashboard_controller.dart';
-import 'package:test_managment/core/database/auth_db.dart';
-import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/lang_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/components/overlay_location_banner.dart';
 import 'package:test_managment/core/services/shared_pre_service.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
 import 'package:test_managment/presentation/screens/home/add_asset_screen.dart';
-import 'package:test_managment/presentation/screens/home/download_data.dart';
 import 'package:test_managment/presentation/screens/home/home_screen.dart';
 import 'package:test_managment/presentation/screens/home/test_asset_screen.dart';
 import 'package:test_managment/presentation/screens/home/view_assets_screen.dart';
-import 'package:test_managment/presentation/screens/home/widgets/floating_location_bar.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
-import 'package:test_managment/core/utils/route.dart';
 import 'package:test_managment/presentation/screens/home/widgets/home_app_bar.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -32,6 +27,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   late LocationService _locationProvider;
+  bool isDataDowloaded = false;
   OverlayEntry? _overlayEntry;
   @override
   void initState() {
@@ -39,9 +35,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _locationProvider = Provider.of<LocationService>(context, listen: false);
     _locationProvider.addListener(_handleLocationStatusChange);
     _locationProvider.startMonitoring();
-    // final detailsareUpdated =
-    //         await Provider.of<SharedPreService>(context, listen: false)
-    //             .dataisUpdated;
+    //
   }
 
   void _handleLocationStatusChange() {
@@ -87,53 +81,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = Provider.of<DashboardController>(context);
-    final c = Provider.of<SharedPreService>(
-      context,
-    );
-    // return FutureBuilder(
-    //     future: c.dataisUpdated,
-    //     builder: (context, snapshot) {
-    //       if (snapshot.data == null || snapshot.data == false) {
-    //         return Builder(builder: (context) {
-    //           // LocalDatabaseService().dowloadAllData(context, dontListen: true);
-    //           // Provider.of<SharedPreService>(context, listen: false)
-    //           //     .setDataStorageStatus(true);
 
-    //           return Scaffold(
-    //             appBar: const HomeAppBar(),
-    //             body: const Center(
-    //               child: Column(
-    //                 mainAxisAlignment: MainAxisAlignment.center,
-    //                 children: [
-    //                   Text(
-    //                     'Please wait until the download is complete',
-    //                     style: TextStyle(fontWeight: FontWeight.w500),
-    //                   ),
-    //                   AppSpacer(
-    //                     heightPortion: .06,
-    //                   ),
-    //                   AppLoadingIndicator(),
-    //                 ],
-    //               ),
-    //             ),
-    //             bottomNavigationBar: bottomNav(controller, functioning: true),
-    //           );
-    //         });
-    //       }
-    return Scaffold(
-        body: pages[controller.currentScreenIndex],
-        bottomNavigationBar: bottomNav(controller)
-        // floatingActionButton: FloatingActionButton(
-        //   shape: const CircleBorder(),
-        //   tooltip: 'Download Data',
-        //   backgroundColor: AppColors.kPrimaryColor,
-        //   onPressed: () {
-
-        //   },
-        //   child: const Icon(color: AppColors.kWhite, Icons.sync),
-        // ),
-        );
-    // });
+    return Consumer<SharedPreService>(builder: (context, contro, child) {
+      return FutureBuilder<bool>(
+          future: contro.dataisUpdated,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data == true) {
+                return Consumer<LanguageService>(builder: (context, serive, _) {
+                  return Scaffold(
+                      // appBar: AppBar(
+                      //   title: TextButton(
+                      //       onPressed: () async {
+                      //         // log(bs.toString());
+                      //         contro.deletedData();
+                      //       },
+                      //       child: Text('data')),
+                      // ),
+                      body: pages[controller.currentScreenIndex],
+                      bottomNavigationBar: bottomNav(controller));
+                });
+              } else {
+                LocalDatabaseService()
+                    .dowloadAllData(context, dontListen: true);
+                return Scaffold(
+                  appBar: const HomeAppBar(),
+                  body:  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'pleaseWaitDashboard'.tr(),
+                          style: TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        AppSpacer(
+                          heightPortion: .06,
+                        ),
+                        AppLoadingIndicator(),
+                      ],
+                    ),
+                  ),
+                  bottomNavigationBar: bottomNav(controller, functioning: true),
+                );
+              }
+            } else {
+              return const SizedBox();
+            }
+          });
+    });
   }
 
   Widget bottomNav(DashboardController controller, {bool? functioning}) =>
@@ -152,46 +147,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 fontWeight: FontWeight.bold),
             selectedItemColor: AppColors.kPrimaryColor,
             unselectedItemColor: AppColors.kGrey,
-            items: const [
+            items: [
               BottomNavigationBarItem(
-                  label: 'HOME',
-                  icon: Icon(
+                  label: 'homeLarge'.tr(),
+                  icon: const Icon(
                     Icons.home_outlined,
                   ),
-                  activeIcon: CircleAvatar(
+                  activeIcon: const CircleAvatar(
                       backgroundColor: AppColors.kPrimaryColor,
                       child: Icon(
                         Icons.home_outlined,
                         color: AppColors.kWhite,
                       ))),
               BottomNavigationBarItem(
-                  label: 'ADD ASSET',
-                  icon: Icon(
+                  label: 'addAssetCap'.tr(),
+                  icon: const Icon(
                     Icons.playlist_add_sharp,
                   ),
-                  activeIcon: CircleAvatar(
+                  activeIcon: const CircleAvatar(
                       backgroundColor: AppColors.kPrimaryColor,
                       child: Icon(
                         Icons.playlist_add_sharp,
                         color: AppColors.kWhite,
                       ))),
               BottomNavigationBarItem(
-                  label: 'TEST ASSET',
-                  icon: Icon(
+                  label: 'testAssetCap'.tr(),
+                  icon: const Icon(
                     Icons.playlist_add_check_outlined,
                   ),
-                  activeIcon: CircleAvatar(
+                  activeIcon: const CircleAvatar(
                       backgroundColor: AppColors.kPrimaryColor,
                       child: Icon(
                         Icons.playlist_add_check_outlined,
                         color: AppColors.kWhite,
                       ))),
               BottomNavigationBarItem(
-                  label: 'VIEW REPORT',
-                  icon: Icon(
+                  label: 'viewReposrCap'.tr(),
+                  icon: const Icon(
                     Icons.auto_graph_sharp,
                   ),
-                  activeIcon: CircleAvatar(
+                  activeIcon: const CircleAvatar(
                     backgroundColor: AppColors.kPrimaryColor,
                     child: Icon(
                       Icons.file_open_outlined,

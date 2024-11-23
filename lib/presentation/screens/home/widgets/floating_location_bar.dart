@@ -1,9 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:test_managment/core/controller/floating_bar_controller.dart';
 import 'package:test_managment/core/services/location_service.dart';
-import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
@@ -160,7 +159,7 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
         // ),
         RichText(
           text: TextSpan(
-              text: "You are ",
+              text: "youAre".tr(),
               style: TextStyle(
                   fontSize: AppDimensions.fontSize15(
                     context,
@@ -179,8 +178,8 @@ class _FloatingDirectionBarState extends State<FloatingDirectionBar> {
                           ? AppColors.kRed
                           : AppColors.kBlack),
                 ),
-                const TextSpan(
-                  text: " away from the asset",
+                TextSpan(
+                  text: "awayFromTheAsset".tr(),
                 )
               ]),
         ),

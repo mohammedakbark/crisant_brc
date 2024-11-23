@@ -2,14 +2,13 @@ import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/controller/camera_controller.dart';
 import 'package:test_managment/core/services/api_service.dart';
-import 'package:test_managment/core/services/local_service.dart';
-import 'package:test_managment/core/services/location_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/model/reposrts%20models/test_report_add_model.dart';
-import 'package:test_managment/presentation/screens/home/test_asset_screen.dart';
 
 class OfflineTestEntityDb with ChangeNotifier {
   static const testEntityOfflineCollection = 'test_entity_offline_collection';
@@ -21,6 +20,21 @@ class OfflineTestEntityDb with ChangeNotifier {
       _listOfflineEntitites ?? [];
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
+
+  Future<void> setlastSync() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final today = "${now.day}-${now.month}-${now.year}";
+    await pre.setString(testEntityOfflineCollection, today);
+    await _getLastSyncData();
+  }
+
+  String? _lastSyncData;
+  String get lastSyncData => _lastSyncData ?? '-';
+  Future _getLastSyncData() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    _lastSyncData = pre.getString(testEntityOfflineCollection) ?? '-';
+  }
 
   Future<void> storeTestEntityOffline(AddNewTestModel model) async {
     try {
@@ -132,7 +146,7 @@ class OfflineTestEntityDb with ChangeNotifier {
 
       //-------------------------
       log('Offline Enitity Test Fetched');
-
+      await setlastSync();
       _isDownloading = false;
       if (dontListen == null) {
         notifyListeners();

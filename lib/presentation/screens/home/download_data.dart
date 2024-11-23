@@ -1,8 +1,6 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:test_managment/core/components/custom_button.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
@@ -16,8 +14,7 @@ import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_spacer.dart';
-import 'package:test_managment/core/services/local_service.dart';
-import 'package:test_managment/core/services/location_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
@@ -32,7 +29,6 @@ class DownloadDataScreen extends StatefulWidget {
 class _DownloadDataScreenState extends State<DownloadDataScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     LocalDatabaseService().fetchAllDatabases(context);
   }
@@ -66,114 +62,93 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                     heightPortion: .01,
                   ),
                   Consumer<EntiteDb>(builder: (context, dbController, _) {
-                    return Column(
-                      children: [
-                        _buildTile('Asset Types', '12-12-2024', () async {
-                          //
-                          dbController.storeEntity(context);
-                        },
-                            count: dbController.listOfEntityData.length,
-                            dbController.isDownloading ?? false),
-                      ],
-                    );
+                    return _buildTile('Asset Types', dbController.lastSyncData,
+                        () async {
+                      //
+                      dbController.storeEntity(context);
+                    },
+                        count: dbController.listOfEntityData.length,
+                        dbController.isDownloading ?? false);
                   }),
                   Consumer<SectionInchargeDb>(
                       builder: (context, dbController, _) {
-                    return Column(
-                      children: [
-                        _buildTile('Section Incharge', '12-12-2024', () async {
-                          dbController.storeSectionIncharges(context);
-                        },
-                            count: dbController.listOfSectionIncharge.length,
-                            dbController.isDownloading ?? false),
-                      ],
-                    );
+                    return _buildTile(
+                        'Section Incharge', dbController.lastSyncData,
+                        () async {
+                      dbController.storeSectionIncharges(context);
+                    },
+                        count: dbController.listOfSectionIncharge.length,
+                        dbController.isDownloading ?? false);
                   }),
                   Consumer<SectionDb>(
-                    builder: (context, dbController, _) => Column(
-                      children: [
-                        _buildTile('Sections', '12-12-2024', () {
-                          dbController.storeSection(context);
-                        },
+                    builder: (context, dbController, _) =>
+                        _buildTile('Sections', dbController.lastSyncData, () {
+                      dbController.storeSection(context);
+                    },
                             count: dbController.listOfSection.length,
                             dbController.isDownloading ?? false),
-                      ],
-                    ),
                   ),
                   Consumer<BlockSectionDb>(
-                    builder: (context, dbController, _) => Column(
-                      children: [
-                        _buildTile('Block Sections', '12-12-2024', () {
-                          dbController.storeBlockSections(context);
-                        },
-                            count: dbController.listOfBlockSections.length,
-                            dbController.isDownloading ?? false),
-                      ],
-                    ),
+                    builder: (context, dbController, _) => _buildTile(
+                        'Block Sections', dbController.lastSyncData, () {
+                      dbController.storeBlockSections(context);
+                    },
+                        count: dbController.listOfBlockSections.length,
+                        dbController.isDownloading ?? false),
                   ),
                   Consumer<StationDb>(
-                      builder: (context, dbController, _) => Column(children: [
-                            _buildTile('Stations', '12-12-2024', () {
-                              dbController.storeStations(context);
-                            },
-                                count: dbController.listOfStationModel.length,
-                                dbController.isDownloading ?? false),
-                          ])),
+                      builder: (context, dbController, _) =>
+                          _buildTile('Stations', dbController.lastSyncData, () {
+                            dbController.storeStations(context);
+                          },
+                              count: dbController.listOfStationModel.length,
+                              dbController.isDownloading ?? false)),
                   Consumer<ParametersDb>(
-                      builder: (context, dbController, _) => Column(children: [
-                            _buildTile('Parameters', '12-12-2024', () {
-                              dbController.storeParameters(context);
-                            },
-                                count: dbController.listOfParameters.length,
-                                dbController.isDownloading ?? false),
-                          ])),
+                      builder: (context, dbController, _) => _buildTile(
+                              'Parameters', dbController.lastSyncData, () {
+                            dbController.storeParameters(context);
+                          },
+                              count: dbController.listOfParameters.length,
+                              dbController.isDownloading ?? false)),
                   Consumer<ParametersValueDb>(
-                      builder: (context, dbController, _) => Column(children: [
-                            _buildTile('Parameter Values', '12-12-2024', () {
-                              dbController.storeParametersValues(context);
-                            },
-                                count:
-                                    dbController.listOfParametersValues.length,
-                                dbController.isDownloading ?? false),
-                          ])),
+                      builder: (context, dbController, _) => _buildTile(
+                              'Parameter Values', dbController.lastSyncData,
+                              () {
+                            dbController.storeParametersValues(context);
+                          },
+                              count: dbController.listOfParametersValues.length,
+                              dbController.isDownloading ?? false)),
                   Consumer<ParametersReasonDb>(
-                      builder: (context, dbController, _) => Column(children: [
-                            _buildTile('Reasons', '12-12-2024', () {
-                              dbController.storeParameterReson(context);
-                            },
-                                count:
-                                    dbController.listOfParametersResons.length,
-                                dbController.isDownloading ?? false),
-                          ])),
+                      builder: (context, dbController, _) =>
+                          _buildTile('Reasons', dbController.lastSyncData, () {
+                            dbController.storeParameterReson(context);
+                          },
+                              count: dbController.listOfParametersResons.length,
+                              dbController.isDownloading ?? false)),
                   Consumer<EnitityProfileDb>(
-                      builder: (context, dbController, _) => Column(children: [
-                            _buildTile('Asset Profiles', '12-12-2024', () {
-                              dbController.storeEnitityProfile(context);
-                            },
-                                count:
-                                    dbController.listOfEnitityProfiles.length,
-                                dbController.isDownloading ?? false),
-                          ])),
+                      builder: (context, dbController, _) => _buildTile(
+                              'Asset Profiles', dbController.lastSyncData, () {
+                            dbController.storeEnitityProfile(context);
+                          },
+                              count: dbController.listOfEnitityProfiles.length,
+                              dbController.isDownloading ?? false)),
                   Consumer<OfflineAddEntityDb>(
-                      builder: (context, dbController, _) => Column(children: [
-                            _buildTile('Asset Profiles - Offline', '12-12-2024',
-                                () {
-                              dbController.getAllOfflineAddEntityDb();
-                            },
-                                count:
-                                    dbController.listOfflineEntitites?.length,
-                                dbController.isDownloading ?? false),
-                          ])),
+                      builder: (context, dbController, _) => _buildTile(
+                              'Asset Profiles - Offline',
+                              dbController.lastSyncData, () {
+                            dbController.getAllOfflineAddEntityDb();
+                          },
+                              count: dbController.listOfflineEntitites?.length,
+                              dbController.isDownloading ?? false)),
                   Consumer<OfflineTestEntityDb>(
-                      builder: (context, dbController, _) => Column(children: [
-                            _buildTile('Test Reports - Offline', '12-12-2024',
-                                hideDevider: true, () {
-                              dbController.getAllPendingOfflineTest();
-                            },
-                                count:
-                                    dbController.listOfflineEntitites?.length,
-                                dbController.isDownloading ?? false),
-                          ])),
+                      builder: (context, dbController, _) => _buildTile(
+                              'Test Reports - Offline',
+                              dbController.lastSyncData,
+                              hideDevider: true, () {
+                            dbController.getAllPendingOfflineTest();
+                          },
+                              count: dbController.listOfflineEntitites?.length,
+                              dbController.isDownloading ?? false)),
                   const AppSpacer(
                     heightPortion: .02,
                   )
@@ -227,17 +202,6 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                   horizontal: AppDimensions.paddingSize15,
                   vertical: AppDimensions.paddingSize10),
               minLeadingWidth: w(context) * .35,
-              // leading: SizedBox(
-
-              //   width: w(context) * .35,
-              //   child: Column(
-
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-
-              //     ],
-              //   ),
-              // ),
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -275,12 +239,14 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                             fontSize: AppDimensions.fontSize18(context),
                             color: AppColors.kWhite),
                       ),
-                      Text(
-                        'Last updated',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: AppDimensions.fontSize10(context),
-                            color: AppColors.kWhite),
+                      Align(
+                        child: Text(
+                          'Last updated',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: AppDimensions.fontSize10(context),
+                              color: AppColors.kWhite),
+                        ),
                       ),
                     ],
                   ),

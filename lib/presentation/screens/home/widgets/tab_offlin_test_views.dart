@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,7 +45,7 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
               builder: (context, controller, child) {
                 final reports = controller.listOfflineEntitites;
                 return reports!.isEmpty
-                    ? const Center(child: Text('No records found'))
+                    ? Center(child: Text('noRecordFoundMessage'.tr()))
                     : ListView.separated(
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
@@ -91,19 +92,22 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
                                   Divider(
                                     color: AppColors.kBgColor,
                                   ),
-                                  tile('ASSET TYPE', report.entityId),
-                                  tile('ASSET ID', report.entityProfileId),
-                                  tile('SECTION INCHARGE', report.entityId),
-                                  tile('SECTION', report.sectionId),
+                                  tile('assetTypeCap'.tr(), report.entityId),
+                                  tile('assetIdCap'.tr(),
+                                      report.entityProfileId),
+                                  tile('sectionInchargeCap'.tr(),
+                                      report.entityId),
+                                  tile('sectionCap'.tr(), report.sectionId),
                                   report.blockSectionId != null
-                                      ? tile('BLOCK SECTION',
+                                      ? tile('blockSectionCap'.tr(),
                                           report.blockSectionId!)
                                       : const SizedBox(),
                                   report.stationId != null
-                                      ? tile('STATION', report.stationId!)
+                                      ? tile(
+                                          'stationCap'.tr(), report.stationId!)
                                       : const SizedBox(),
-                                  tile('LATITUDE', report.testLatt),
-                                  tile('LONGITUDE', report.testLong)
+                                  tile('latitudeCap'.tr(), report.testLatt),
+                                  tile('longitudeCap'.tr(), report.testLong)
                                 ],
                               ),
                             ),

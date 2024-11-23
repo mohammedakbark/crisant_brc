@@ -9,7 +9,6 @@ import 'package:test_managment/core/services/shared_pre_service.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/route.dart';
-import 'package:test_managment/first_time_downloading_screen.dart';
 import 'package:test_managment/presentation/auth/login_screen.dart';
 import 'package:test_managment/presentation/screens/dashboard.dart';
 

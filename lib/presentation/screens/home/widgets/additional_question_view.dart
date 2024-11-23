@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/core/controller/parameter_controller.dart';
@@ -13,6 +14,7 @@ import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/model/db%20models/parameter_reson_model.dart';
 import 'package:test_managment/model/db%20models/parameter_values_model.dart';
 import 'package:test_managment/model/db%20models/parameters_model.dart';
+import 'package:test_managment/presentation/screens/home/widgets/home_app_bar.dart';
 
 class AdditionalQuestionView extends StatefulWidget {
   const AdditionalQuestionView({super.key});
@@ -109,7 +111,7 @@ class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _titleText('Reason', isRequired: true),
+                            _titleText('reason'.tr(), isRequired: true),
                             CustomDropdownField(
                                 items: getfilterParametsrReason(
                                     ctlr.infinityHelperData?[index]
@@ -120,7 +122,7 @@ class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
                                   ctlr.onChangeTheParameterReason(
                                       index, data.parameterReasonId);
                                 },
-                                hintText: 'Reason'),
+                                hintText: 'reason'.tr()),
                           ],
                         ),
                       ]

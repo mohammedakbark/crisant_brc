@@ -1,6 +1,6 @@
 {
   "hi": "Hi",
-  "welocme": "Welocme",
+  "welocme": "Welcome",
   "homeLarge": "HOME",
   "addAssetCap": "ADD ASSET",
   "testAssetCap": "TEST ASSET",
@@ -8,7 +8,7 @@
   "dataCap": "DATA",
   "onlineModeCap": "ONLINE MODE",
   "offlineModeCap": "OFFLINE MODE",
-  "appVersion": "App Version:",
+  "appVersion": "App version:",
   "logout": "LOGOUT",
   "assetType": "Asset Type",
   "sectionIncharge": "Section Incharge",
@@ -32,7 +32,7 @@
   "submitTestReport": "SUBMIT TEST REPORT",
   "onlineData": "ONLINE DATA",
   "offlineData": "OFFLINE DATA",
-  "noRecordFoundMessage": "NO records found",
+  "noRecordFoundMessage": "No records found",
 
   "assetTypeCap": "ASSET TYPE",
   "assetIdCap": "ASSET ID",
@@ -44,5 +44,9 @@
   "longitudeCap": "LONGITUDE",
   "distanceCap": "DISTANCE",
   "youAre":"You are ",
-  "awayFromTheAsset":"away from the asset"
+  "awayFromTheAsset":" away from the asset",
+  "imageCaptured":"Image Captured",
+  "reason":"Reason",
+  "pleaseWaitDashboard":"Please wait until the download is complete"
+
 }

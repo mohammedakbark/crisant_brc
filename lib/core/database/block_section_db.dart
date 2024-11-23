@@ -2,10 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_block_section_repo.dart';
-import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/block_station_model.dart';
 
@@ -17,14 +18,30 @@ class BlockSectionDb with ChangeNotifier {
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
 
-  Future storeBlockSections(BuildContext context,{bool? dontList}) async {
+  Future<void> setlastSync() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final today = "${now.day}-${now.month}-${now.year}";
+    await pre.setString(blockSectionCollection, today);
+    await _getLastSyncData();
+  }
+
+  String? _lastSyncData;
+  String get lastSyncData => _lastSyncData ?? '-';
+  Future _getLastSyncData() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    _lastSyncData = pre.getString(blockSectionCollection) ?? '-';
+  }
+
+  Future storeBlockSections(BuildContext context, {bool? dontList}) async {
     try {
       if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
           true) {
         _isDownloading = true;
-if (dontList == null) {
-        notifyListeners();
-      }        final db = await LocalDatabaseService().initDb;
+        if (dontList == null) {
+          notifyListeners();
+        }
+        final db = await LocalDatabaseService().initDb;
 
         await _clearTable();
         final result = await FetchBlockSectionRepo().fetchBlockSection(context);
@@ -38,16 +55,10 @@ if (dontList == null) {
             blockSection.toJson(),
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
-          // await db.rawInsert(
-          //     'INSERT INTO $blockSectionCollection(blockSectionId,blockSectionName,sectionId) VALUES(?,?,?)',
-          //     [
-          //       blockSection.blockSectionId,
-          //       blockSection.blockSectionName,
-          //       blockSection.sectionId
-          //     ]);
         }
 
         log('Block Section Downloaded Successful');
+       await setlastSync();
         await getAllBlockSections();
         _isDownloading = false;
       } else {
@@ -59,9 +70,10 @@ if (dontList == null) {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
-if (dontList == null) {
-        notifyListeners();
-      }  }
+    if (dontList == null) {
+      notifyListeners();
+    }
+  }
 
   Future getAllBlockSections() async {
     final db = await LocalDatabaseService().initDb;

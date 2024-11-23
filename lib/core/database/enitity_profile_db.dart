@@ -3,10 +3,11 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_entity_profile_repo.dart';
-import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/entity_profile_model.dart';
@@ -17,14 +18,32 @@ class EnitityProfileDb with ChangeNotifier {
   List<EntityProfileModel> get listOfEnitityProfiles => _listOfEnitityProfiles;
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
-  Future<void> storeEnitityProfile(BuildContext context,{bool? dontList}) async {
+
+  Future<void> setlastSync() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final today = "${now.day}-${now.month}-${now.year}";
+    await pre.setString(entityProfileCollection, today);
+    await _getLastSyncData();
+  }
+
+  String? _lastSyncData;
+  String get lastSyncData => _lastSyncData ?? '-';
+  Future _getLastSyncData() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    _lastSyncData = pre.getString(entityProfileCollection) ?? '-';
+  }
+
+  Future<void> storeEnitityProfile(BuildContext context,
+      {bool? dontList}) async {
     try {
       if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
           true) {
         _isDownloading = true;
-if (dontList == null) {
-        notifyListeners();
-      }        final db = await LocalDatabaseService().initDb;
+        if (dontList == null) {
+          notifyListeners();
+        }
+        final db = await LocalDatabaseService().initDb;
 
         await _clearTable();
         final result =
@@ -39,28 +58,10 @@ if (dontList == null) {
             enitityProfile.toJson(),
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
-          // await db.rawInsert(
-          //     'INSERT INTO $entityProfileCollection(entityProfileId,divisionId,sectionInchargeId,sectionId,blockSectionId,stationId,entityId,entityIdentifier,entityLatt,entityLong,entityStatus,entityConfirmed,status,userId,modifiedDate) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-          //     [
-          //       enitityProfile.entityProfileId,
-          //       enitityProfile.divisionId,
-          //       enitityProfile.sectionInchargeId,
-          //       enitityProfile.sectionId,
-          //       enitityProfile.blockSectionId,
-          //       enitityProfile.stationId,
-          //       enitityProfile.entityId,
-          //       enitityProfile.entityIdentifier,
-          //       enitityProfile.entityLatt,
-          //       enitityProfile.entityLong,
-          //       enitityProfile.entityStatus,
-          //       enitityProfile.entityConfirmed,
-          //       enitityProfile.status,
-          //       enitityProfile.userId,
-          //       enitityProfile.modifiedDate
-          //     ]);
         }
 
         print('Enitity Profile  Downloaded Successful');
+        await setlastSync();
         await getAllEnitityProfile();
         _isDownloading = false;
       } else {

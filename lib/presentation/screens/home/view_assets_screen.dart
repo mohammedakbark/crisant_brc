@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +12,8 @@ import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
 import 'package:test_managment/model/test_report_model.dart';
-import 'package:test_managment/presentation/screens/home/widgets/home_drawer.dart';
+import 'package:test_managment/presentation/screens/home/widgets/app_drawer.dart';
+import 'package:test_managment/presentation/screens/home/widgets/home_app_bar.dart';
 import 'package:test_managment/presentation/screens/home/widgets/tab_offlin_test_views.dart';
 import 'package:test_managment/presentation/screens/home/widgets/tab_online_test_view.dart';
 
@@ -41,21 +43,21 @@ class ViewAssetsScreen extends StatelessWidget {
             color: AppColors.kBlack,
           ),
           centerTitle: true,
-          title: const AppPageHeadText(title: 'View Test Asset'),
+          title:  AppPageHeadText(title: 'viewTestAsset'.tr()),
         ),
-        body: const DefaultTabController(
+        body:  DefaultTabController(
           length: 2,
           child: Column(
             children: [
               TabBar(tabs: [
                 Tab(
-                  text: 'ONLINE DATA',
+                  text: 'onlineData'.tr(),
                 ),
                 Tab(
-                  text: 'OFFLINE DATA',
+                  text: 'offlineData'.tr(),
                 )
               ]),
-              Expanded(
+              const Expanded(
                   child: TabBarView(
                       children: [TabOnlineTestView(), TabOfflinTestViews()]))
             ],

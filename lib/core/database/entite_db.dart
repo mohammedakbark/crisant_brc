@@ -2,10 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_entity_repo.dart';
-import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/entity_model.dart';
 
@@ -37,19 +38,12 @@ class EntiteDb with ChangeNotifier {
             entity.toJson(),
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
-          // await db.rawInsert(
-          //     'INSERT INTO $entitiesCollection(entityId,entityName,pictureRequired,periodicity,entityType) VALUES(?,?,?,?,?)',
-          //     [
-          //       entity.entityId,
-          //       entity.entityName,
-          //       entity.pictureRequired,
-          //       entity.periodicity,
-          //       entity.entityType
-          //     ]);
         }
 
         log('Entity Downloaded Successful');
+         await setlastSync();
         await getAllEntities();
+       
         _isDownloading = false;
       } else {
         showMessage(
@@ -72,6 +66,7 @@ class EntiteDb with ChangeNotifier {
     try {
       final data = await db.rawQuery('SELECT * FROM $entitiesCollection');
       _listOfEntityData = data.map((e) => EntityModel.fromJson(e)).toList();
+    
       notifyListeners();
       log('Entity Fetched');
     } catch (e) {
@@ -88,5 +83,20 @@ class EntiteDb with ChangeNotifier {
     } catch (e) {
       log('exception on deleting  table  ${e.toString()}');
     }
+  }
+
+ Future<void> setlastSync() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final today = "${now.day}-${now.month}-${now.year}";
+    await pre.setString(entitiesCollection, today);
+    await _getLastSyncData();
+  }
+
+  String? _lastSyncData;
+  String get lastSyncData => _lastSyncData ?? '-';
+  Future _getLastSyncData() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    _lastSyncData = pre.getString(entitiesCollection) ?? '-';
   }
 }

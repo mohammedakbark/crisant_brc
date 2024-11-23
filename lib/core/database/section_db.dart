@@ -2,10 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_section_repo.dart';
-import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/section_model.dart';
 
@@ -17,14 +18,30 @@ class SectionDb with ChangeNotifier {
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
 
-  Future storeSection(BuildContext context,{bool? dontList}) async {
+  Future<void> setlastSync() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final today = "${now.day}-${now.month}-${now.year}";
+    await pre.setString(sectionCollection, today);
+    await _getLastSyncData();
+  }
+
+  String? _lastSyncData;
+  String get lastSyncData => _lastSyncData ?? '-';
+  Future _getLastSyncData() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    _lastSyncData = pre.getString(sectionCollection) ?? '-';
+  }
+
+  Future storeSection(BuildContext context, {bool? dontList}) async {
     try {
       if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
           true) {
         _isDownloading = true;
-if (dontList == null) {
-        notifyListeners();
-      }        final db = await LocalDatabaseService().initDb;
+        if (dontList == null) {
+          notifyListeners();
+        }
+        final db = await LocalDatabaseService().initDb;
 
         await _clearTable();
         final result = await FetchSectionRepo().fetchSection(context);
@@ -38,16 +55,10 @@ if (dontList == null) {
             section.toJson(),
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
-          // await db.rawInsert(
-          //     'INSERT INTO $sectionCollection(sectionId,sectionName,sectionInchargeId) VALUES(?,?,?)',
-          //     [
-          //       section.sectionId,
-          //       section.sectionName,
-          //       section.sectionInchargeId
-          //     ]);
         }
 
         log('Section  Downloaded Successful');
+        await setlastSync();
         await getAllSections();
         _isDownloading = false;
       } else {
@@ -57,9 +68,10 @@ if (dontList == null) {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
-if (dontList == null) {
-        notifyListeners();
-      }  }
+    if (dontList == null) {
+      notifyListeners();
+    }
+  }
 
   Future getAllSections() async {
     final db = await LocalDatabaseService().initDb;

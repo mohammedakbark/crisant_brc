@@ -9,7 +9,7 @@ class SharedPreService with ChangeNotifier {
   Future<bool> get dataisUpdated async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     _dataisUpdated = preferences.getBool(key) ?? false;
-    notifyListeners();
+    // notifyListeners();
     return _dataisUpdated!;
   }
 
@@ -18,9 +18,9 @@ class SharedPreService with ChangeNotifier {
     final data = await preferences.setBool(key, vaue);
     _dataisUpdated = data;
     log('Dowloaded');
-    if (dontlistern == null) {
-      notifyListeners();
-    }
+    // if (dontlistern == null) {
+    notifyListeners();
+    // }
   }
 
   deletedData() async {

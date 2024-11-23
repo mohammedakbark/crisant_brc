@@ -1,18 +1,12 @@
-import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:test_managment/core/alert_message.dart';
-import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/custom_button.dart';
 import 'package:test_managment/core/services/api_service.dart';
-import 'package:test_managment/core/services/shared_pre_service.dart';
-import 'package:test_managment/core/utils/app_colors.dart';
+
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/route.dart';
-import 'package:test_managment/first_time_downloading_screen.dart';
 import 'package:test_managment/presentation/screens/dashboard.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -27,7 +21,7 @@ class LoginScreen extends StatelessWidget {
       //   title: Text('data'),
       // ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: AppDimensions.paddingSize20),
+        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingSize20),
         child: Form(
           key: _formKey,
           child: Column(

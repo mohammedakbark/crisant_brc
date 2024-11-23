@@ -2,11 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/services/api_service.dart';
-import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/model/add_new_asset_model.dart';
 import 'package:test_managment/model/db%20models/entity_profile_model.dart';
 
@@ -18,6 +19,22 @@ class OfflineAddEntityDb with ChangeNotifier {
       _listOfflineEntitites ?? [];
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
+
+  Future<void> setlastSync() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final today = "${now.day}-${now.month}-${now.year}";
+    await pre.setString(offlineCollectionTable, today);
+    await _getLastSyncData();
+  }
+
+  String? _lastSyncData;
+  String get lastSyncData => _lastSyncData ?? '-';
+  Future _getLastSyncData() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    _lastSyncData = pre.getString(offlineCollectionTable) ?? '-';
+  }
+
   Future<void> addToOfflineAddEntityDb(AddNewAssetModel model) async {
     try {
       final db = await LocalDatabaseService().initOfflineAddEntityDb;
@@ -38,7 +55,7 @@ class OfflineAddEntityDb with ChangeNotifier {
 
     try {
       _isDownloading = true;
-     if (dontList == null) {
+      if (dontList == null) {
         notifyListeners();
       }
       final dataofPentitles =
@@ -48,14 +65,15 @@ class OfflineAddEntityDb with ChangeNotifier {
         _listOfflineEntitites =
             dataofPentitles.map((e) => AddNewAssetModel.fromJson(e)).toList();
       }
+      await setlastSync();
       _isDownloading = false;
-     if (dontList == null) {
+      if (dontList == null) {
         notifyListeners();
       }
       log('Parameters Fetched');
     } catch (e) {
       _isDownloading = false;
-   if (dontList == null) {
+      if (dontList == null) {
         notifyListeners();
       }
       log('exception on getting data from table ${e.toString()}');

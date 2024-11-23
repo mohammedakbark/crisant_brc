@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,14 +20,14 @@ import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/services/api_service.dart';
-import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
 import 'package:test_managment/model/add_new_asset_model.dart';
-import 'package:test_managment/presentation/screens/home/widgets/home_drawer.dart';
+import 'package:test_managment/presentation/screens/home/widgets/app_drawer.dart';
 
 class AddAssetScreen extends StatefulWidget {
   const AddAssetScreen({Key? key}) : super(key: key);
@@ -74,7 +75,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
             color: AppColors.kBlack,
           ),
           centerTitle: true,
-          title: const AppPageHeadText(title: 'Add Asset'),
+          title: AppPageHeadText(title: 'addAsset'.tr()),
         ),
         body: Form(
           key: _formKey,
@@ -93,7 +94,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
                       _buildSectionDropdown(),
                       _buildBlockOrStationDropdown(),
                       Text(
-                        'Asset ID',
+                        'assetId'.tr(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.kBlack),
@@ -101,12 +102,12 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
                       CustomFormField(
                         isRequiredField: true,
                         controller: assetIdController,
-                        hintText: 'Asset ID / SL#',
+                        hintText: 'assetid/sl'.tr(),
                       ),
                       const AppSpacer(heightPortion: .05),
                       Center(
                         child: CustomButton(
-                          title: 'ADD ASSET',
+                          title: 'addAssetCap'.tr(),
                           onTap: _handleSubmit,
                         ),
                       ),
@@ -137,7 +138,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
             .sort((a, b) => (a['title'] ?? '').compareTo(b['title'] ?? ''));
         return CustomDropdownField(
             onCallBack: assetCtrl.onChangeEnitity,
-            hintText: 'Asset Type',
+            hintText: 'assetType'.tr(),
             items: sortedItems);
       },
     );
@@ -165,7 +166,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
                 Provider.of<SectionDb>(context, listen: false).listOfSection;
             assetCtrl.onChangedSectionIncharge(value, sectionList);
           },
-          hintText: 'Section Incharge',
+          hintText: 'sectionIncharge'.tr(),
           items: assetCtrl.selectedEntityId == null ? [] : sortedItems,
         );
       },
@@ -200,7 +201,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
               assetCtrl.onChangedSection(value, stationList: stationList);
             }
           },
-          hintText: 'Section',
+          hintText: 'section'.tr(),
           items: assetCtrl.selectedSectonInchargeId == null ? [] : sortedItems,
         );
       },
@@ -231,7 +232,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
             builder: (context, blockDb, _) {
               return CustomDropdownField(
                 onCallBack: assetCtrl.onChangedBlocks,
-                hintText: 'Block',
+                hintText: 'block'.tr(),
                 items: assetCtrl.selectedSectionId == null ? [] : sortedItems,
               );
             },
@@ -253,7 +254,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
                 .sort((a, b) => (a['title'] ?? '').compareTo(b['title'] ?? ''));
             return CustomDropdownField(
               onCallBack: assetCtrl.onChangedStations,
-              hintText: 'Station',
+              hintText: 'station'.tr(),
               items: assetCtrl.selectedSectionId == null ? [] : sortedItems,
             );
           },

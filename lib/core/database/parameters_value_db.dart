@@ -2,10 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/fetch_parameter_value_repo.dart';
-import 'package:test_managment/core/services/local_service.dart';
+import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/db%20models/parameter_values_model.dart';
 
@@ -16,6 +17,22 @@ class ParametersValueDb with ChangeNotifier {
       _listOfParametersValues;
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
+
+  Future<void> setlastSync() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final today = "${now.day}-${now.month}-${now.year}";
+    await pre.setString(parametersValueCollection, today);
+    await _getLastSyncData();
+  }
+
+  String? _lastSyncData;
+  String get lastSyncData => _lastSyncData ?? '-';
+  Future _getLastSyncData() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    _lastSyncData = pre.getString(parametersValueCollection) ?? '-';
+  }
+
   Future storeParametersValues(BuildContext context, {bool? dontList}) async {
     try {
       if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
@@ -39,17 +56,10 @@ class ParametersValueDb with ChangeNotifier {
             parametersValues.toJson(),
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
-          // await db.rawInsert(
-          //     'INSERT INTO $parametersValueCollection(parameterValueId,parameterId,parameterValue,parameterStatus) VALUES(?,?,?,?)',
-          //     [
-          //       parametersValues.parameterValueId,
-          //       parametersValues.parameterId,
-          //       parametersValues.parameterValue,
-          //       parametersValues.parameterStatus
-          //     ]);
         }
 
         log('Parameters Values  Downloaded Successful');
+        await setlastSync();
         await getAllParametersValues();
         _isDownloading = false;
       } else {
@@ -59,9 +69,10 @@ class ParametersValueDb with ChangeNotifier {
       _isDownloading = false;
       log('exception on adding data in to table ${e.toString()}');
     }
-if (dontList == null) {
-        notifyListeners();
-      }  }
+    if (dontList == null) {
+      notifyListeners();
+    }
+  }
 
   Future getAllParametersValues() async {
     final db = await LocalDatabaseService().initDb;

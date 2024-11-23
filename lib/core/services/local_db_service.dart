@@ -203,8 +203,10 @@ class LocalDatabaseService with ChangeNotifier {
     }
   }
 
+ 
   void fetchAllDatabases(BuildContext context) async {
     await Provider.of<EntiteDb>(context, listen: false).getAllEntities();
+    // await Provider.of<EntiteDb>(context, listen: false).getLastSyncData();
     await Provider.of<SectionInchargeDb>(context, listen: false)
         .getAllSectionIncharges();
     await Provider.of<SectionDb>(context, listen: false).getAllSections();

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:test_managment/core/components/app_margin.dart';
@@ -6,6 +7,7 @@ import 'package:test_managment/core/components/common_widgets.dart';
 import 'package:test_managment/core/services/api_service.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
+import 'package:test_managment/main.dart';
 import 'package:test_managment/model/test_report_model.dart';
 
 class TabOnlineTestView extends StatefulWidget {
@@ -16,27 +18,43 @@ class TabOnlineTestView extends StatefulWidget {
 }
 
 class _TabOnlineTestViewState extends State<TabOnlineTestView> {
-  List<TestReportsModel> reports = [];
-  bool isLoading = false;
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
+  // List<TestReportsModel> reports = [];
+  // bool isLoading = false;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getData();
+  // }
 
-  void getData() async {
-    isLoading = true;
-    reports = await ApiService.getAllTestReports(context);
-    setState(() {
-      isLoading = false;
-    });
-  }
+  // void getData() async {
+  //   isLoading = true;
+  //   reports = await ApiService.getAllTestReports(context);
+  //   WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback(
+  //     (timeStamp) {
+  //       setState(() {
+  //         isLoading = false;
+  //       });
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? const AppLoadingIndicator()
-        : Padding(
+    // return isLoading
+    //     ? const AppLoadingIndicator()
+    //     :
+    return FutureBuilder(
+        future: ApiService.getAllTestReports(context),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return AppLoadingIndicator();
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('noRecordFoundMessage'.tr()),
+            );
+          }
+          final reports = snapshot.data ?? [];
+          return Padding(
             padding: const EdgeInsets.only(
                 top: AppDimensions.paddingSize10,
                 bottom: AppDimensions.paddingSize10),
@@ -86,20 +104,20 @@ class _TabOnlineTestViewState extends State<TabOnlineTestView> {
                               Divider(
                                 color: AppColors.kBgColor,
                               ),
-                              tile('ASSET TYPE', report.entityId),
-                              tile('ASSET ID', report.entityProfileId),
-                              tile('SECTION INCHARGE', report.entityId),
-                              tile('SECTION', report.sectionId),
+                              tile('assetTypeCap'.tr(), report.entityId),
+                              tile('assetIdCap'.tr(), report.entityProfileId),
+                              tile('sectionInchargeCap'.tr(), report.entityId),
+                              tile('sectionCap'.tr(), report.sectionId),
                               report.blockSectionId != null
                                   ? tile(
-                                      'BLOCK SECTION', report.blockSectionId!)
+                                      'blockSectionCap'.tr(), report.blockSectionId!)
                                   : const SizedBox(),
                               report.stationId != null
-                                  ? tile('STATION', report.stationId!)
+                                  ? tile('stationCap'.tr(), report.stationId!)
                                   : const SizedBox(),
-                              tile('LATITUDE', report.testLatt),
-                              tile('LONGITUDE', report.testLong),
-                              tile('DISTANCE', report.distance)
+                              tile('latitudeCap'.tr(), report.testLatt),
+                              tile('longitudeCap'.tr(), report.testLong),
+                              tile('distanceCap'.tr(), report.distance)
                             ],
                           ),
                         ),
@@ -110,6 +128,7 @@ class _TabOnlineTestViewState extends State<TabOnlineTestView> {
                         ),
                     itemCount: reports.length),
           );
+        });
   }
 
   Widget tile(String head, String body) {

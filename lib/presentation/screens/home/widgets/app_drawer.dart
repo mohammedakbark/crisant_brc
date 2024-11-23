@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
 import 'package:test_managment/core/utils/route.dart';
 import 'package:test_managment/presentation/screens/home/download_data.dart';
+import 'package:test_managment/presentation/screens/home/widgets/home_app_bar.dart';
 import 'package:test_managment/presentation/screens/spash_screen.dart';
 
 class HomeDrawer extends StatefulWidget {
@@ -37,7 +39,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
               decoration: const BoxDecoration(color: AppColors.kWhite),
               child: Text(
                 textAlign: TextAlign.center,
-                'Welcome\n${Provider.of<AuthDb>(context, listen: false).userName}',
+                '${'welocme'.tr()}\n${Provider.of<AuthDb>(context, listen: false).userName}',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: AppColors.kBlack,
@@ -45,11 +47,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
               ),
             ),
           ),
-          _buildButton('HOME', Icons.home_outlined, 0),
-          _buildButton('ADD ASSET', Icons.playlist_add_sharp, 1),
-          _buildButton('TEST ASSET', Icons.playlist_add_check_outlined, 2),
-          _buildButton('VIEW REPORT', Icons.auto_graph_sharp, 3),
-          _buildButton('DATA', Icons.storage, 4),
+          _buildButton('homeLarge'.tr(), Icons.home_outlined, 0),
+          _buildButton('addAssetCap'.tr(), Icons.playlist_add_sharp, 1),
+          _buildButton(
+              'testAssetCap'.tr(), Icons.playlist_add_check_outlined, 2),
+          _buildButton('viewReposrCap'.tr(), Icons.auto_graph_sharp, 3),
+          _buildButton('dataCap'.tr(), Icons.storage, 4),
           // InkWell(
           //   onTap: () {
           //     Provider.of<SharedPreService>(context, listen: false)
@@ -66,7 +69,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    net.netisConnected == true ? "ONLINE MODE" : "OFFLINE MODE",
+                    net.netisConnected == true
+                        ? "onlineModeCap".tr()
+                        : "offlineModeCap".tr(),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -77,20 +82,20 @@ class _HomeDrawerState extends State<HomeDrawer> {
             future: PackageInfo.fromPlatform(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Text("Loading...");
+                return const Text("Loading...");
               } else if (snapshot.hasError) {
-                return Text("Error loading version info");
+                return const Text("Error loading version info");
               } else if (snapshot.hasData) {
                 final packageInfo = snapshot.data!;
                 final version = packageInfo.version;
-                final buildNumber = packageInfo.buildNumber;
+                // final buildNumber = packageInfo.buildNumber;
 
                 return Text(
-                  "App version: $version",
-                  style: TextStyle(fontSize: 16),
+                  "${'appVersion'.tr()}: $version",
+                  style: const TextStyle(fontSize: 16),
                 );
               } else {
-                return Text("No version info available");
+                return const Text("No version info available");
               }
             },
           ),
@@ -99,7 +104,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
           ),
           CustomButton(
               butonColor: AppColors.kRed,
-              title: 'LOGOUT',
+              title: 'logout'.tr(),
               onTap: () async {
                 await Provider.of<AuthDb>(context, listen: false)
                     .clearAuthtable();
@@ -119,7 +124,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
         onTap: () {
           if (index == 4) {
             Navigator.of(context)
-                .push(AppRoutes.createRoute(DownloadDataScreen()));
+                .push(AppRoutes.createRoute(const DownloadDataScreen()));
           } else {
             controller.onChagePageIndex(index);
           }
