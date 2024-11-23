@@ -35,39 +35,20 @@ class EnitityProfileDb with ChangeNotifier {
   }
 
   Future<void> storeEnitityProfile(BuildContext context,
-      {bool? dontList}) async {
+      {bool? dontList, bool? dontehckNet}) async {
     try {
-      if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
-          true) {
-        _isDownloading = true;
-        if (dontList == null) {
-          notifyListeners();
-        }
-        final db = await LocalDatabaseService().initDb;
-
-        await _clearTable();
-        final result =
-            await FetchEntityProfileRepo().fetchEntityProfile(context);
-        List data = result!.data as List;
-        List<EntityProfileModel> listOfEnitityProfile =
-            data.map((e) => EntityProfileModel.fromJson(e)).toList();
-
-        for (var enitityProfile in listOfEnitityProfile) {
-          await db.insert(
-            entityProfileCollection,
-            enitityProfile.toJson(),
-            conflictAlgorithm: ConflictAlgorithm.replace,
+      if (dontehckNet == null) {
+        if (Provider.of<NetworkService>(context, listen: false)
+                .netisConnected ==
+            true) {
+          await _storeProfile(dontList, context);
+        } else {
+          showMessage(
+            'Please Check Your Internet Connection',
           );
         }
-
-        print('Enitity Profile  Downloaded Successful');
-        await setlastSync();
-        await getAllEnitityProfile();
-        _isDownloading = false;
       } else {
-        showMessage(
-          'Please Check Your Internet Connection',
-        );
+        await _storeProfile(dontList, context);
       }
     } catch (e) {
       _isDownloading = false;
@@ -75,6 +56,33 @@ class EnitityProfileDb with ChangeNotifier {
       print('exception on adding data in to table ${e.toString()}');
     }
     notifyListeners();
+  }
+
+  _storeProfile(bool? dontList, context) async {
+    _isDownloading = true;
+    if (dontList == null) {
+      notifyListeners();
+    }
+    final db = await LocalDatabaseService().initDb;
+
+    await _clearTable();
+    final result = await FetchEntityProfileRepo().fetchEntityProfile(context);
+    List data = result!.data as List;
+    List<EntityProfileModel> listOfEnitityProfile =
+        data.map((e) => EntityProfileModel.fromJson(e)).toList();
+
+    for (var enitityProfile in listOfEnitityProfile) {
+      await db.insert(
+        entityProfileCollection,
+        enitityProfile.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    print('Enitity Profile  Downloaded Successful');
+    await setlastSync();
+    await getAllEnitityProfile();
+    _isDownloading = false;
   }
 
   Future getAllEnitityProfile() async {

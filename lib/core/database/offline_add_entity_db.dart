@@ -103,7 +103,7 @@ class OfflineAddEntityDb with ChangeNotifier {
           }
           await _clearTable();
           await Provider.of<EnitityProfileDb>(context, listen: false)
-              .storeEnitityProfile(context);
+              .storeEnitityProfile(context,dontehckNet: true);
           await getAllOfflineAddEntityDb();
         }
       }
