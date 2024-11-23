@@ -2,10 +2,17 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/common_widgets.dart';
+import 'package:test_managment/core/database/block_section_db.dart';
+import 'package:test_managment/core/database/enitity_profile_db.dart';
+import 'package:test_managment/core/database/entite_db.dart';
 import 'package:test_managment/core/database/offline_test_entity_db.dart';
+import 'package:test_managment/core/database/section_db.dart';
+import 'package:test_managment/core/database/section_incharge_db.dart';
+import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 
@@ -28,9 +35,51 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
     isLoading = true;
     await Provider.of<OfflineTestEntityDb>(context, listen: false)
         .getAllPendingOfflineTest(dontListen: true);
+    await getEachData();
+
     setState(() {
       isLoading = false;
     });
+  }
+
+  List<Map<String, dynamic>> listOFData = [];
+  Future getEachData() async {
+    try {
+      final list = Provider.of<OfflineTestEntityDb>(context, listen: false)
+          .listOfflineEntitites;
+      for (var i in list!) {
+        listOFData.add(await _convertIdIntoValue(i.entityId, i.entityProfileId,
+            i.sectionInchargeId, i.sectionId, i.blockSectionId, i.stationId));
+      }
+    } catch (e) {
+      showMessage("Something went wrong.");
+    }
+  }
+
+  Future<Map<String, dynamic>> _convertIdIntoValue(assetTypeId, assetIds,
+      sectionInchargeid, sectionid, blockSectionid, stationid) async {
+    String assetType = await EntiteDb.getValueById(assetTypeId);
+    String assetId = await EnitityProfileDb.getValueById(assetIds);
+    String sectionIncharge =
+        await SectionInchargeDb.getValueById(sectionInchargeid);
+    String section = await SectionDb.getValueById(sectionid);
+    String blockSection = (blockSectionid == null ||
+            blockSectionid.isEmpty ||
+            blockSectionid == "null")
+        ? "N/A"
+        : await BlockSectionDb.getValueById(blockSectionid);
+    String station =
+        (stationid == null || stationid.isEmpty || stationid == "null")
+            ? "N/A"
+            : await StationDb.getValueById(stationid);
+    return {
+      "assetType": assetType,
+      "assetId": assetId,
+      "sectionIncharge": sectionIncharge,
+      "section": section,
+      "blockSection": blockSection,
+      "station": station,
+    };
   }
 
   @override
@@ -71,7 +120,7 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
                                 collapsedBackgroundColor: AppColors.kWhite,
                                 backgroundColor: AppColors.kBgColor2,
                                 title: Text(
-                                  report.entityProfileId,
+                                  listOFData[index]['assetId'],
                                   style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize:
@@ -92,19 +141,21 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
                                   Divider(
                                     color: AppColors.kBgColor,
                                   ),
-                                  tile('assetTypeCap'.tr(), report.entityId),
+                                  tile('assetTypeCap'.tr(),
+                                      listOFData[index]['assetType']),
                                   tile('assetIdCap'.tr(),
-                                      report.entityProfileId),
+                                      listOFData[index]['assetId']),
                                   tile('sectionInchargeCap'.tr(),
-                                      report.entityId),
-                                  tile('sectionCap'.tr(), report.sectionId),
+                                      listOFData[index]['sectionIncharge']),
+                                  tile('sectionCap'.tr(),
+                                      listOFData[index]['section']),
                                   report.blockSectionId != null
                                       ? tile('blockSectionCap'.tr(),
-                                          report.blockSectionId!)
+                                          listOFData[index]['blockSection'])
                                       : const SizedBox(),
                                   report.stationId != null
-                                      ? tile(
-                                          'stationCap'.tr(), report.stationId!)
+                                      ? tile('stationCap'.tr(),
+                                          listOFData[index]['station'])
                                       : const SizedBox(),
                                   tile('latitudeCap'.tr(), report.testLatt),
                                   tile('longitudeCap'.tr(), report.testLong)

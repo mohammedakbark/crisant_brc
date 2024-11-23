@@ -41,9 +41,9 @@ class EntiteDb with ChangeNotifier {
         }
 
         log('Entity Downloaded Successful');
-         await setlastSync();
+        await setlastSync();
         await getAllEntities();
-       
+
         _isDownloading = false;
       } else {
         showMessage(
@@ -66,7 +66,7 @@ class EntiteDb with ChangeNotifier {
     try {
       final data = await db.rawQuery('SELECT * FROM $entitiesCollection');
       _listOfEntityData = data.map((e) => EntityModel.fromJson(e)).toList();
-    
+
       notifyListeners();
       log('Entity Fetched');
     } catch (e) {
@@ -85,7 +85,7 @@ class EntiteDb with ChangeNotifier {
     }
   }
 
- Future<void> setlastSync() async {
+  Future<void> setlastSync() async {
     SharedPreferences pre = await SharedPreferences.getInstance();
     final now = DateTime.now();
     final today = "${now.day}-${now.month}-${now.year}";
@@ -98,5 +98,15 @@ class EntiteDb with ChangeNotifier {
   Future getLastSyncData() async {
     SharedPreferences pre = await SharedPreferences.getInstance();
     _lastSyncData = pre.getString(entitiesCollection) ?? '-';
+  }
+
+ static Future<String> getValueById(dynamic id) async {
+    final db = await LocalDatabaseService().initDb;
+    final List<Map<String, dynamic>> result = await db.query(
+      entitiesCollection, // Table name
+      where: 'entityId = ?', // WHERE clause
+      whereArgs: [id], // Value for the placeholder
+    );
+    return result[0]['entityName'];
   }
 }

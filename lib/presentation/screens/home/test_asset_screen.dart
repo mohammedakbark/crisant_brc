@@ -524,7 +524,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
         testLatt: locationProvider.currentLat.toString(),
         testLong: locationProvider.currentLon.toString(),
         testMode: ctr.isManual == true ? "MANUAL" : 'AUTO',
-        connectivityMode: 'ONLINE',
+        connectivityMode: isOnline == true ? 'ONLINE' : "OFFLINE",
         picture: cameraController.convertedImageFile?['file'],
         parameters: listOfParameters);
     if (isOnline == true) {

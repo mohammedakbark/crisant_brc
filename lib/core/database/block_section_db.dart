@@ -17,7 +17,15 @@ class BlockSectionDb with ChangeNotifier {
 
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
-
+static Future<String> getValueById(dynamic id) async {
+    final db = await LocalDatabaseService().initDb;
+    final List<Map<String, dynamic>> result = await db.query(
+      blockSectionCollection, // Table name
+      where: 'blockSectionId = ?', // WHERE clause
+      whereArgs: [id], // Value for the placeholder
+    );
+    return result[0]['blockSectionName'];
+  }
   Future<void> setlastSync() async {
     SharedPreferences pre = await SharedPreferences.getInstance();
     final now = DateTime.now();

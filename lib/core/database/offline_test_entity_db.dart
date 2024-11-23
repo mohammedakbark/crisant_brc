@@ -2,12 +2,14 @@ import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/controller/camera_controller.dart';
 import 'package:test_managment/core/services/api_service.dart';
 import 'package:test_managment/core/services/local_db_service.dart';
+import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/reposrts%20models/test_report_add_model.dart';
 
 class OfflineTestEntityDb with ChangeNotifier {
@@ -160,22 +162,40 @@ class OfflineTestEntityDb with ChangeNotifier {
     }
   }
 
-  Future<void> storeAllOfflineDataToServer(
-    BuildContext context,
-  ) async {
+  Future<void> offlineSyncTestToServer(BuildContext context,
+      {bool? fontCheckNet}) async {
     try {
-      if (listOfflineEntitites != null) {
-        if (listOfflineEntitites!.isNotEmpty) {
-          for (var i in listOfflineEntitites!) {
-            await ApiService.addNewTest(context, i);
-            showMessage('Storing offline Test to server');
-          }
-          await _clearEntityTable();
-          await getAllPendingOfflineTest();
+      if (fontCheckNet == null) {
+        if (Provider.of<NetworkService>(context, listen: false)
+                .netisConnected ==
+            true) {
+          await _syncData(context);
+        } else {
+          showMessage(
+            'Please Check Your Internet Connection',
+          );
         }
+      } else {
+        await _syncData(context);
       }
     } catch (e) {
       log('exception on storing offline Test Data to server   ${e.toString()}');
     }
   }
+
+  Future<void> _syncData(context) async {
+    if (listOfflineEntitites != null) {
+      if (listOfflineEntitites!.isNotEmpty) {
+        for (var i in listOfflineEntitites!) {
+          await ApiService.addNewTest(context, i);
+          showMessage('Storing offline Test to server');
+        }
+        await _clearEntityTable();
+        await getAllPendingOfflineTest();
+      }
+    }
+  }
+
+
+ 
 }

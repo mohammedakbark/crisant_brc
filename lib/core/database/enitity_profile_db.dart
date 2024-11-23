@@ -18,6 +18,15 @@ class EnitityProfileDb with ChangeNotifier {
   List<EntityProfileModel> get listOfEnitityProfiles => _listOfEnitityProfiles;
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
+  static Future<String> getValueById(dynamic id) async {
+    final db = await LocalDatabaseService().initDb;
+    final List<Map<String, dynamic>> result = await db.query(
+      entityProfileCollection, // Table name
+      where: 'entityProfileId = ?', // WHERE clause
+      whereArgs: [id], // Value for the placeholder
+    );
+    return result[0]['entityIdentifier'];
+  }
 
   Future<void> setlastSync() async {
     SharedPreferences pre = await SharedPreferences.getInstance();

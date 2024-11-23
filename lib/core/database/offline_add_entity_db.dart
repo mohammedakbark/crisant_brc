@@ -8,6 +8,7 @@ import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/services/api_service.dart';
 import 'package:test_managment/core/services/local_db_service.dart';
+import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/add_new_asset_model.dart';
 import 'package:test_managment/model/db%20models/entity_profile_model.dart';
 
@@ -91,24 +92,39 @@ class OfflineAddEntityDb with ChangeNotifier {
     }
   }
 
-  Future<void> storeAllOfflineDataToServer(
-    BuildContext context,
-  ) async {
+  Future<void> offlineAddAssetToServer(BuildContext context,
+      {bool? dontehckNet}) async {
     try {
-      if (listOfflineEntitites != null) {
-        if (listOfflineEntitites!.isNotEmpty) {
-          for (var i in listOfflineEntitites!) {
-            await ApiService.addNewAsset(context, i);
-            showMessage('Storing offline assets to server');
-          }
-          await _clearTable();
-          await Provider.of<EnitityProfileDb>(context, listen: false)
-              .storeEnitityProfile(context,dontehckNet: true);
-          await getAllOfflineAddEntityDb();
+      if (dontehckNet == null) {
+        if (Provider.of<NetworkService>(context, listen: false)
+                .netisConnected ==
+            true) {
+          await _syncData(context, dontehckNet: dontehckNet);
+        } else {
+          showMessage(
+            'Please Check Your Internet Connection',
+          );
         }
+      } else {
+        await _syncData(context, dontehckNet: dontehckNet);
       }
     } catch (e) {
       log('exception on storing offline data to server   ${e.toString()}');
+    }
+  }
+
+  Future<void> _syncData(BuildContext context, {bool? dontehckNet}) async {
+    if (listOfflineEntitites != null) {
+      if (listOfflineEntitites!.isNotEmpty) {
+        for (var i in listOfflineEntitites!) {
+          await ApiService.addNewAsset(context, i);
+          showMessage('Storing offline assets to server');
+        }
+        await _clearTable();
+        await Provider.of<EnitityProfileDb>(context, listen: false)
+            .storeEnitityProfile(context, dontehckNet: dontehckNet);
+        await getAllOfflineAddEntityDb();
+      }
     }
   }
 }

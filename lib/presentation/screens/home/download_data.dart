@@ -137,22 +137,49 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                               count: dbController.listOfEnitityProfiles.length,
                               dbController.isDownloading ?? false)),
                   Consumer<OfflineAddEntityDb>(
-                      builder: (context, dbController, _) => _buildTile(
-                              'assetProfilesofflineD'.tr(),
-                              dbController.lastSyncData, () {
-                            dbController.getAllOfflineAddEntityDb();
-                          },
-                              count: dbController.listOfflineEntitites?.length,
-                              dbController.isDownloading ?? false)),
+                    builder: (context, dbController, _) => _buildTile(
+                      'assetProfilesofflineD'.tr(),
+                      dbController.lastSyncData,
+                      () async {
+                        await Provider.of<OfflineAddEntityDb>(context,
+                                listen: false)
+                            .offlineAddAssetToServer(
+                          context,
+                        );
+                        // dbController.getAllOfflineAddEntityDb();
+                      },
+                      count: dbController.listOfflineEntitites?.length,
+                      dbController.isDownloading ?? false,
+                      showSync: true,
+                      // onTap: () async {
+                      //   // await Provider.of<OfflineAddEntityDb>(context,
+                      //   //         listen: false)
+                      //   //     .storeAllOfflineDataToServer(
+                      //   //   context,
+                      //   // );
+                      // },
+                    ),
+                  ),
                   Consumer<OfflineTestEntityDb>(
                       builder: (context, dbController, _) => _buildTile(
-                              'testReportsOfflineD'.tr(),
-                              dbController.lastSyncData,
-                              hideDevider: true, () {
-                            dbController.getAllPendingOfflineTest();
-                          },
-                              count: dbController.listOfflineEntitites?.length,
-                              dbController.isDownloading ?? false)),
+                            'testReportsOfflineD'.tr(),
+                            dbController.lastSyncData,
+                            hideDevider: true,
+                            () async {
+                              // dbController.getAllPendingOfflineTest();
+                              await Provider.of<OfflineTestEntityDb>(context,
+                                      listen: false)
+                                  .offlineSyncTestToServer(context);
+                            },
+                            count: dbController.listOfflineEntitites?.length,
+                            dbController.isDownloading ?? false,
+                            showSync: true,
+                            // onTap: () async {
+                            //   await Provider.of<OfflineTestEntityDb>(context,
+                            //           listen: false)
+                            //       .storeAllOfflineDataToServer(context);
+                            // },
+                          )),
                   const AppSpacer(
                     heightPortion: .02,
                   )
@@ -191,114 +218,137 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
   }
 
   Widget _buildTile(
-      String title, String date, void Function()? onPressed, bool loading,
-      {bool? hideDevider, int? count}) {
+    String title,
+    String date,
+    void Function()? onPressed,
+    bool loading, {
+    bool? hideDevider,
+    int? count,
+    bool? showSync,
+    // void Function()? onTap
+  }) {
     return Column(
       children: [
         AppMargin(
-          child: Container(
-            decoration: BoxDecoration(
-                color: AppColors.kPrimaryColor,
-                borderRadius:
-                    BorderRadius.circular(AppDimensions.radiusSize10)),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppDimensions.paddingSize15,
-                  vertical: AppDimensions.paddingSize10),
-              minLeadingWidth: w(context) * .35,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: w(context) * .5,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          overflow: TextOverflow.ellipsis,
-                          title,
-                          maxLines: 2,
-                          style: TextStyle(
-                              fontSize: AppDimensions.fontSize18(context),
-                              color: AppColors.kWhite,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          count != null
-                              ? "${count} ${'records'.tr()}"
-                              : "0 ${'records'.tr()}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: AppDimensions.fontSize10(context),
-                              color: AppColors.kWhite),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppDimensions.paddingSize15,
+                      vertical: AppDimensions.paddingSize10),
+                  decoration: BoxDecoration(
+                      color: AppColors.kPrimaryColor,
+                      borderRadius:
+                          BorderRadius.circular(AppDimensions.radiusSize10)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        date,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: AppDimensions.fontSize18(context),
-                            color: AppColors.kWhite),
-                      ),
-                      Align(
-                        child: Text(
-                          'lastUpdated'.tr(),
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: AppDimensions.fontSize10(context),
-                              color: AppColors.kWhite),
+                      SizedBox(
+                        width:
+                            // showSync == true
+                            //     ? w(context) * .3
+                            // :
+                            w(context) * .5,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              overflow: TextOverflow.ellipsis,
+                              title,
+                              maxLines: 2,
+                              style: TextStyle(
+                                  fontSize: AppDimensions.fontSize18(context),
+                                  color: AppColors.kWhite,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              count != null
+                                  ? "${count} ${'records'.tr()}"
+                                  : "0 ${'records'.tr()}",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: AppDimensions.fontSize10(context),
+                                  color: AppColors.kWhite),
+                            ),
+                          ],
                         ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            date,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: AppDimensions.fontSize18(context),
+                                color: AppColors.kWhite),
+                          ),
+                          Align(
+                            child: Text(
+                              'lastUpdated'.tr(),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: AppDimensions.fontSize10(context),
+                                  color: AppColors.kWhite),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          loading
+                              ? const SizedBox(
+                                  height: 5,
+                                  width: 5,
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.kWhite,
+                                    strokeAlign: 2,
+                                    strokeWidth: 3,
+                                  ),
+                                )
+                              : InkWell(
+                                  onTap: () {
+                                    if (!Provider.of<LocalDatabaseService>(
+                                            context,
+                                            listen: false)
+                                        .isDownloading) {
+                                      return onPressed!();
+                                    }
+                                  },
+                                  child: Icon(
+                                    size: 30,
+                                    showSync == true
+                                        ? Icons.cloud_sync_sharp
+                                        : Icons.download_for_offline,
+                                    color: AppColors.kWhite,
+                                  )),
+                          loading
+                              ? const AppSpacer(
+                                  heightPortion: .005,
+                                )
+                              : const SizedBox(),
+                          Text(
+                            showSync == true ? "Sync" : 'download'.tr(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: AppDimensions.fontSize10(context),
+                                color: AppColors.kWhite),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      loading
-                          ? const SizedBox(
-                              height: 5,
-                              width: 5,
-                              child: CircularProgressIndicator(
-                                color: AppColors.kWhite,
-                                strokeAlign: 2,
-                                strokeWidth: 3,
-                              ),
-                            )
-                          : InkWell(
-                              onTap: () {
-                                if (!Provider.of<LocalDatabaseService>(context,
-                                        listen: false)
-                                    .isDownloading) {
-                                  return onPressed!();
-                                }
-                              },
-                              child: const Icon(
-                                size: 30,
-                                Icons.download_for_offline,
-                                color: AppColors.kWhite,
-                              )),
-                      loading
-                          ? const AppSpacer(
-                              heightPortion: .005,
-                            )
-                          : const SizedBox(),
-                      Text(
-                        'download'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: AppDimensions.fontSize10(context),
-                            color: AppColors.kWhite),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
-            ),
+              // if (showSync == true) ...[
+              //   // TextButton(
+              //   //   onPressed: onTap,
+              //   //   child: Text("Sync"),
+              //   // )
+              // ]
+            ],
           ),
         ),
         hideDevider == true

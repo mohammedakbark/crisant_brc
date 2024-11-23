@@ -2,10 +2,13 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/database/offline_add_entity_db.dart';
 import 'package:test_managment/core/database/offline_test_entity_db.dart';
+import 'package:test_managment/core/services/lang_service.dart';
 
 class NetworkService with ChangeNotifier {
   final Connectivity _connectivity = Connectivity();
@@ -31,22 +34,28 @@ class NetworkService with ChangeNotifier {
         InternetAddress.lookup('example.com').then(
           (result) {
             if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-              _netisConnected = true; // Internet is available
+              _netisConnected = true;
+              showMessage('onlineModeCap'.tr());
+
+              // Internet is available
               Provider.of<OfflineAddEntityDb>(context, listen: false)
-                  .storeAllOfflineDataToServer(context);
+                  .offlineAddAssetToServer(context, dontehckNet: true);
               Provider.of<OfflineTestEntityDb>(context, listen: false)
-                  .storeAllOfflineDataToServer(context);
+                  .offlineSyncTestToServer(context, fontCheckNet: true);
             } else {
               _netisConnected = false;
+              showMessage('offlineModeCap'.tr());
             }
             notifyListeners();
           },
         ); // Test with a simple domain
       } catch (e) {
         _netisConnected = false; // No internet access
+        showMessage('offlineModeCap'.tr());
       }
     } else {
       _netisConnected = false;
+      showMessage('offlineModeCap'.tr());
     }
     notifyListeners();
     return _netisConnected ?? false;
