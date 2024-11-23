@@ -1,4 +1,4 @@
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
@@ -18,6 +18,7 @@ import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
+import 'package:test_managment/presentation/screens/home/widgets/home_app_bar.dart';
 
 class DownloadDataScreen extends StatefulWidget {
   const DownloadDataScreen({super.key});
@@ -49,7 +50,7 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
               ),
               centerTitle: true,
               title: Text(
-                'Download',
+                'download'.tr(),
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: AppDimensions.fontSize18(context)),
@@ -62,7 +63,8 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                     heightPortion: .01,
                   ),
                   Consumer<EntiteDb>(builder: (context, dbController, _) {
-                    return _buildTile('Asset Types', dbController.lastSyncData,
+                    return _buildTile(
+                        'assetTypesD'.tr(), dbController.lastSyncData,
                         () async {
                       //
                       dbController.storeEntity(context);
@@ -73,7 +75,7 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                   Consumer<SectionInchargeDb>(
                       builder: (context, dbController, _) {
                     return _buildTile(
-                        'Section Incharge', dbController.lastSyncData,
+                        'sectionInchargesD'.tr(), dbController.lastSyncData,
                         () async {
                       dbController.storeSectionIncharges(context);
                     },
@@ -81,60 +83,62 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                         dbController.isDownloading ?? false);
                   }),
                   Consumer<SectionDb>(
-                    builder: (context, dbController, _) =>
-                        _buildTile('Sections', dbController.lastSyncData, () {
+                    builder: (context, dbController, _) => _buildTile(
+                        'sectionsD'.tr(), dbController.lastSyncData, () {
                       dbController.storeSection(context);
                     },
-                            count: dbController.listOfSection.length,
-                            dbController.isDownloading ?? false),
+                        count: dbController.listOfSection.length,
+                        dbController.isDownloading ?? false),
                   ),
                   Consumer<BlockSectionDb>(
                     builder: (context, dbController, _) => _buildTile(
-                        'Block Sections', dbController.lastSyncData, () {
+                        'blockSectionsD'.tr(), dbController.lastSyncData, () {
                       dbController.storeBlockSections(context);
                     },
                         count: dbController.listOfBlockSections.length,
                         dbController.isDownloading ?? false),
                   ),
                   Consumer<StationDb>(
-                      builder: (context, dbController, _) =>
-                          _buildTile('Stations', dbController.lastSyncData, () {
+                      builder: (context, dbController, _) => _buildTile(
+                              'stationsD'.tr(), dbController.lastSyncData, () {
                             dbController.storeStations(context);
                           },
                               count: dbController.listOfStationModel.length,
                               dbController.isDownloading ?? false)),
                   Consumer<ParametersDb>(
                       builder: (context, dbController, _) => _buildTile(
-                              'Parameters', dbController.lastSyncData, () {
+                              'parametersD'.tr(), dbController.lastSyncData,
+                              () {
                             dbController.storeParameters(context);
                           },
                               count: dbController.listOfParameters.length,
                               dbController.isDownloading ?? false)),
                   Consumer<ParametersValueDb>(
                       builder: (context, dbController, _) => _buildTile(
-                              'Parameter Values', dbController.lastSyncData,
-                              () {
+                              'parametersValuesD'.tr(),
+                              dbController.lastSyncData, () {
                             dbController.storeParametersValues(context);
                           },
                               count: dbController.listOfParametersValues.length,
                               dbController.isDownloading ?? false)),
                   Consumer<ParametersReasonDb>(
-                      builder: (context, dbController, _) =>
-                          _buildTile('Reasons', dbController.lastSyncData, () {
+                      builder: (context, dbController, _) => _buildTile(
+                              'reasonsD'.tr(), dbController.lastSyncData, () {
                             dbController.storeParameterReson(context);
                           },
                               count: dbController.listOfParametersResons.length,
                               dbController.isDownloading ?? false)),
                   Consumer<EnitityProfileDb>(
                       builder: (context, dbController, _) => _buildTile(
-                              'Asset Profiles', dbController.lastSyncData, () {
+                              'assetsProfilesD'.tr(), dbController.lastSyncData,
+                              () {
                             dbController.storeEnitityProfile(context);
                           },
                               count: dbController.listOfEnitityProfiles.length,
                               dbController.isDownloading ?? false)),
                   Consumer<OfflineAddEntityDb>(
                       builder: (context, dbController, _) => _buildTile(
-                              'Asset Profiles - Offline',
+                              'assetProfilesofflineD'.tr(),
                               dbController.lastSyncData, () {
                             dbController.getAllOfflineAddEntityDb();
                           },
@@ -142,7 +146,7 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                               dbController.isDownloading ?? false)),
                   Consumer<OfflineTestEntityDb>(
                       builder: (context, dbController, _) => _buildTile(
-                              'Test Reports - Offline',
+                              'testReportsOfflineD'.tr(),
                               dbController.lastSyncData,
                               hideDevider: true, () {
                             dbController.getAllPendingOfflineTest();
@@ -175,9 +179,9 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                         blurRadius: 2,
                         offset: const Offset(3, 0)),
                   ]),
-                  child: const Text(
-                    'DOWNLOAD ALL',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  child: Text(
+                    'downloadAll'.tr(),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               );
@@ -220,7 +224,9 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          count != null ? "${count} Records" : "0 Records",
+                          count != null
+                              ? "${count} ${'records'.tr()}"
+                              : "0 ${'records'.tr()}",
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: AppDimensions.fontSize10(context),
@@ -241,7 +247,7 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                       ),
                       Align(
                         child: Text(
-                          'Last updated',
+                          'lastUpdated'.tr(),
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: AppDimensions.fontSize10(context),
@@ -282,7 +288,7 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                             )
                           : const SizedBox(),
                       Text(
-                        'Download',
+                        'download'.tr(),
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: AppDimensions.fontSize10(context),

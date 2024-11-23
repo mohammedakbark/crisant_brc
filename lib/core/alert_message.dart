@@ -23,22 +23,26 @@ showLoaingIndicator(BuildContext context) {
     barrierDismissible: false,
     context: context,
     builder: (context) {
-      return const AlertDialog(
-        titlePadding: EdgeInsets.symmetric(
+      return AlertDialog(
+        titlePadding: const EdgeInsets.symmetric(
             horizontal: AppDimensions.paddingSize20,
             vertical: AppDimensions.paddingSize20),
-        shape: BeveledRectangleBorder(),
+        shape: const BeveledRectangleBorder(),
         title: Row(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            AppLoadingIndicator(),
-            AppSpacer(
-              widthPortion: .02,
+            const AppLoadingIndicator(),
+            const AppSpacer(
+              widthPortion: .05,
             ),
             Text(
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
               'Please wait a moment..',
-              style: TextStyle(fontWeight: FontWeight.w500),
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: AppDimensions.fontSize16(context)),
             ),
           ],
         ),

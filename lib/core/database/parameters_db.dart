@@ -25,12 +25,12 @@ class ParametersDb with ChangeNotifier {
     final now = DateTime.now();
     final today = "${now.day}-${now.month}-${now.year}";
     await pre.setString(parametersCollection, today);
-    await _getLastSyncData();
+    await getLastSyncData();
   }
 
   String? _lastSyncData;
   String get lastSyncData => _lastSyncData ?? '-';
-  Future _getLastSyncData() async {
+  Future getLastSyncData() async {
     SharedPreferences pre = await SharedPreferences.getInstance();
     _lastSyncData = pre.getString(parametersCollection) ?? '-';
   }

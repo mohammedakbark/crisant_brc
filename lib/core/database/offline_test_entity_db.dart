@@ -26,12 +26,12 @@ class OfflineTestEntityDb with ChangeNotifier {
     final now = DateTime.now();
     final today = "${now.day}-${now.month}-${now.year}";
     await pre.setString(testEntityOfflineCollection, today);
-    await _getLastSyncData();
+    await getLastSyncData();
   }
 
   String? _lastSyncData;
   String get lastSyncData => _lastSyncData ?? '-';
-  Future _getLastSyncData() async {
+  Future getLastSyncData() async {
     SharedPreferences pre = await SharedPreferences.getInstance();
     _lastSyncData = pre.getString(testEntityOfflineCollection) ?? '-';
   }
@@ -168,7 +168,7 @@ class OfflineTestEntityDb with ChangeNotifier {
         if (listOfflineEntitites!.isNotEmpty) {
           for (var i in listOfflineEntitites!) {
             await ApiService.addNewTest(context, i);
-            showMessage('Storing Offline Test to server');
+            showMessage('Storing offline Test to server');
           }
           await _clearEntityTable();
           await getAllPendingOfflineTest();

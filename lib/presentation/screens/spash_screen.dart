@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
+import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/database/auth_db.dart';
 import 'package:test_managment/core/services/shared_pre_service.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
+import 'package:test_managment/core/utils/responsive_helper.dart';
 import 'package:test_managment/core/utils/route.dart';
 import 'package:test_managment/presentation/auth/login_screen.dart';
 import 'package:test_managment/presentation/screens/dashboard.dart';
@@ -24,7 +26,7 @@ class _SpashScreenState extends State<SpashScreen> {
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 3)).then(
       (value) async {
-        
+
         final auth = await Provider.of<AuthDb>(context, listen: false)
             .checkUserTableExist();
         if (auth) {
@@ -50,17 +52,19 @@ class _SpashScreenState extends State<SpashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'ASSET',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppDimensions.fontSize25(context)),
+            SizedBox(
+                width: w(context) * .5,
+                height: w(context) * .5,
+                child: Image.asset('assets/assets_logo.png')),
+            const AppSpacer(
+              heightPortion: .03,
             ),
             Text(
-              'MANAGEMENT SYSTEM',
+              'TEST MANAGMENT',
               style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: AppDimensions.fontSize15(context)),
+                  fontWeight: FontWeight.w900,
+                  color: const Color.fromARGB(255, 41, 77, 107),
+                  fontSize: AppDimensions.fontSize17(context)),
             )
           ],
         ),

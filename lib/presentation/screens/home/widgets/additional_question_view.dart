@@ -113,6 +113,7 @@ class _AdditionalQuestionViewState extends State<AdditionalQuestionView> {
                           children: [
                             _titleText('reason'.tr(), isRequired: true),
                             CustomDropdownField(
+                                dontShowTitle: true,
                                 items: getfilterParametsrReason(
                                     ctlr.infinityHelperData?[index]
                                         ['parameterValue']),

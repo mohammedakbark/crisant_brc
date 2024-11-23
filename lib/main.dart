@@ -122,15 +122,17 @@ class _ProviderMainState extends State<ProviderMain> {
           ChangeNotifierProvider<OfflineTestEntityDb>(
             create: (context) => OfflineTestEntityDb(),
           ),
+       
           ChangeNotifierProvider<OfflineAddEntityDb>(
             create: (context) => OfflineAddEntityDb(),
           ),
           ChangeNotifierProvider<ParameterController>(
             create: (context) => ParameterController(),
           ),
-          ChangeNotifierProvider<NetworkService>(
+             ChangeNotifierProvider<NetworkService>(
             create: (context) => NetworkService(context),
           ),
+          
         ],
         child: EasyLocalization(
             supportedLocales: const [
@@ -177,7 +179,7 @@ class _MyAppState extends State<MyApp> {
               backgroundColor: AppColors.kWhite,
               surfaceTintColor: AppColors.kWhite),
           scaffoldBackgroundColor: AppColors.kBgColor,
-          fontFamily: 'OpenSans',
+          fontFamily: 'Roboto',
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.kPrimaryColor),
           useMaterial3: true,
         ),

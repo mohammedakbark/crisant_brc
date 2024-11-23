@@ -86,7 +86,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AppSpacer(
+                      const AppSpacer(
                         heightPortion: .01,
                       ),
                       _buildEntityDropdown(),
@@ -95,7 +95,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
                       _buildBlockOrStationDropdown(),
                       Text(
                         'assetId'.tr(),
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.kBlack),
                       ),

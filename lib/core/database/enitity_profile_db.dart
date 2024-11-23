@@ -24,12 +24,12 @@ class EnitityProfileDb with ChangeNotifier {
     final now = DateTime.now();
     final today = "${now.day}-${now.month}-${now.year}";
     await pre.setString(entityProfileCollection, today);
-    await _getLastSyncData();
+    await getLastSyncData();
   }
 
   String? _lastSyncData;
   String get lastSyncData => _lastSyncData ?? '-';
-  Future _getLastSyncData() async {
+  Future getLastSyncData() async {
     SharedPreferences pre = await SharedPreferences.getInstance();
     _lastSyncData = pre.getString(entityProfileCollection) ?? '-';
   }
@@ -79,7 +79,6 @@ class EnitityProfileDb with ChangeNotifier {
 
   Future getAllEnitityProfile() async {
     final db = await LocalDatabaseService().initDb;
-
     try {
       final data = await db.rawQuery('SELECT * FROM $entityProfileCollection');
       _listOfEnitityProfiles =

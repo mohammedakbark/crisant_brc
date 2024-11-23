@@ -25,12 +25,12 @@ class OfflineAddEntityDb with ChangeNotifier {
     final now = DateTime.now();
     final today = "${now.day}-${now.month}-${now.year}";
     await pre.setString(offlineCollectionTable, today);
-    await _getLastSyncData();
+    await getLastSyncData();
   }
 
   String? _lastSyncData;
   String get lastSyncData => _lastSyncData ?? '-';
-  Future _getLastSyncData() async {
+  Future getLastSyncData() async {
     SharedPreferences pre = await SharedPreferences.getInstance();
     _lastSyncData = pre.getString(offlineCollectionTable) ?? '-';
   }
@@ -61,10 +61,10 @@ class OfflineAddEntityDb with ChangeNotifier {
       final dataofPentitles =
           await db.rawQuery('SELECT * FROM $offlineCollectionTable');
 
-      if (dataofPentitles.isNotEmpty) {
-        _listOfflineEntitites =
-            dataofPentitles.map((e) => AddNewAssetModel.fromJson(e)).toList();
-      }
+      // if (dataofPentitles.isNotEmpty) {
+      _listOfflineEntitites =
+          dataofPentitles.map((e) => AddNewAssetModel.fromJson(e)).toList();
+      // }
       await setlastSync();
       _isDownloading = false;
       if (dontList == null) {
@@ -99,12 +99,12 @@ class OfflineAddEntityDb with ChangeNotifier {
         if (listOfflineEntitites!.isNotEmpty) {
           for (var i in listOfflineEntitites!) {
             await ApiService.addNewAsset(context, i);
-            showMessage('Storing Offline assessment to server');
+            showMessage('Storing offline assets to server');
           }
           await _clearTable();
-          await getAllOfflineAddEntityDb();
           await Provider.of<EnitityProfileDb>(context, listen: false)
               .storeEnitityProfile(context);
+          await getAllOfflineAddEntityDb();
         }
       }
     } catch (e) {

@@ -112,12 +112,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         Text(
                           'pleaseWaitDashboard'.tr(),
-                          style: TextStyle(fontWeight: FontWeight.w500),
+                          style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
-                        AppSpacer(
+                        const AppSpacer(
                           heightPortion: .06,
                         ),
-                        AppLoadingIndicator(),
+                        const AppLoadingIndicator(),
                       ],
                     ),
                   ),

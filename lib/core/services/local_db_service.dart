@@ -206,25 +206,35 @@ class LocalDatabaseService with ChangeNotifier {
  
   void fetchAllDatabases(BuildContext context) async {
     await Provider.of<EntiteDb>(context, listen: false).getAllEntities();
-    // await Provider.of<EntiteDb>(context, listen: false).getLastSyncData();
+    await Provider.of<EntiteDb>(context, listen: false).getLastSyncData();
     await Provider.of<SectionInchargeDb>(context, listen: false)
         .getAllSectionIncharges();
+        await Provider.of<SectionInchargeDb>(context, listen: false).getLastSyncData();
     await Provider.of<SectionDb>(context, listen: false).getAllSections();
+    await Provider.of<SectionDb>(context, listen: false).getLastSyncData();
     await Provider.of<BlockSectionDb>(context, listen: false)
         .getAllBlockSections();
+        await Provider.of<BlockSectionDb>(context, listen: false).getLastSyncData();
     await Provider.of<StationDb>(context, listen: false)
         .getAllSectionIncharges();
+        await Provider.of<StationDb>(context, listen: false).getLastSyncData();
     await Provider.of<ParametersDb>(context, listen: false).getAllParameters();
+    await Provider.of<ParametersDb>(context, listen: false).getLastSyncData();
     await Provider.of<ParametersValueDb>(context, listen: false)
         .getAllParametersValues();
+        await Provider.of<ParametersValueDb>(context, listen: false).getLastSyncData();
     await Provider.of<ParametersReasonDb>(context, listen: false)
         .getAllParameterReson();
+        await Provider.of<ParametersReasonDb>(context, listen: false).getLastSyncData();
     await Provider.of<EnitityProfileDb>(context, listen: false)
         .getAllEnitityProfile();
+        await Provider.of<EnitityProfileDb>(context, listen: false).getLastSyncData();
     await Provider.of<OfflineAddEntityDb>(context, listen: false)
         .getAllOfflineAddEntityDb();
+        await Provider.of<OfflineAddEntityDb>(context, listen: false).getLastSyncData();
     await Provider.of<OfflineTestEntityDb>(context, listen: false)
         .getAllPendingOfflineTest();
+        await Provider.of<OfflineTestEntityDb>(context, listen: false).getLastSyncData();
   }
 
   bool? _isDownloading;

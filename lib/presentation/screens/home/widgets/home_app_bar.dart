@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/database/auth_db.dart';
 import 'package:test_managment/core/services/lang_service.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
@@ -30,14 +31,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         Consumer<LanguageService>(builder: (context, service, _) {
           return PopupMenuButton(
             color: AppColors.kBgColor,
-            initialValue: service.selectedLanguage ??
-                (
-                  context.locale.languageCode == 'en'
-                      ? 'English'
-                      : context.locale.languageCode == "hi"
-                          ? "हिन्दी"
-                          : 'ಕನ್ನಡ',
-                ),
+            initialValue:
+                service.selectedLanguage ?? context.locale.languageCode,
             tooltip: 'Language',
             icon: Row(
               children: [

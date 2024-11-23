@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/database/auth_db.dart';
 import 'package:test_managment/core/services/location_service.dart';
 import 'package:test_managment/core/components/common_widgets.dart';
@@ -36,8 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 await gMapController.animateCamera(
                   CameraUpdate.newCameraPosition(
                     CameraPosition(
-                      target:
-                          LatLng(controller.currentLat, controller.currentLon),
+                      target: LatLng(
+                          controller.currentLat, controller.currentLon),
                       zoom: 15.0, // Adjust zoom level as needed
                     ),
                   ),
@@ -60,12 +61,12 @@ class _HomeScreenState extends State<HomeScreen> {
             scrollGesturesEnabled: true,
             tiltGesturesEnabled: true,
             trafficEnabled: true,
-
+      
             initialCameraPosition: CameraPosition(
                 target: LatLng(controller.currentLat, controller.currentLon)),
             mapType: MapType.normal,
             myLocationEnabled: true,
-
+      
             // markers: {
             //   Marker(
             //       icon: BitmapDescriptor.defaultMarkerWithHue(

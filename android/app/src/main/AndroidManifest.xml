@@ -1,10 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-<uses-permission android:name="android.permission.INTERNET" />
+ <uses-permission android:name="android.permission.INTERNET" /> <!-- For internet-based operations -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- For connectivity status -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- For WiFi status -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- For location (precise) -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- For location (approximate) -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- For saving files (deprecated on Android 10+) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- For reading files -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- For image picker and camera access -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- For foreground services (e.g., location tracking) -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" /> <!-- For location tracking in background -->
+
 
     <application
-        android:label="test_managment"
+        android:label="Test Managment"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

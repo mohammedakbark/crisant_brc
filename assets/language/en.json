@@ -43,10 +43,26 @@
   "latitudeCap": "LATITUDE",
   "longitudeCap": "LONGITUDE",
   "distanceCap": "DISTANCE",
-  "youAre":"You are ",
-  "awayFromTheAsset":" away from the asset",
-  "imageCaptured":"Image Captured",
-  "reason":"Reason",
-  "pleaseWaitDashboard":"Please wait until the download is complete"
+  "youAre": "You are ",
+  "awayFromTheAsset": " away from the asset",
+  "imageCaptured": "Image Captured",
+  "reason": "Reason",
+  "pleaseWaitDashboard": "Please wait until the download is complete",
 
+  "download": "Download",
+  "records": "Records",
+  "downloadAll": "DOWNLOAD ALL",
+  "assetTypesD": "Asset Types",
+  "sectionInchargesD": "Section Incharges",
+  "sectionsD": "Sections",
+  "blockSectionsD": "Block Sections",
+  "stationsD": "Stations",
+  "parametersD": "Parameters",
+  "parametersValuesD": "Parameter Values",
+  "reasonsD": "Reasons",
+  "assetProfilesofflineD":"Asset Profiles - Offline",
+  "testReportsOfflineD":"Test Reports - Offline",
+  "lastUpdated":"Last updated",
+  "assetsProfilesD":"Asset Profiles"
+  
 }
