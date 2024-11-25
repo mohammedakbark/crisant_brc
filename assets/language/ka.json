@@ -32,8 +32,8 @@
   "submitTestReport": "ಪರೀಕ್ಷಣೆ ವರದಿ ಸಲ್ಲಿಸಿ",
   "onlineData": "ಆನ್‌ಲೈನ್ ಟೆಸ್ಟ್ ಡೇಟಾ",
   "offlineData": "ಆಫ್‌ಲೈನ್ ಟೆಸ್ಟ್ ಡೇಟಾ",
-  "offlineAddAsset": "ಆಫ್‌ಲೈನ್ ಟೆಸ್ಟ್ ಆಸ್ತಿ",
-
+  "offlineAddAsset": "ಆಫ್‌ಲೈನ್ ಆಡ್ ಅಸೆಟ್"
+,
   "noRecordFoundMessage": "ಯಾವುದೇ ದಾಖಲೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
   "assetTypeCap": "ಅಸೆಟ್ ವರ್ಗ",
   "assetIdCap": "ಅಸೆಟ್ ಗುರುತು ",

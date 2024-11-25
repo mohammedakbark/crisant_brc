@@ -36,8 +36,8 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
         if (widget.dontShowTitle == null)
           Text(
             widget.hintText,
-            style:
-                TextStyle(fontWeight: FontWeight.bold, color: AppColors.kBlack),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: AppColors.kBlack),
           ),
         Stack(
           children: [
@@ -131,7 +131,7 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
                   });
                 },
                 hint: Text(
-                  widget.hintText,
+                  "Please select ${widget.hintText.toLowerCase()}",
                   style: TextStyle(
                     fontSize: AppDimensions.fontSize16(context),
                     color: AppColors.kGrey,

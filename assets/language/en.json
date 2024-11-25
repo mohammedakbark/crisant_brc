@@ -32,7 +32,7 @@
   "submitTestReport": "SUBMIT TEST REPORT",
   "onlineData": "ONLINE TEST DATA",
   "offlineData": "OFFLINE TEST DATA",
-  "offlineAddAsset":"OFFLINE TEST ASSET",
+  "offlineAddAsset":"OFFLINE ADD ASSETS",
   "noRecordFoundMessage": "No records found",
 
   "assetTypeCap": "ASSET TYPE",

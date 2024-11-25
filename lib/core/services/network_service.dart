@@ -37,10 +37,10 @@ class NetworkService with ChangeNotifier {
               showMessage('onlineModeCap'.tr());
 
               // Internet is available
-              // Provider.of<OfflineAddEntityDb>(context, listen: false)
-              //     .offlineAddAssetToServer(context, dontehckNet: true);
-              // Provider.of<OfflineTestEntityDb>(context, listen: false)
-              //     .offlineSyncTestToServer(context, fontCheckNet: true);
+              Provider.of<OfflineAddEntityDb>(context, listen: false)
+                  .offlineAddAssetToServer(context, dontehckNet: true);
+              Provider.of<OfflineTestEntityDb>(context, listen: false)
+                  .offlineSyncTestToServer(context, fontCheckNet: true);
             } else {
               _netisConnected = false;
               showMessage('offlineModeCap'.tr());

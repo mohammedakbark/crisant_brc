@@ -6,13 +6,12 @@ import 'package:test_managment/core/utils/responsive_helper.dart';
 class CustomFormField extends StatelessWidget {
   final String hintText;
   final bool? isRequiredField;
-  final TextEditingController ?controller;
-  
+  final TextEditingController? controller;
 
   const CustomFormField(
       {super.key,
-       this.controller,
-      required this.hintText,    
+      this.controller,
+      required this.hintText,
       this.isRequiredField});
 
   @override
@@ -56,7 +55,7 @@ class CustomFormField extends StatelessWidget {
             ),
             controller: controller,
             decoration: InputDecoration(
-                hintText: hintText,
+                hintText: "Please enter ${hintText.toLowerCase()}",
                 hintStyle: TextStyle(
                     fontSize: AppDimensions.fontSize16(context),
                     color: AppColors.kGrey),

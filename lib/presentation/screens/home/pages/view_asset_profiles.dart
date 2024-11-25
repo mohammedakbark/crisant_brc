@@ -25,7 +25,7 @@ class AssetProfiles extends StatefulWidget {
 }
 
 class _AssetProfilesState extends State<AssetProfiles> {
-   bool isLoading = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -35,10 +35,7 @@ class _AssetProfilesState extends State<AssetProfiles> {
 
   void getData() async {
     isLoading = true;
-    
     await getEachData();
-  
-
     setState(() {
       isLoading = false;
     });
@@ -48,7 +45,6 @@ class _AssetProfilesState extends State<AssetProfiles> {
 
   Future getEachData() async {
     try {
-      
       for (var i in widget.listOfData) {
         listOFData.add(await _convertIdIntoValue(i.entityId, i.entityProfileId,
             i.sectionInchargeId, i.sectionId, i.blockSectionId, i.stationId));
@@ -87,121 +83,128 @@ class _AssetProfilesState extends State<AssetProfiles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: const BackButton(),
-        centerTitle: true,
-        title: Text(
-          'assetsProfilesD'.tr(),
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: AppDimensions.fontSize18(context)),
+        appBar: AppBar(
+          leading: const BackButton(),
+          centerTitle: true,
+          title: Text(
+            'assetsProfilesD'.tr(),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: AppDimensions.fontSize18(context)),
+          ),
         ),
-      ),
-      body: isLoading
-        ? const AppLoadingIndicator()
-        : Padding(
-            padding: const EdgeInsets.only(
-                top: AppDimensions.paddingSize10,
-                bottom: AppDimensions.paddingSize10),
-            child: Builder(
-              builder: (context,) {
-                final reports = widget.listOfData;
-                return reports.isEmpty
-                    ? Center(child: Text('noRecordFoundMessage'.tr()))
-                    : Column(
-                        children: [
-                          Expanded(
-                            child: ListView.separated(
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  final report = reports[index];
+        body: isLoading
+            ? const AppLoadingIndicator()
+            : Padding(
+                padding: const EdgeInsets.only(
+                    top: AppDimensions.paddingSize10,
+                    bottom: AppDimensions.paddingSize10),
+                child: Builder(
+                  builder: (
+                    context,
+                  ) {
+                    final reports = widget.listOfData;
+                    return reports.isEmpty
+                        ? Center(child: Text('noRecordFoundMessage'.tr()))
+                        : Column(
+                            children: [
+                              Expanded(
+                                child: ListView.separated(
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) {
+                                      final report = reports[index];
 
-                                  return AppMargin(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        boxShadow: [
-                                          BoxShadow(
-                                            spreadRadius: 1,
-                                            color: AppColors.kBlack
-                                                .withOpacity(0.2),
-                                            blurRadius: 2,
-                                            offset: const Offset(0, 1),
+                                      return AppMargin(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            boxShadow: [
+                                              BoxShadow(
+                                                spreadRadius: 1,
+                                                color: AppColors.kBlack
+                                                    .withOpacity(0.2),
+                                                blurRadius: 2,
+                                                offset: const Offset(0, 1),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                      child: ExpansionTile(
-                                        // controller: controller,
-                                        onExpansionChanged: (value) {},
-                                        shape: const BeveledRectangleBorder(
-                                            side: BorderSide.none),
-                                        collapsedBackgroundColor:
-                                            AppColors.kWhite,
-                                        backgroundColor: AppColors.kBgColor2,
-                                        title: Text(
-                                          listOFData[index]['assetId'],
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize:
-                                                  AppDimensions.fontSize16(
-                                                      context)),
-                                        ),
-                                        // subtitle: Text(report.),
-                                        // trailing: Text(
-                                        //   report.createdDate.toString(),
-                                        //   style: TextStyle(
-                                        //       fontWeight: FontWeight.w400,
-                                        //       fontSize:
-                                        //           AppDimensions.fontSize13(context)),
-                                        // ),
-                                        expandedAlignment: Alignment.topLeft,
-                                        expandedCrossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Divider(
-                                            color: AppColors.kBgColor,
-                                          ),
-                                          tile('assetTypeCap'.tr(),
-                                              listOFData[index]['assetType']),
-                                          tile('assetIdCap'.tr(),
-                                              listOFData[index]['assetId']),
-                                          tile(
-                                              'sectionInchargeCap'.tr(),
-                                              listOFData[index]
-                                                  ['sectionIncharge']),
-                                          tile('sectionCap'.tr(),
-                                              listOFData[index]['section']),
-                                          report.blockSectionId != null
-                                              ? tile(
-                                                  'blockSectionCap'.tr(),
+                                          child: ExpansionTile(
+                                            // controller: controller,
+                                            onExpansionChanged: (value) {},
+                                            shape: const BeveledRectangleBorder(
+                                                side: BorderSide.none),
+                                            collapsedBackgroundColor:
+                                                AppColors.kWhite,
+                                            backgroundColor:
+                                                AppColors.kBgColor2,
+                                            title: Text(
+                                              listOFData[index]['assetId'],
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize:
+                                                      AppDimensions.fontSize16(
+                                                          context)),
+                                            ),
+                                            // subtitle: Text(report.),
+                                            // trailing: Text(
+                                            //   report.createdDate.toString(),
+                                            //   style: TextStyle(
+                                            //       fontWeight: FontWeight.w400,
+                                            //       fontSize:
+                                            //           AppDimensions.fontSize13(context)),
+                                            // ),
+                                            expandedAlignment:
+                                                Alignment.topLeft,
+                                            expandedCrossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Divider(
+                                                color: AppColors.kBgColor,
+                                              ),
+                                              tile(
+                                                  'assetTypeCap'.tr(),
                                                   listOFData[index]
-                                                      ['blockSection'])
-                                              : const SizedBox(),
-                                          report.stationId != null
-                                              ? tile('stationCap'.tr(),
-                                                  listOFData[index]['station'])
-                                              : const SizedBox(),
-                                          tile('latitudeCap'.tr(),
-                                              report.entityLatt),
-                                          tile('longitudeCap'.tr(),
-                                              report.entityLong)
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                separatorBuilder: (context, index) =>
-                                    const AppSpacer(
-                                      heightPortion: .01,
-                                    ),
-                                itemCount: reports.length),
-                          ),
-                          
-                        ],
-                      );
-              },
-            ))
-    );
+                                                      ['assetType']),
+                                              tile('assetIdCap'.tr(),
+                                                  listOFData[index]['assetId']),
+                                              tile(
+                                                  'sectionInchargeCap'.tr(),
+                                                  listOFData[index]
+                                                      ['sectionIncharge']),
+                                              tile('sectionCap'.tr(),
+                                                  listOFData[index]['section']),
+                                              report.blockSectionId != null
+                                                  ? tile(
+                                                      'blockSectionCap'.tr(),
+                                                      listOFData[index]
+                                                          ['blockSection'])
+                                                  : const SizedBox(),
+                                              report.stationId != null
+                                                  ? tile(
+                                                      'stationCap'.tr(),
+                                                      listOFData[index]
+                                                          ['station'])
+                                                  : const SizedBox(),
+                                              tile('latitudeCap'.tr(),
+                                                  report.entityLatt),
+                                              tile('longitudeCap'.tr(),
+                                                  report.entityLong)
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    separatorBuilder: (context, index) =>
+                                        const AppSpacer(
+                                          heightPortion: .01,
+                                        ),
+                                    itemCount: reports.length),
+                              ),
+                            ],
+                          );
+                  },
+                )));
   }
+
   Widget tile(String head, String body) {
     return Padding(
       padding: const EdgeInsets.symmetric(

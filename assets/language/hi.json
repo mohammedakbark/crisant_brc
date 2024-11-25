@@ -32,8 +32,8 @@
   "submitTestReport": "सबमिट परीक्षण रिपोर्ट",
   "onlineData": "ऑनलाइन परीक्षण डेटा",
   "offlineData": "ऑफलाइन परीक्षण डेटा",
-  "offlineAddAsset": "ऑफलाइन परीक्षण संपत्ति",
-
+  "offlineAddAsset": "ऑफलाइन जोड़ें संपत्ति"
+,
   "noRecordFoundMessage": "कोई रिकॉर्ड नहीं मिला",
   "assetTypeCap": "असेट प्रकार",
   "assetIdCap": "असेट आईडी",

@@ -25,9 +25,33 @@ class ApiService {
           final Map<String, dynamic> data = result.data as Map<String, dynamic>;
           final token = data['token'];
           log(token.toString());
+          final profileResult =
+              await AuthRepo.getUserProfileData(userName, password, devisionId,token);
+
           // store data
-          await Provider.of<AuthDb>(context, listen: false).storeUserData(
-              userName, password, devisionId, token, divisonName);
+          if (profileResult != null) {
+            if (!profileResult.error) {
+              final Map<String, dynamic> data =
+                  profileResult.data as Map<String, dynamic>;
+              log('da');
+
+              await Provider.of<AuthDb>(context, listen: false).storeUserData(
+                  data['user']['userinfo']['userFullName'],
+                  password,
+                  devisionId,
+                  token,
+                  divisonName);
+            } else {
+              log('dasss');
+              await Provider.of<AuthDb>(context, listen: false).storeUserData(
+                  userName, password, devisionId, token, divisonName);
+            }
+          } else {
+            log('daaaaaaa');
+
+            await Provider.of<AuthDb>(context, listen: false).storeUserData(
+                userName, password, devisionId, token, divisonName);
+          }
           showMessage(result.message);
           return true;
         } else {
