@@ -45,6 +45,9 @@ class _AssetProfilesState extends State<AssetProfiles> {
 
   Future getEachData() async {
     try {
+      widget.listOfData
+          .sort((a, b) => (b.modifiedDate).compareTo(a.modifiedDate));
+
       for (var i in widget.listOfData) {
         listOFData.add(await _convertIdIntoValue(i.entityId, i.entityProfileId,
             i.sectionInchargeId, i.sectionId, i.blockSectionId, i.stationId));
