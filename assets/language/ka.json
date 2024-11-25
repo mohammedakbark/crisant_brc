@@ -30,8 +30,10 @@
   "manual": "ಹಸ್ತಚಾಲಿತ",
   "auto": "ಸ್ವಯಂಚಾಲಿತ",
   "submitTestReport": "ಪರೀಕ್ಷಣೆ ವರದಿ ಸಲ್ಲಿಸಿ",
-  "onlineData": "ಆನ್‌ಲೈನ್ ಡೇಟಾ",
-  "offlineData": "ಆಫ್‌ಲೈನ್ ಡೇಟಾ",
+  "onlineData": "ಆನ್‌ಲೈನ್ ಟೆಸ್ಟ್ ಡೇಟಾ",
+  "offlineData": "ಆಫ್‌ಲೈನ್ ಟೆಸ್ಟ್ ಡೇಟಾ",
+  "offlineAddAsset": "ಆಫ್‌ಲೈನ್ ಟೆಸ್ಟ್ ಆಸ್ತಿ",
+
   "noRecordFoundMessage": "ಯಾವುದೇ ದಾಖಲೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
   "assetTypeCap": "ಅಸೆಟ್ ವರ್ಗ",
   "assetIdCap": "ಅಸೆಟ್ ಗುರುತು ",
@@ -62,6 +64,8 @@
   "assetProfilesofflineD": "ಆಸ್ತಿ ಪ್ರೊಫೈಲ್‌ಗಳು - ಆಫ್‌ಲೈನ್",
   "testReportsOfflineD": "ಟೆಸ್ಟ್ ವರದಿಗಳು - ಆಫ್‌ಲೈನ್",
   "lastUpdated": "ಕೊನೆಗೆ ನವೀಕರಿಸಲಾಗಿದೆ",
-  "assetsProfilesD": "ಆಸ್ತಿ ಪ್ರೊಫೈಲ್‌ಗಳು"
+  "assetsProfilesD": "ಆಸ್ತಿ ಪ್ರೊಫೈಲ್‌ಗಳು",
+  "syncAll":"ಸಿಂಕ್ ಎಲ್ಲಾ"
+
 
 }

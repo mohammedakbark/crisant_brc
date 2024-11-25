@@ -18,7 +18,10 @@ import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
-import 'package:test_managment/presentation/screens/home/widgets/home_app_bar.dart';
+import 'package:test_managment/core/utils/route.dart';
+import 'package:test_managment/presentation/screens/home/pages/sync_off_test_reports.dart';
+import 'package:test_managment/presentation/screens/home/pages/view_asset_profiles.dart';
+import 'package:test_managment/presentation/screens/home/pages/sync_off_asset_profiles.dart';
 
 class DownloadDataScreen extends StatefulWidget {
   const DownloadDataScreen({super.key});
@@ -129,56 +132,76 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                               count: dbController.listOfParametersResons.length,
                               dbController.isDownloading ?? false)),
                   Consumer<EnitityProfileDb>(
-                      builder: (context, dbController, _) => _buildTile(
-                              'assetsProfilesD'.tr(), dbController.lastSyncData,
-                              () {
-                            dbController.storeEnitityProfile(context);
-                          },
-                              count: dbController.listOfEnitityProfiles.length,
-                              dbController.isDownloading ?? false)),
+                      builder: (context, dbController, _) => InkWell(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(AppRoutes.createRoute(AssetProfiles(
+                                listOfData: dbController.listOfEnitityProfiles,
+                              )));
+                            },
+                            child: _buildTile('assetsProfilesD'.tr(),
+                                dbController.lastSyncData, () {
+                              dbController.storeEnitityProfile(context);
+                            },
+                                count:
+                                    dbController.listOfEnitityProfiles.length,
+                                dbController.isDownloading ?? false),
+                          )),
                   Consumer<OfflineAddEntityDb>(
-                    builder: (context, dbController, _) => _buildTile(
-                      'assetProfilesofflineD'.tr(),
-                      dbController.lastSyncData,
-                      () async {
-                        await Provider.of<OfflineAddEntityDb>(context,
-                                listen: false)
-                            .offlineAddAssetToServer(
-                          context,
-                        );
-                        // dbController.getAllOfflineAddEntityDb();
+                    builder: (context, dbController, _) => InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(AppRoutes.createRoute(OffAssetProfiles()));
                       },
-                      count: dbController.listOfflineEntitites?.length,
-                      dbController.isDownloading ?? false,
-                      showSync: true,
-                      // onTap: () async {
-                      //   // await Provider.of<OfflineAddEntityDb>(context,
-                      //   //         listen: false)
-                      //   //     .storeAllOfflineDataToServer(
-                      //   //   context,
-                      //   // );
-                      // },
+                      child: _buildTile(
+                        'assetProfilesofflineD'.tr(),
+                        dbController.lastSyncData,
+                        () async {
+                          // await Provider.of<OfflineAddEntityDb>(context,
+                          //         listen: false)
+                          //     .offlineAddAssetToServer(
+                          //   context,
+                          // );
+                          await dbController.getAllOfflineAddEntityDb();
+                        },
+                        count: dbController.listOfflineEntitites?.length,
+                        dbController.isDownloading ?? false,
+                        // showSync: true,
+                        // onTap: () async {
+                        //   // await Provider.of<OfflineAddEntityDb>(context,
+                        //   //         listen: false)
+                        //   //     .storeAllOfflineDataToServer(
+                        //   //   context,
+                        //   // );
+                        // },
+                      ),
                     ),
                   ),
                   Consumer<OfflineTestEntityDb>(
-                      builder: (context, dbController, _) => _buildTile(
-                            'testReportsOfflineD'.tr(),
-                            dbController.lastSyncData,
-                            hideDevider: true,
-                            () async {
-                              // dbController.getAllPendingOfflineTest();
-                              await Provider.of<OfflineTestEntityDb>(context,
-                                      listen: false)
-                                  .offlineSyncTestToServer(context);
+                      builder: (context, dbController, _) => InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                  AppRoutes.createRoute(OffTestReports()));
                             },
-                            count: dbController.listOfflineEntitites?.length,
-                            dbController.isDownloading ?? false,
-                            showSync: true,
-                            // onTap: () async {
-                            //   await Provider.of<OfflineTestEntityDb>(context,
-                            //           listen: false)
-                            //       .storeAllOfflineDataToServer(context);
-                            // },
+                            child: _buildTile(
+                              'testReportsOfflineD'.tr(),
+                              dbController.lastSyncData,
+                              hideDevider: true,
+                              () async {
+                                dbController.getAllPendingOfflineTest();
+                                // await Provider.of<OfflineTestEntityDb>(context,
+                                //         listen: false)
+                                //     .offlineSyncTestToServer(context);
+                              },
+                              count: dbController.listOfflineEntitites?.length,
+                              dbController.isDownloading ?? false,
+                              // showSync: true,
+                              // onTap: () async {
+                              //   await Provider.of<OfflineTestEntityDb>(context,
+                              //           listen: false)
+                              //       .storeAllOfflineDataToServer(context);
+                              // },
+                            ),
                           )),
                   const AppSpacer(
                     heightPortion: .02,

@@ -12,7 +12,7 @@
 
 
     <application
-        android:label="Test Managment"
+        android:label="Test Management"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

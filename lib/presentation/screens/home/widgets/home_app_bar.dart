@@ -18,13 +18,27 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         color: AppColors.kBlack,
       ),
       title: Consumer<LanguageService>(builder: (context, service, _) {
-        return Text(
-          '${'hi'.tr()} ${Provider.of<AuthDb>(context, listen: false).userName}',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: AppColors.kBlack,
-            fontSize: AppDimensions.fontSize18(context),
-          ),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${'hi'.tr()} ${Provider.of<AuthDb>(context, listen: false).userName}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: AppColors.kBlack,
+                fontSize: AppDimensions.fontSize18(context),
+              ),
+            ),
+            Text(
+              'Division: ${Provider.of<AuthDb>(context, listen: false).divisionName}',
+              style: TextStyle(
+                  color: AppColors.kGrey,
+                  fontSize: AppDimensions.fontSize12(
+                    context,
+                  )),
+            )
+          ],
         );
       }),
       actions: [

@@ -30,8 +30,9 @@
   "manual": "MANUAL",
   "auto": "AUTO",
   "submitTestReport": "SUBMIT TEST REPORT",
-  "onlineData": "ONLINE DATA",
-  "offlineData": "OFFLINE DATA",
+  "onlineData": "ONLINE TEST DATA",
+  "offlineData": "OFFLINE TEST DATA",
+  "offlineAddAsset":"OFFLINE TEST ASSET",
   "noRecordFoundMessage": "No records found",
 
   "assetTypeCap": "ASSET TYPE",
@@ -63,6 +64,7 @@
   "assetProfilesofflineD":"Asset Profiles - Offline",
   "testReportsOfflineD":"Test Reports - Offline",
   "lastUpdated":"Last updated",
-  "assetsProfilesD":"Asset Profiles"
+  "assetsProfilesD":"Asset Profiles",
+  "syncAll":"Sync All"
   
 }

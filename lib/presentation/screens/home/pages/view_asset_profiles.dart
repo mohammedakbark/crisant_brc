@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_spacer.dart';
@@ -9,24 +8,25 @@ import 'package:test_managment/core/components/common_widgets.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
-import 'package:test_managment/core/database/offline_add_entity_db.dart';
-import 'package:test_managment/core/database/offline_test_entity_db.dart';
 import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
+import 'package:test_managment/model/db%20models/entity_profile_model.dart';
 
-class TabOfflinTestViews extends StatefulWidget {
-  const TabOfflinTestViews({super.key});
+class AssetProfiles extends StatefulWidget {
+  final List<EntityProfileModel> listOfData;
+  const AssetProfiles({super.key, required this.listOfData});
 
   @override
-  State<TabOfflinTestViews> createState() => _TabOfflinTestViewsState();
+  State<AssetProfiles> createState() => _AssetProfilesState();
 }
 
-class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
-  bool isLoading = false;
+class _AssetProfilesState extends State<AssetProfiles> {
+   bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -35,11 +35,9 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
 
   void getData() async {
     isLoading = true;
-    await Provider.of<OfflineTestEntityDb>(context, listen: false)
-        .getAllPendingOfflineTest(dontListen: true);
+    
     await getEachData();
-    await Provider.of<OfflineTestEntityDb>(context, listen: false)
-        .offlineSyncTestToServer(context);
+  
 
     setState(() {
       isLoading = false;
@@ -47,11 +45,11 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
   }
 
   List<Map<String, dynamic>> listOFData = [];
+
   Future getEachData() async {
     try {
-      final list = Provider.of<OfflineTestEntityDb>(context, listen: false)
-          .listOfflineEntitites;
-      for (var i in list!) {
+      
+      for (var i in widget.listOfData) {
         listOFData.add(await _convertIdIntoValue(i.entityId, i.entityProfileId,
             i.sectionInchargeId, i.sectionId, i.blockSectionId, i.stationId));
       }
@@ -86,23 +84,29 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
     };
   }
 
-  Future<void> syncData() async {
-    await Provider.of<OfflineTestEntityDb>(context, listen: false)
-        .offlineSyncTestToServer(context);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return isLoading
+    return Scaffold(
+      appBar: AppBar(
+        leading: const BackButton(),
+        centerTitle: true,
+        title: Text(
+          'assetsProfilesD'.tr(),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: AppDimensions.fontSize18(context)),
+        ),
+      ),
+      body: isLoading
         ? const AppLoadingIndicator()
         : Padding(
             padding: const EdgeInsets.only(
                 top: AppDimensions.paddingSize10,
                 bottom: AppDimensions.paddingSize10),
-            child: Consumer<OfflineTestEntityDb>(
-              builder: (context, controller, child) {
-                final reports = controller.listOfflineEntitites;
-                return reports!.isEmpty
+            child: Builder(
+              builder: (context,) {
+                final reports = widget.listOfData;
+                return reports.isEmpty
                     ? Center(child: Text('noRecordFoundMessage'.tr()))
                     : Column(
                         children: [
@@ -177,9 +181,9 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
                                                   listOFData[index]['station'])
                                               : const SizedBox(),
                                           tile('latitudeCap'.tr(),
-                                              report.testLatt),
+                                              report.entityLatt),
                                           tile('longitudeCap'.tr(),
-                                              report.testLong)
+                                              report.entityLong)
                                         ],
                                       ),
                                     ),
@@ -191,46 +195,13 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
                                     ),
                                 itemCount: reports.length),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: AppDimensions.paddingSize10),
-                            child: InkWell(
-                              onTap: () async {
-                                await syncData();
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: h(context) * .06,
-                                width: w(context) * .4,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        AppDimensions.radiusSize50),
-                                    color: AppColors.kPrimaryColor,
-                                    boxShadow: [
-                                      BoxShadow(
-                                          spreadRadius: 1,
-                                          color:
-                                              AppColors.kBlack.withOpacity(0.2),
-                                          blurRadius: 2,
-                                          offset: const Offset(2, 1)),
-                                    ]),
-                                child: Text(
-                                  'syncAll'.tr(),
-                                  style: TextStyle(
-                                      color: AppColors.kWhite,
-                                      fontSize:
-                                          AppDimensions.fontSize16(context),
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          )
+                          
                         ],
                       );
               },
-            ));
+            ))
+    );
   }
-
   Widget tile(String head, String body) {
     return Padding(
       padding: const EdgeInsets.symmetric(

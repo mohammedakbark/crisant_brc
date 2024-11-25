@@ -125,7 +125,7 @@ class LocalDatabaseService with ChangeNotifier {
         version: 1,
         onCreate: (db, version) {
           db.execute(
-              'CREATE TABLE IF NOT EXISTS ${AuthDb.authtableCollection} (userName TEXT PRIMARY KEY, divisionId INTEGER,userPassword TEXT,token TEXT)');
+              'CREATE TABLE IF NOT EXISTS ${AuthDb.authtableCollection} (userName TEXT PRIMARY KEY, divisionId INTEGER,divisionName Text,userPassword TEXT,token TEXT)');
 
           log('local ');
         },

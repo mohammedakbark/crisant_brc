@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,6 @@ import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
 import 'package:test_managment/core/database/offline_add_entity_db.dart';
-import 'package:test_managment/core/database/offline_test_entity_db.dart';
 import 'package:test_managment/core/database/section_db.dart';
 import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
@@ -18,14 +19,14 @@ import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
 
-class TabOfflinTestViews extends StatefulWidget {
-  const TabOfflinTestViews({super.key});
+class TabOfflineAddAsset extends StatefulWidget {
+  const TabOfflineAddAsset({super.key});
 
   @override
-  State<TabOfflinTestViews> createState() => _TabOfflinTestViewsState();
+  State<TabOfflineAddAsset> createState() => _TabOfflineAddAssetState();
 }
 
-class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
+class _TabOfflineAddAssetState extends State<TabOfflineAddAsset> {
   bool isLoading = false;
   @override
   void initState() {
@@ -35,11 +36,11 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
 
   void getData() async {
     isLoading = true;
-    await Provider.of<OfflineTestEntityDb>(context, listen: false)
-        .getAllPendingOfflineTest(dontListen: true);
+    await Provider.of<OfflineAddEntityDb>(context, listen: false)
+        .getAllOfflineAddEntityDb(dontList: true);
     await getEachData();
-    await Provider.of<OfflineTestEntityDb>(context, listen: false)
-        .offlineSyncTestToServer(context);
+    await Provider.of<OfflineAddEntityDb>(context, listen: false)
+      .offlineAddAssetToServer(context);
 
     setState(() {
       isLoading = false;
@@ -49,13 +50,14 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
   List<Map<String, dynamic>> listOFData = [];
   Future getEachData() async {
     try {
-      final list = Provider.of<OfflineTestEntityDb>(context, listen: false)
+      final list = Provider.of<OfflineAddEntityDb>(context, listen: false)
           .listOfflineEntitites;
       for (var i in list!) {
-        listOFData.add(await _convertIdIntoValue(i.entityId, i.entityProfileId,
+        listOFData.add(await _convertIdIntoValue(i.entityId, i.entityIdentifier,
             i.sectionInchargeId, i.sectionId, i.blockSectionId, i.stationId));
       }
     } catch (e) {
+      log(e.toString());
       showMessage("Something went wrong.");
     }
   }
@@ -63,7 +65,7 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
   Future<Map<String, dynamic>> _convertIdIntoValue(assetTypeId, assetIds,
       sectionInchargeid, sectionid, blockSectionid, stationid) async {
     String assetType = await EntiteDb.getValueById(assetTypeId);
-    String assetId = await EnitityProfileDb.getValueById(assetIds);
+    String assetId = assetIds;
     String sectionIncharge =
         await SectionInchargeDb.getValueById(sectionInchargeid);
     String section = await SectionDb.getValueById(sectionid);
@@ -85,10 +87,13 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
       "station": station,
     };
   }
+//---------------------------
 
   Future<void> syncData() async {
-    await Provider.of<OfflineTestEntityDb>(context, listen: false)
-        .offlineSyncTestToServer(context);
+    await Provider.of<OfflineAddEntityDb>(context, listen: false)
+        .offlineAddAssetToServer(
+      context,
+    );
   }
 
   @override
@@ -99,7 +104,7 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
             padding: const EdgeInsets.only(
                 top: AppDimensions.paddingSize10,
                 bottom: AppDimensions.paddingSize10),
-            child: Consumer<OfflineTestEntityDb>(
+            child: Consumer<OfflineAddEntityDb>(
               builder: (context, controller, child) {
                 final reports = controller.listOfflineEntitites;
                 return reports!.isEmpty
@@ -177,9 +182,9 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
                                                   listOFData[index]['station'])
                                               : const SizedBox(),
                                           tile('latitudeCap'.tr(),
-                                              report.testLatt),
+                                              report.entityLatt),
                                           tile('longitudeCap'.tr(),
-                                              report.testLong)
+                                              report.entityLong)
                                         ],
                                       ),
                                     ),

@@ -52,6 +52,7 @@ class _SpashScreenState extends State<SpashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Spacer(),
             SizedBox(
                 width: w(context) * .5,
                 height: w(context) * .5,
@@ -65,6 +66,34 @@ class _SpashScreenState extends State<SpashScreen> {
                   fontWeight: FontWeight.w900,
                   color: const Color.fromARGB(255, 41, 77, 107),
                   fontSize: AppDimensions.fontSize17(context)),
+            ),
+            const Spacer(),
+            Text(
+              "Designed & developed by",
+              style: TextStyle(
+                color: AppColors.kBlack,
+                fontSize: AppDimensions.fontSize13(context),
+              ),
+            ),
+            RichText(
+              text: TextSpan(
+                  text: "Crisant Technologies, ",
+                  style: TextStyle(
+                      fontSize: AppDimensions.fontSize15(context),
+                      color: AppColors.kBlack,
+                      fontWeight: FontWeight.w700),
+                  children: [
+                    TextSpan(
+                      text: "Mysuru",
+                      style: TextStyle(
+                          fontSize: AppDimensions.fontSize13(context),
+                          color: AppColors.kBlack,
+                          fontWeight: FontWeight.w400),
+                    )
+                  ]),
+            ),
+            const AppSpacer(
+              heightPortion: .05,
             )
           ],
         ),

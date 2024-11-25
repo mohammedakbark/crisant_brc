@@ -30,8 +30,10 @@
   "manual": "मैन्युअल",
   "auto": "ऑटो",
   "submitTestReport": "सबमिट परीक्षण रिपोर्ट",
-  "onlineData": "ऑनलाइन डाटा",
-  "offlineData": "ऑफलाइन डाटा",
+  "onlineData": "ऑनलाइन परीक्षण डेटा",
+  "offlineData": "ऑफलाइन परीक्षण डेटा",
+  "offlineAddAsset": "ऑफलाइन परीक्षण संपत्ति",
+
   "noRecordFoundMessage": "कोई रिकॉर्ड नहीं मिला",
   "assetTypeCap": "असेट प्रकार",
   "assetIdCap": "असेट आईडी",
@@ -62,5 +64,7 @@
   "assetProfilesofflineD": "संपत्ति प्रोफाइल्स - ऑफ़लाइन",
   "testReportsOfflineD": "परीक्षण रिपोर्ट्स - ऑफ़लाइन",
   "lastUpdated": "अंतिम बार अपडेट किया गया",
-  "assetsProfilesD": "संपत्ति प्रोफाइल्स"
+  "assetsProfilesD": "संपत्ति प्रोफाइल्स",
+  "syncAll":"सिंक सब"
+
 }

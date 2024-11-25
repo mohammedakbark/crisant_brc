@@ -15,6 +15,7 @@ import 'package:test_managment/model/test_report_model.dart';
 import 'package:test_managment/presentation/screens/home/widgets/app_drawer.dart';
 import 'package:test_managment/presentation/screens/home/widgets/home_app_bar.dart';
 import 'package:test_managment/presentation/screens/home/widgets/tab_offlin_test_views.dart';
+import 'package:test_managment/presentation/screens/home/widgets/tab_offline_add_asset.dart';
 import 'package:test_managment/presentation/screens/home/widgets/tab_online_test_view.dart';
 
 class ViewAssetsScreen extends StatelessWidget {
@@ -43,23 +44,36 @@ class ViewAssetsScreen extends StatelessWidget {
             color: AppColors.kBlack,
           ),
           centerTitle: true,
-          title:  AppPageHeadText(title: 'viewTestAsset'.tr()),
+          title: AppPageHeadText(title: 'viewTestAsset'.tr()),
         ),
-        body:  DefaultTabController(
-          length: 2,
+        body: DefaultTabController(
+          length: 3,
           child: Column(
             children: [
-              TabBar(tabs: [
-                Tab(
-                  text: 'onlineData'.tr(),
-                ),
-                Tab(
-                  text: 'offlineData'.tr(),
-                )
-              ]),
+              TabBar(
+                  unselectedLabelStyle: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: AppDimensions.fontSize12(context)),
+                  labelStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: AppDimensions.fontSize13(context)),
+                  tabs: [
+                    Tab(
+                      text: 'onlineData'.tr(),
+                    ),
+                    Tab(
+                      text: 'offlineData'.tr(),
+                    ),
+                    Tab(
+                      text: 'offlineAddAsset'.tr(),
+                    ),
+                  ]),
               const Expanded(
-                  child: TabBarView(
-                      children: [TabOnlineTestView(), TabOfflinTestViews()]))
+                  child: TabBarView(children: [
+                TabOnlineTestView(),
+                TabOfflinTestViews(),
+                TabOfflineAddAsset()
+              ]))
             ],
           ),
         ));

@@ -173,7 +173,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'BRC',
+        title: 'Test Management',
         theme: ThemeData(
           appBarTheme: const AppBarTheme(
               backgroundColor: AppColors.kWhite,

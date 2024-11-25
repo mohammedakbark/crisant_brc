@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/database/offline_add_entity_db.dart';
 import 'package:test_managment/core/database/offline_test_entity_db.dart';
-import 'package:test_managment/core/services/lang_service.dart';
 
 class NetworkService with ChangeNotifier {
   final Connectivity _connectivity = Connectivity();
@@ -38,10 +37,10 @@ class NetworkService with ChangeNotifier {
               showMessage('onlineModeCap'.tr());
 
               // Internet is available
-              Provider.of<OfflineAddEntityDb>(context, listen: false)
-                  .offlineAddAssetToServer(context, dontehckNet: true);
-              Provider.of<OfflineTestEntityDb>(context, listen: false)
-                  .offlineSyncTestToServer(context, fontCheckNet: true);
+              // Provider.of<OfflineAddEntityDb>(context, listen: false)
+              //     .offlineAddAssetToServer(context, dontehckNet: true);
+              // Provider.of<OfflineTestEntityDb>(context, listen: false)
+              //     .offlineSyncTestToServer(context, fontCheckNet: true);
             } else {
               _netisConnected = false;
               showMessage('offlineModeCap'.tr());

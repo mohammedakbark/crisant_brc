@@ -8,31 +8,38 @@ import 'package:test_managment/core/repositories/add_new_test_repo.dart';
 import 'package:test_managment/core/repositories/auth_repo.dart';
 import 'package:test_managment/core/database/auth_db.dart';
 import 'package:test_managment/core/repositories/fetch_entity_reports.dart';
+import 'package:test_managment/core/repositories/get_division_repo.dart';
 import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/model/add_new_asset_model.dart';
+import 'package:test_managment/model/divisions_model.dart';
 import 'package:test_managment/model/reposrts%20models/test_report_add_model.dart';
 import 'package:test_managment/model/test_report_model.dart';
 
 class ApiService {
-  static Future<bool> loginUser(
-      String userName, String password, int devisionId, context) async {
-    final result = await AuthRepo.loginUser(userName, password, devisionId);
-    if (result != null) {
-      if (!result.error) {
-        final Map<String, dynamic> data = result.data as Map<String, dynamic>;
-        final token = data['token'];
-        log(token.toString());
-        // store data
-        await Provider.of<AuthDb>(context, listen: false)
-            .storeUserData(userName, password, devisionId, token);
-        showMessage(result.message);
-        return true;
+  static Future<bool> loginUser(String userName, String password,
+      int devisionId, String divisonName, context) async {
+    try {
+      final result = await AuthRepo.loginUser(userName, password, devisionId);
+      if (result != null) {
+        if (!result.error) {
+          final Map<String, dynamic> data = result.data as Map<String, dynamic>;
+          final token = data['token'];
+          log(token.toString());
+          // store data
+          await Provider.of<AuthDb>(context, listen: false).storeUserData(
+              userName, password, devisionId, token, divisonName);
+          showMessage(result.message);
+          return true;
+        } else {
+          showMessage(result.message, isWarning: true);
+          return false;
+        }
       } else {
-        showMessage(result.message, isWarning: true);
+        log('message');
         return false;
       }
-    } else {
-      log('message');
+    } catch (e) {
+      log("Error - Login - ${e}");
       return false;
     }
   } // ADD ASSET
@@ -79,6 +86,37 @@ class ApiService {
           log(lis.length.toString());
           // Sort in descending order by createdDate
           lis.sort((a, b) => (b.createdDate).compareTo(a.createdDate));
+          return lis;
+        } else {
+          showMessage(result.message);
+          return [];
+        }
+      } else {
+        showMessage('Test Report Feching Failed');
+        return [];
+      }
+    } else {
+      showMessage('Please Check Your Internet Connection');
+      return [];
+    }
+  }
+
+  static Future<List<DivisionsModel>> getAllDivision(
+      BuildContext context) async {
+    if (Provider.of<NetworkService>(context, listen: false).netisConnected ==
+        true) {
+      final result = await GetDivisionRepo().getDivisions(context);
+      if (result != null) {
+        if (!result.error) {
+          final data = result.data as List;
+          List<DivisionsModel> lis = data
+              .map(
+                (e) => DivisionsModel.fromJson(e),
+              )
+              .toList();
+          log(lis.length.toString());
+          // Sort in descending order by createdDate
+          lis.sort((a, b) => (a.divisionName).compareTo(b.divisionName));
           return lis;
         } else {
           showMessage(result.message);
