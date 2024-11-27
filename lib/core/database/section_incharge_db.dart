@@ -19,14 +19,24 @@ class SectionInchargeDb with ChangeNotifier {
   bool? _isDownloading;
   bool? get isDownloading => _isDownloading;
 
-  static Future<String> getValueById(dynamic id) async {
-    final db = await LocalDatabaseService().initDb;
-    final List<Map<String, dynamic>> result = await db.query(
-      sectionInchargeCollection, // Table name
-      where: 'sectionInchargeId = ?', // WHERE clause
-      whereArgs: [id], // Value for the placeholder
-    );
-    return result[0]['sectionInchargeName'];
+  static Future<String?> getValueById(dynamic id) async {
+    // log(id.toString());
+
+    try {
+      final db = await LocalDatabaseService().initDb;
+      final List<Map<String, dynamic>> result = await db.query(
+        sectionInchargeCollection, // Table name
+        where: 'sectionInchargeId = ?', // WHERE clause
+        whereArgs: [id], // Value for the placeholder
+      );
+      if (result.isEmpty) {
+        return null;
+      } else {
+        return result[0]['sectionInchargeName'];
+      }
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<void> setlastSync() async {

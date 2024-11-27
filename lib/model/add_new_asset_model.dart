@@ -1,4 +1,5 @@
 class AddNewAssetModel {
+  int? rawId;
   String entityId;
   String sectionInchargeId;
   String sectionId;
@@ -9,6 +10,7 @@ class AddNewAssetModel {
   String entityLong;
 
   AddNewAssetModel({
+    this.rawId,
     required this.entityId,
     required this.sectionInchargeId,
     required this.sectionId,
@@ -22,6 +24,7 @@ class AddNewAssetModel {
   factory AddNewAssetModel.fromJson(Map<String, dynamic> json) {
     if (json['stationId'] == null) {
       return AddNewAssetModel(
+        rawId: json['id'],
         entityId: json["entityId"],
         sectionInchargeId: json["sectionInchargeId"],
         sectionId: json["sectionId"],
@@ -32,6 +35,7 @@ class AddNewAssetModel {
       );
     } else if (json['blockSectionId'] == null) {
       return AddNewAssetModel(
+        rawId: json['id'],
         entityId: json["entityId"],
         sectionInchargeId: json["sectionInchargeId"],
         sectionId: json["sectionId"],
@@ -42,6 +46,7 @@ class AddNewAssetModel {
       );
     } else {
       return AddNewAssetModel(
+        rawId: json['id'],
         entityId: json["entityId"],
         sectionInchargeId: json["sectionInchargeId"],
         sectionId: json["sectionId"],

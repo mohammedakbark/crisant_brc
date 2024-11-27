@@ -92,6 +92,17 @@ class OfflineAddEntityDb with ChangeNotifier {
     }
   }
 
+  Future _deleteTableWhere(dynamic id) async {
+    final db = await LocalDatabaseService().initOfflineAddEntityDb;
+
+    try {
+      await db.delete(offlineCollectionTable, where: "id=?", whereArgs: [id]);
+      log('deleted 1 $id item from the local data');
+    } catch (e) {
+      log('exception on deleting  item from table  ${e.toString()}');
+    }
+  }
+
   Future<void> offlineAddAssetToServer(BuildContext context,
       {bool? dontehckNet}) async {
     try {
@@ -117,10 +128,16 @@ class OfflineAddEntityDb with ChangeNotifier {
     if (listOfflineEntitites != null) {
       if (listOfflineEntitites!.isNotEmpty) {
         for (var i in listOfflineEntitites!) {
-          await ApiService.addNewAsset(context, i);
-          showMessage('Storing offline assets to server');
+          final isSuccessAdd = await ApiService.addNewAsset(context, i);
+          if (isSuccessAdd) {
+            _deleteTableWhere(i.rawId);
+            showMessage('Storing offline assets to server');
+          } else {
+            showMessage('Storing offline assets to server - FAILED',
+                isWarning: true);
+          }
         }
-        await _clearTable();
+        // await _clearTable();
         await Provider.of<EnitityProfileDb>(context, listen: false)
             .storeEnitityProfile(context, dontehckNet: dontehckNet);
         await getAllOfflineAddEntityDb();

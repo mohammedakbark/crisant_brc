@@ -129,6 +129,7 @@ class OfflineTestEntityDb with ChangeNotifier {
             }
           }
           _listOfflineEntitites?.add(AddNewTestModel(
+              rawId: testEntityId,
               connectivityMode: connectivityMode,
               entityId: entityId,
               entityProfileId: entityProfileId,
@@ -162,6 +163,18 @@ class OfflineTestEntityDb with ChangeNotifier {
     }
   }
 
+  Future _deleteTableWhere(dynamic id) async {
+    final db = await LocalDatabaseService().initOfflinTestEntityDb;
+
+    try {
+      await db
+          .delete(testEntityOfflineCollection, where: "id = ?", whereArgs: [id]);
+      log('deleted 1 $id item from the local data');
+    } catch (e) {
+      log('exception on deleting  item from table  ${e.toString()}');
+    }
+  }
+
   Future<void> offlineSyncTestToServer(BuildContext context,
       {bool? fontCheckNet}) async {
     try {
@@ -187,15 +200,20 @@ class OfflineTestEntityDb with ChangeNotifier {
     if (listOfflineEntitites != null) {
       if (listOfflineEntitites!.isNotEmpty) {
         for (var i in listOfflineEntitites!) {
-          await ApiService.addNewTest(context, i);
-          showMessage('Storing offline Test to server');
+          final isAddTestSuccess = await ApiService.addNewTest(context, i);
+          if (isAddTestSuccess) {
+            log("raw id - ${i.rawId}");
+            _deleteTableWhere(i.rawId);
+
+            showMessage('Storing offline Test to server');
+          } else {
+            showMessage('Storing offline assets to server - FAILED',
+                isWarning: true);
+          }
         }
         await _clearEntityTable();
         await getAllPendingOfflineTest();
       }
     }
   }
-
-
- 
 }

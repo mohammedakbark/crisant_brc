@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,6 @@ import 'package:test_managment/core/database/section_incharge_db.dart';
 import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
-import 'package:test_managment/core/utils/responsive_helper.dart';
 import 'package:test_managment/model/db%20models/entity_profile_model.dart';
 
 class AssetProfiles extends StatefulWidget {
@@ -47,40 +48,59 @@ class _AssetProfilesState extends State<AssetProfiles> {
     try {
       widget.listOfData
           .sort((a, b) => (b.modifiedDate).compareTo(a.modifiedDate));
-
+      log(widget.listOfData.length.toString());
       for (var i in widget.listOfData) {
-        listOFData.add(await _convertIdIntoValue(i.entityId, i.entityProfileId,
-            i.sectionInchargeId, i.sectionId, i.blockSectionId, i.stationId));
+        final data = await _convertIdIntoValue(
+            i.entityId,
+            i.entityProfileId,
+            i.sectionInchargeId,
+            i.sectionId,
+            i.blockSectionId,
+            i.stationId,
+            i.entityLatt,
+            i.entityLong);
+        if (data.isNotEmpty) {
+          listOFData.add(data);
+        }
       }
+      log(listOFData.length.toString());
     } catch (e) {
       showMessage("Something went wrong.");
     }
   }
 
   Future<Map<String, dynamic>> _convertIdIntoValue(assetTypeId, assetIds,
-      sectionInchargeid, sectionid, blockSectionid, stationid) async {
-    String assetType = await EntiteDb.getValueById(assetTypeId);
-    String assetId = await EnitityProfileDb.getValueById(assetIds);
-    String sectionIncharge =
-        await SectionInchargeDb.getValueById(sectionInchargeid);
-    String section = await SectionDb.getValueById(sectionid);
-    String blockSection = (blockSectionid == null ||
-            blockSectionid.isEmpty ||
-            blockSectionid == "null")
-        ? "N/A"
-        : await BlockSectionDb.getValueById(blockSectionid);
-    String station =
-        (stationid == null || stationid.isEmpty || stationid == "null")
-            ? "N/A"
-            : await StationDb.getValueById(stationid);
-    return {
-      "assetType": assetType,
-      "assetId": assetId,
-      "sectionIncharge": sectionIncharge,
-      "section": section,
-      "blockSection": blockSection,
-      "station": station,
-    };
+      sectionInchargeid, sectionid, blockSectionid, stationid, lat, lon) async {
+    try {
+      String assetType = await EntiteDb.getValueById(assetTypeId);
+      String assetId = await EnitityProfileDb.getValueById(assetIds);
+      final ddd = await SectionInchargeDb.getValueById(sectionInchargeid);
+      String sectionIncharge = ddd ?? "N/A";
+      String section = await SectionDb.getValueById(sectionid);
+      String blockSection = (blockSectionid == null ||
+              blockSectionid.isEmpty ||
+              blockSectionid == "null")
+          ? "N/A"
+          : await BlockSectionDb.getValueById(blockSectionid);
+      String station =
+          (stationid == null || stationid.isEmpty || stationid == "null")
+              ? "N/A"
+              : await StationDb.getValueById(stationid);
+      return {
+        "assetType": assetType,
+        "assetId": assetId,
+        "sectionIncharge": sectionIncharge,
+        "section": section,
+        "blockSection": blockSection,
+        "station": station,
+        "lat": lat,
+        "lon": lon
+      };
+    } catch (e) {
+      log(e.toString());
+
+      return {};
+    }
   }
 
   @override
@@ -107,6 +127,7 @@ class _AssetProfilesState extends State<AssetProfiles> {
                     context,
                   ) {
                     final reports = widget.listOfData;
+
                     return reports.isEmpty
                         ? Center(child: Text('noRecordFoundMessage'.tr()))
                         : Column(
@@ -188,9 +209,9 @@ class _AssetProfilesState extends State<AssetProfiles> {
                                                           ['station'])
                                                   : const SizedBox(),
                                               tile('latitudeCap'.tr(),
-                                                  report.entityLatt),
+                                                  listOFData[index]['lat']),
                                               tile('longitudeCap'.tr(),
-                                                  report.entityLong)
+                                                  listOFData[index]['lon'])
                                             ],
                                           ),
                                         ),
@@ -200,7 +221,7 @@ class _AssetProfilesState extends State<AssetProfiles> {
                                         const AppSpacer(
                                           heightPortion: .01,
                                         ),
-                                    itemCount: reports.length),
+                                    itemCount: listOFData.length),
                               ),
                             ],
                           );

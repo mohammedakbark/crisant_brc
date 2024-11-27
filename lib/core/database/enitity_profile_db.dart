@@ -72,26 +72,38 @@ class EnitityProfileDb with ChangeNotifier {
     if (dontList == null) {
       notifyListeners();
     }
-    final db = await LocalDatabaseService().initDb;
+    try {
+      final db = await LocalDatabaseService().initDb;
 
-    await _clearTable();
-    final result = await FetchEntityProfileRepo().fetchEntityProfile(context);
-    List data = result!.data as List;
-    List<EntityProfileModel> listOfEnitityProfile =
-        data.map((e) => EntityProfileModel.fromJson(e)).toList();
+      await _clearTable();
+      final result = await FetchEntityProfileRepo().fetchEntityProfile(context);
+      List data = result!.data as List;
+      List<EntityProfileModel> listOfEnitityProfile =
+          data.map((e) => EntityProfileModel.fromJson(e)).toList();
 
-    for (var enitityProfile in listOfEnitityProfile) {
-      await db.insert(
-        entityProfileCollection,
-        enitityProfile.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      for (var enitityProfile in listOfEnitityProfile) {
+        await db.insert(
+          entityProfileCollection,
+          enitityProfile.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+
+      print('Enitity Profile  Downloaded Successful');
+      await setlastSync();
+      await getAllEnitityProfile();
+      _isDownloading = false;
+      if (dontList == null) {
+        notifyListeners();
+      }
+    } catch (e) {
+      _isDownloading = false;
+      if (dontList == null) {
+        notifyListeners();
+      }
+      print(
+          '----------------------- Error - while feching asset profiles --- $e');
     }
-
-    print('Enitity Profile  Downloaded Successful');
-    await setlastSync();
-    await getAllEnitityProfile();
-    _isDownloading = false;
   }
 
   Future getAllEnitityProfile() async {

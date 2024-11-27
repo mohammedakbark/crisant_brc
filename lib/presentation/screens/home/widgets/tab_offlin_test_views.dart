@@ -64,8 +64,8 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
       sectionInchargeid, sectionid, blockSectionid, stationid) async {
     String assetType = await EntiteDb.getValueById(assetTypeId);
     String assetId = await EnitityProfileDb.getValueById(assetIds);
-    String sectionIncharge =
-        await SectionInchargeDb.getValueById(sectionInchargeid);
+   final ddd = await SectionInchargeDb.getValueById(sectionInchargeid);
+      String sectionIncharge = ddd ?? "N/A";
     String section = await SectionDb.getValueById(sectionid);
     String blockSection = (blockSectionid == null ||
             blockSectionid.isEmpty ||

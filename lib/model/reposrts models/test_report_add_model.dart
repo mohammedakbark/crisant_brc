@@ -1,4 +1,5 @@
 class AddNewTestModel {
+  int? rawId;
   String entityId;
   String sectionInchargeId;
   String sectionId;
@@ -13,6 +14,7 @@ class AddNewTestModel {
   List<TestParametersModel> parameters;
 
   AddNewTestModel({
+    this.rawId,
     required this.entityId,
     required this.sectionInchargeId,
     required this.sectionId,
@@ -27,20 +29,23 @@ class AddNewTestModel {
     required this.parameters,
   });
 
-  factory AddNewTestModel.fromJson(Map<String, dynamic> json) => AddNewTestModel(
-      entityId: json["entityId"],
-      sectionInchargeId: json["sectionInchargeId"],
-      sectionId: json["sectionId"],
-      blockSectionId: json["blockSectionId"],
-      stationId:json['stationId'],
-      entityProfileId: json["entityProfileId"],
-      testLatt: json["testLatt"],
-      testLong: json["testLong"],
-      testMode: json["testMode"],
-      connectivityMode: json["connectivityMode"],
-      picture: json["picture"],
-      parameters: List<TestParametersModel>.from(json["parameters"].map((x) => TestParametersModel.fromJson(x))),
-  );
+  factory AddNewTestModel.fromJson(Map<String, dynamic> json) =>
+      AddNewTestModel(
+        rawId: json['id'],
+        entityId: json["entityId"],
+        sectionInchargeId: json["sectionInchargeId"],
+        sectionId: json["sectionId"],
+        blockSectionId: json["blockSectionId"],
+        stationId: json['stationId'],
+        entityProfileId: json["entityProfileId"],
+        testLatt: json["testLatt"],
+        testLong: json["testLong"],
+        testMode: json["testMode"],
+        connectivityMode: json["connectivityMode"],
+        picture: json["picture"],
+        parameters: List<TestParametersModel>.from(
+            json["parameters"].map((x) => TestParametersModel.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
         "entityId": entityId,
@@ -69,11 +74,12 @@ class TestParametersModel {
     this.parameterReasonId,
   });
 
-  factory TestParametersModel.fromJson(Map<String, dynamic> json) => TestParametersModel(
-      parameterId: json["parameterId"],
-      parameterValue: json["parameterValue"],
-      parameterReasonId: json["parameterReasonId"],
-  );
+  factory TestParametersModel.fromJson(Map<String, dynamic> json) =>
+      TestParametersModel(
+        parameterId: json["parameterId"],
+        parameterValue: json["parameterValue"],
+        parameterReasonId: json["parameterReasonId"],
+      );
 
   Map<String, dynamic> toJson() => parameterReasonId!.isEmpty
       ? {

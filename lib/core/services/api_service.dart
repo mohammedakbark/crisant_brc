@@ -25,8 +25,8 @@ class ApiService {
           final Map<String, dynamic> data = result.data as Map<String, dynamic>;
           final token = data['token'];
           log(token.toString());
-          final profileResult =
-              await AuthRepo.getUserProfileData(userName, password, devisionId,token);
+          final profileResult = await AuthRepo.getUserProfileData(
+              userName, password, devisionId, token);
 
           // store data
           if (profileResult != null) {
@@ -68,28 +68,38 @@ class ApiService {
     }
   } // ADD ASSET
 
-  static Future<void> addNewAsset(
+  static Future<bool> addNewAsset(
       BuildContext context, AddNewAssetModel model) async {
     final result = await AddNewAssetRepo().addNewAsset(context, model);
     if (result != null) {
       if (!result.error) {
         showMessage(result.message);
+        return true;
       } else {
         showMessage(result.message, isWarning: true);
+        return false;
       }
+    } else {
+      return false;
     }
   }
 
-  static Future<void> addNewTest(
+  static Future<bool> addNewTest(
       BuildContext context, AddNewTestModel model) async {
     final result = await AddNewTestRepo().addNewTest(context, model);
     if (result != null) {
       if (!result.error) {
         showMessage(result.message);
         log(result.data.toString());
+        return true;
       } else {
         showMessage(result.message, isWarning: true);
+                return false;
+
       }
+    }else{
+              return false;
+
     }
   }
 

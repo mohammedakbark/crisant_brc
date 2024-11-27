@@ -70,7 +70,7 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                         'assetTypesD'.tr(), dbController.lastSyncData,
                         () async {
                       //
-                      dbController.storeEntity(context);
+                      await dbController.storeEntity(context);
                     },
                         count: dbController.listOfEntityData.length,
                         dbController.isDownloading ?? false);
@@ -80,54 +80,57 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                     return _buildTile(
                         'sectionInchargesD'.tr(), dbController.lastSyncData,
                         () async {
-                      dbController.storeSectionIncharges(context);
+                      await dbController.storeSectionIncharges(context);
                     },
                         count: dbController.listOfSectionIncharge.length,
                         dbController.isDownloading ?? false);
                   }),
                   Consumer<SectionDb>(
                     builder: (context, dbController, _) => _buildTile(
-                        'sectionsD'.tr(), dbController.lastSyncData, () {
-                      dbController.storeSection(context);
+                        'sectionsD'.tr(), dbController.lastSyncData, () async {
+                      await dbController.storeSection(context);
                     },
                         count: dbController.listOfSection.length,
                         dbController.isDownloading ?? false),
                   ),
                   Consumer<BlockSectionDb>(
                     builder: (context, dbController, _) => _buildTile(
-                        'blockSectionsD'.tr(), dbController.lastSyncData, () {
-                      dbController.storeBlockSections(context);
+                        'blockSectionsD'.tr(), dbController.lastSyncData,
+                        () async {
+                      await dbController.storeBlockSections(context);
                     },
                         count: dbController.listOfBlockSections.length,
                         dbController.isDownloading ?? false),
                   ),
                   Consumer<StationDb>(
                       builder: (context, dbController, _) => _buildTile(
-                              'stationsD'.tr(), dbController.lastSyncData, () {
-                            dbController.storeStations(context);
+                              'stationsD'.tr(), dbController.lastSyncData,
+                              () async {
+                            await dbController.storeStations(context);
                           },
                               count: dbController.listOfStationModel.length,
                               dbController.isDownloading ?? false)),
                   Consumer<ParametersDb>(
                       builder: (context, dbController, _) => _buildTile(
                               'parametersD'.tr(), dbController.lastSyncData,
-                              () {
-                            dbController.storeParameters(context);
+                              () async {
+                            await dbController.storeParameters(context);
                           },
                               count: dbController.listOfParameters.length,
                               dbController.isDownloading ?? false)),
                   Consumer<ParametersValueDb>(
                       builder: (context, dbController, _) => _buildTile(
                               'parametersValuesD'.tr(),
-                              dbController.lastSyncData, () {
-                            dbController.storeParametersValues(context);
+                              dbController.lastSyncData, () async {
+                            await dbController.storeParametersValues(context);
                           },
                               count: dbController.listOfParametersValues.length,
                               dbController.isDownloading ?? false)),
                   Consumer<ParametersReasonDb>(
-                      builder: (context, dbController, _) => _buildTile(
-                              'reasonsD'.tr(), dbController.lastSyncData, () {
-                            dbController.storeParameterReson(context);
+                      builder: (context, dbController, _) =>
+                          _buildTile('reasonsD'.tr(), dbController.lastSyncData,
+                              () async {
+                            await dbController.storeParameterReson(context);
                           },
                               count: dbController.listOfParametersResons.length,
                               dbController.isDownloading ?? false)),
@@ -140,8 +143,8 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                               )));
                             },
                             child: _buildTile('assetsProfilesD'.tr(),
-                                dbController.lastSyncData, () {
-                              dbController.storeEnitityProfile(context);
+                                dbController.lastSyncData, () async {
+                              await dbController.storeEnitityProfile(context);
                             },
                                 count:
                                     dbController.listOfEnitityProfiles.length,
@@ -188,7 +191,7 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
                               dbController.lastSyncData,
                               hideDevider: true,
                               () async {
-                                dbController.getAllPendingOfflineTest();
+                                await dbController.getAllPendingOfflineTest();
                                 // await Provider.of<OfflineTestEntityDb>(context,
                                 //         listen: false)
                                 //     .offlineSyncTestToServer(context);
