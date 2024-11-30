@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/components/common_widgets.dart';
 import 'package:test_managment/core/controller/camera_controller.dart';
+import 'package:test_managment/core/controller/sync_controller.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
@@ -526,6 +527,7 @@ class _TestAssetScreenState extends State<TestAssetScreen> {
         testMode: ctr.isManual == true ? "MANUAL" : 'AUTO',
         connectivityMode: isOnline == true ? 'ONLINE' : "OFFLINE",
         picture: cameraController.convertedImageFile?['file'],
+        createdAt: SyncController.converDataTime(),
         parameters: listOfParameters);
     if (isOnline == true) {
       await onlineSubmit(model);

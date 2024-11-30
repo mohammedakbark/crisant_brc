@@ -7,6 +7,7 @@ import 'package:test_managment/core/utils/app_dimentions.dart';
 
 showMessage(String message, {bool? isWarning}) {
   return Fluttertoast.showToast(
+
       msg: message,
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
@@ -23,28 +24,31 @@ showLoaingIndicator(BuildContext context) {
     barrierDismissible: false,
     context: context,
     builder: (context) {
-      return AlertDialog(
-        titlePadding: const EdgeInsets.symmetric(
-            horizontal: AppDimensions.paddingSize20,
-            vertical: AppDimensions.paddingSize20),
-        shape: const BeveledRectangleBorder(),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const AppLoadingIndicator(),
-            const AppSpacer(
-              widthPortion: .05,
-            ),
-            Text(
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              'Please wait a moment..',
-              style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: AppDimensions.fontSize16(context)),
-            ),
-          ],
+      return PopScope(
+        canPop: false,
+        child: AlertDialog(
+          titlePadding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.paddingSize20,
+              vertical: AppDimensions.paddingSize20),
+          shape: const BeveledRectangleBorder(),
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const AppLoadingIndicator(),
+              const AppSpacer(
+                widthPortion: .05,
+              ),
+              Text(
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                'Please wait a moment..',
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: AppDimensions.fontSize16(context)),
+              ),
+            ],
+          ),
         ),
       );
     },
@@ -53,4 +57,11 @@ showLoaingIndicator(BuildContext context) {
 
 closeLoadingIndicator(BuildContext context) {
   Navigator.of(context).pop();
+}
+
+errorSnackBar(BuildContext context, String message, {bool? isError}) {
+  return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: Duration(seconds: 10),
+      backgroundColor: isError == true ? AppColors.kRed : null,
+      content: Text(message)));
 }

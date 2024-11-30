@@ -1,15 +1,15 @@
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/common_widgets.dart';
+import 'package:test_managment/core/components/custom_button.dart';
+import 'package:test_managment/core/controller/sync_controller.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
-import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
 import 'package:test_managment/core/database/offline_add_entity_db.dart';
 import 'package:test_managment/core/database/section_db.dart';
@@ -18,6 +18,8 @@ import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
+import 'package:test_managment/core/utils/route.dart';
+import 'package:test_managment/presentation/screens/dashboard.dart';
 
 class TabOfflineAddAsset extends StatefulWidget {
   const TabOfflineAddAsset({super.key});
@@ -39,8 +41,8 @@ class _TabOfflineAddAssetState extends State<TabOfflineAddAsset> {
     await Provider.of<OfflineAddEntityDb>(context, listen: false)
         .getAllOfflineAddEntityDb(dontList: true);
     await getEachData();
-    await Provider.of<OfflineAddEntityDb>(context, listen: false)
-      .offlineAddAssetToServer(context);
+    // await Provider.of<OfflineAddEntityDb>(context, listen: false)
+    //   .offlineAddAssetToServer(context);
 
     setState(() {
       isLoading = false;
@@ -67,7 +69,7 @@ class _TabOfflineAddAssetState extends State<TabOfflineAddAsset> {
     String assetType = await EntiteDb.getValueById(assetTypeId);
     String assetId = assetIds;
     final ddd = await SectionInchargeDb.getValueById(sectionInchargeid);
-      String sectionIncharge = ddd ?? "N/A";
+    String sectionIncharge = ddd ?? "N/A";
     String section = await SectionDb.getValueById(sectionid);
     String blockSection = (blockSectionid == null ||
             blockSectionid.isEmpty ||
@@ -90,7 +92,7 @@ class _TabOfflineAddAssetState extends State<TabOfflineAddAsset> {
 //---------------------------
 
   Future<void> syncData() async {
-    await Provider.of<OfflineAddEntityDb>(context, listen: false)
+    return await Provider.of<OfflineAddEntityDb>(context, listen: false)
         .offlineAddAssetToServer(
       context,
     );
@@ -184,7 +186,9 @@ class _TabOfflineAddAssetState extends State<TabOfflineAddAsset> {
                                           tile('latitudeCap'.tr(),
                                               report.entityLatt),
                                           tile('longitudeCap'.tr(),
-                                              report.entityLong)
+                                              report.entityLong),
+                                          tile('date'.tr(), report.createdAt),
+                                          deleteButton(report.rawId)
                                         ],
                                       ),
                                     ),
@@ -199,36 +203,41 @@ class _TabOfflineAddAssetState extends State<TabOfflineAddAsset> {
                           Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: AppDimensions.paddingSize10),
-                            child: InkWell(
-                              onTap: () async {
-                                await syncData();
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: h(context) * .06,
-                                width: w(context) * .4,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        AppDimensions.radiusSize50),
-                                    color: AppColors.kPrimaryColor,
-                                    boxShadow: [
-                                      BoxShadow(
-                                          spreadRadius: 1,
-                                          color:
-                                              AppColors.kBlack.withOpacity(0.2),
-                                          blurRadius: 2,
-                                          offset: const Offset(2, 1)),
-                                    ]),
-                                child: Text(
-                                  'syncAll'.tr(),
-                                  style: TextStyle(
-                                      color: AppColors.kWhite,
-                                      fontSize:
-                                          AppDimensions.fontSize16(context),
-                                      fontWeight: FontWeight.bold),
+                            child: Consumer<SyncController>(
+                                builder: (context, syncController, _) {
+                              return InkWell(
+                                onTap: () async {
+                                  syncController.syncDataLoadingState();
+                                  await syncData();
+                                  syncController.closeSync();
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  height: h(context) * .06,
+                                  width: w(context) * .4,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          AppDimensions.radiusSize50),
+                                      color: AppColors.kPrimaryColor,
+                                      boxShadow: [
+                                        BoxShadow(
+                                            spreadRadius: 1,
+                                            color: AppColors.kBlack
+                                                .withOpacity(0.2),
+                                            blurRadius: 2,
+                                            offset: const Offset(2, 1)),
+                                      ]),
+                                  child: Text(
+                                    'syncAll'.tr(),
+                                    style: TextStyle(
+                                        color: AppColors.kWhite,
+                                        fontSize:
+                                            AppDimensions.fontSize16(context),
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              );
+                            }),
                           )
                         ],
                       );
@@ -260,5 +269,57 @@ class _TabOfflineAddAssetState extends State<TabOfflineAddAsset> {
         ],
       ),
     );
+  }
+
+  Widget deleteButton(dynamic id) {
+    return Consumer<OfflineAddEntityDb>(
+        builder: (context, deleteController, _) {
+      return Padding(
+        padding:
+            const EdgeInsets.symmetric(vertical: AppDimensions.paddingSize10),
+        child: Center(
+          child: CustomButton(
+            textColor: AppColors.kWhite,
+            butonColor: AppColors.kRed,
+            title: "DELETE",
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text(
+                    'Do you want to delete ?',
+                    style: const TextStyle(fontWeight: FontWeight.w400),
+                  ),
+                  actions: [
+                    CustomButton(
+                      butonColor: AppColors.kRed,
+                      title: "No",
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    CustomButton(
+                      title: "Yes",
+                      onTap: () async {
+                        await deleteController.deleteTableWhere(id);
+                        await deleteController.getAllOfflineAddEntityDb();
+
+                        showMessage("Deleted");
+                        Navigator.pop(context);
+
+                        // Navigator.of(context).pushAndRemoveUntil(
+                        //   AppRoutes.createRoute(const DashboardScreen()),
+                        //   (route) => false,
+                        // );
+                      },
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    });
   }
 }

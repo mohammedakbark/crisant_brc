@@ -12,6 +12,7 @@ import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/custom_button.dart';
 import 'package:test_managment/core/components/custom_dropdown_field.dart';
 import 'package:test_managment/core/components/custom_form_field.dart';
+import 'package:test_managment/core/controller/sync_controller.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
@@ -282,6 +283,7 @@ class _AddAssetScreenState extends State<AddAssetScreen> {
       entityLong: locationProvider.currentLon.toString(),
       stationId: assetCtrl.selectedStationId,
       blockSectionId: assetCtrl.selectedBlockId,
+      createdAt: SyncController.converDataTime()
     );
 // ignore: use_build_context_synchronously
     if (isOnline == true) {

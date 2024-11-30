@@ -12,40 +12,41 @@ class AddNewTestModel {
   String connectivityMode;
   String picture;
   List<TestParametersModel> parameters;
+  String createdAt;
 
-  AddNewTestModel({
-    this.rawId,
-    required this.entityId,
-    required this.sectionInchargeId,
-    required this.sectionId,
-    this.blockSectionId,
-    this.stationId,
-    required this.entityProfileId,
-    required this.testLatt,
-    required this.testLong,
-    required this.testMode,
-    required this.connectivityMode,
-    required this.picture,
-    required this.parameters,
-  });
+  AddNewTestModel(
+      {this.rawId,
+      required this.entityId,
+      required this.sectionInchargeId,
+      required this.sectionId,
+      this.blockSectionId,
+      this.stationId,
+      required this.entityProfileId,
+      required this.testLatt,
+      required this.testLong,
+      required this.testMode,
+      required this.connectivityMode,
+      required this.picture,
+      required this.parameters,
+      required this.createdAt});
 
   factory AddNewTestModel.fromJson(Map<String, dynamic> json) =>
       AddNewTestModel(
-        rawId: json['id'],
-        entityId: json["entityId"],
-        sectionInchargeId: json["sectionInchargeId"],
-        sectionId: json["sectionId"],
-        blockSectionId: json["blockSectionId"],
-        stationId: json['stationId'],
-        entityProfileId: json["entityProfileId"],
-        testLatt: json["testLatt"],
-        testLong: json["testLong"],
-        testMode: json["testMode"],
-        connectivityMode: json["connectivityMode"],
-        picture: json["picture"],
-        parameters: List<TestParametersModel>.from(
-            json["parameters"].map((x) => TestParametersModel.fromJson(x))),
-      );
+          rawId: json['id'],
+          entityId: json["entityId"],
+          sectionInchargeId: json["sectionInchargeId"],
+          sectionId: json["sectionId"],
+          blockSectionId: json["blockSectionId"],
+          stationId: json['stationId'],
+          entityProfileId: json["entityProfileId"],
+          testLatt: json["testLatt"],
+          testLong: json["testLong"],
+          testMode: json["testMode"],
+          connectivityMode: json["connectivityMode"],
+          picture: json["picture"],
+          parameters: List<TestParametersModel>.from(
+              json["parameters"].map((x) => TestParametersModel.fromJson(x))),
+          createdAt: json["createdDate"]);
 
   Map<String, dynamic> toJson() => {
         "entityId": entityId,
@@ -60,6 +61,7 @@ class AddNewTestModel {
         "picture": picture,
         "stationId": stationId,
         "parameters": List<dynamic>.from(parameters.map((x) => x.toJson())),
+        "createdDate":createdAt
       };
 }
 

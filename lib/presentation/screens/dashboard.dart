@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/common_widgets.dart';
+import 'package:test_managment/core/components/custom_button.dart';
 import 'package:test_managment/core/controller/dashboard_controller.dart';
+import 'package:test_managment/core/controller/sync_controller.dart';
 import 'package:test_managment/core/services/lang_service.dart';
 import 'package:test_managment/core/services/local_db_service.dart';
 import 'package:test_managment/core/services/location_service.dart';
@@ -78,57 +82,94 @@ class _DashboardScreenState extends State<DashboardScreen> {
     TestAssetScreen(),
     const ViewAssetsScreen()
   ];
+
   @override
   Widget build(BuildContext context) {
     final controller = Provider.of<DashboardController>(context);
-
-    return Consumer<SharedPreService>(builder: (context, contro, child) {
-      return FutureBuilder<bool>(
-          future: contro.dataisUpdated,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data == true) {
-                return Consumer<LanguageService>(builder: (context, serive, _) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text(
+                'Do you want to close this app',
+                style: const TextStyle(fontWeight: FontWeight.w400),
+              ),
+              actions: [
+                CustomButton(
+                  butonColor: AppColors.kRed,
+                  title: "No",
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                CustomButton(
+                  title: "Yes",
+                  onTap: () {
+                    exit(0);
+                  },
+                )
+              ],
+            );
+          },
+        );
+      },
+      child: Consumer<SharedPreService>(builder: (context, contro, child) {
+        return FutureBuilder<bool>(
+            future: contro.dataisUpdated,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data == true) {
+                  return Consumer<LanguageService>(
+                      builder: (context, serive, _) {
+                    return Scaffold(
+                        // appBar: AppBar(
+                        //   title: TextButton(
+                        //       onPressed: () async {
+                        //         // log(bs.toString());
+                        //         contro.deletedData();
+                        //       },
+                        //       child: Text('data')),
+                        // ),
+                        body: pages[controller.currentScreenIndex],
+                        bottomNavigationBar: Consumer<SyncController>(
+                            builder: (context, isSyncing, _) {
+                          return bottomNav(controller,
+                              functioning: isSyncing.isSyncing ? true : null);
+                        }));
+                  });
+                } else {
+                  LocalDatabaseService()
+                      .dowloadAllData(context, dontListen: true);
                   return Scaffold(
-                      // appBar: AppBar(
-                      //   title: TextButton(
-                      //       onPressed: () async {
-                      //         // log(bs.toString());
-                      //         contro.deletedData();
-                      //       },
-                      //       child: Text('data')),
-                      // ),
-                      body: pages[controller.currentScreenIndex],
-                      bottomNavigationBar: bottomNav(controller));
-                });
-              } else {
-                LocalDatabaseService()
-                    .dowloadAllData(context, dontListen: true);
-                return Scaffold(
-                  appBar: const HomeAppBar(),
-                  body:  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'pleaseWaitDashboard'.tr(),
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                        const AppSpacer(
-                          heightPortion: .06,
-                        ),
-                        const AppLoadingIndicator(),
-                      ],
+                    appBar: const HomeAppBar(),
+                    body: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'pleaseWaitDashboard'.tr(),
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          const AppSpacer(
+                            heightPortion: .06,
+                          ),
+                          const AppLoadingIndicator(),
+                        ],
+                      ),
                     ),
-                  ),
-                  bottomNavigationBar: bottomNav(controller, functioning: true),
-                );
+                    bottomNavigationBar:
+                        bottomNav(controller, functioning: true),
+                  );
+                }
+              } else {
+                return const SizedBox();
               }
-            } else {
-              return const SizedBox();
-            }
-          });
-    });
+            });
+      }),
+    );
   }
 
   Widget bottomNav(DashboardController controller, {bool? functioning}) =>

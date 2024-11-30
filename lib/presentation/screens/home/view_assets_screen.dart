@@ -6,6 +6,7 @@ import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_page_head_text.dart';
 import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/common_widgets.dart';
+import 'package:test_managment/core/controller/sync_controller.dart';
 import 'package:test_managment/core/services/api_service.dart';
 import 'package:test_managment/core/services/network_service.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
@@ -23,59 +24,105 @@ class ViewAssetsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        drawer: const HomeDrawer(),
-        appBar: AppBar(
-          leadingWidth: 70,
-          // leading: Builder(builder: (context) {
-          //   return Consumer<NetworkService>(builder: (context, net, _) {
-          //     return Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Text(
-          //           net.netisConnected == true ? "ONLINE" : "OFFLINE",
-          //           style: const TextStyle(fontWeight: FontWeight.bold),
-          //         ),
-          //       ],
-          //     );
-          //   });
-          // }),
-          leading: const DrawerButton(
-            color: AppColors.kBlack,
-          ),
-          centerTitle: true,
-          title: AppPageHeadText(title: 'viewTestAsset'.tr()),
-        ),
-        body: DefaultTabController(
-          length: 3,
-          child: Column(
-            children: [
-              TabBar(
-                  unselectedLabelStyle: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: AppDimensions.fontSize12(context)),
-                  labelStyle: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: AppDimensions.fontSize13(context)),
-                  tabs: [
-                    Tab(
-                      text: 'onlineData'.tr(),
+    return Consumer<SyncController>(builder: (context, controller, _) {
+      return PopScope(
+        canPop: !controller.isSyncing,
+        child: Scaffold(
+            drawer: const HomeDrawer(),
+            appBar: AppBar(
+              leadingWidth: 70,
+              // leading: Builder(builder: (context) {
+              //   return Consumer<NetworkService>(builder: (context, net, _) {
+              //     return Column(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: [
+              //         Text(
+              //           net.netisConnected == true ? "ONLINE" : "OFFLINE",
+              //           style: const TextStyle(fontWeight: FontWeight.bold),
+              //         ),
+              //       ],
+              //     );
+              //   });
+              // }),
+              leading: controller.isSyncing
+                  ? const Icon(Icons.menu)
+                  : const DrawerButton(
+                      color: AppColors.kBlack,
                     ),
-                    Tab(
-                      text: 'offlineData'.tr(),
-                    ),
-                    Tab(
-                      text: 'offlineAddAsset'.tr(),
-                    ),
-                  ]),
-              const Expanded(
-                  child: TabBarView(children: [
-                TabOnlineTestView(),
-                TabOfflinTestViews(),
-                TabOfflineAddAsset()
-              ]))
-            ],
-          ),
-        ));
+              centerTitle: true,
+              title: AppPageHeadText(title: 'viewTestAsset'.tr()),
+            ),
+            body: Stack(
+              children: [
+                DefaultTabController(
+                  length: 3,
+                  child: Column(
+                    children: [
+                      TabBar(
+                          unselectedLabelStyle: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: AppDimensions.fontSize12(context)),
+                          labelStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: AppDimensions.fontSize13(context)),
+                          tabs: [
+                            Tab(
+                              text: 'onlineData'.tr(),
+                            ),
+                            Tab(
+                              text: 'offlineData'.tr(),
+                            ),
+                            Tab(
+                              text: 'offlineAddAsset'.tr(),
+                            ),
+                          ]),
+                      const Expanded(
+                          child: TabBarView(children: [
+                        TabOnlineTestView(),
+                        TabOfflinTestViews(),
+                        TabOfflineAddAsset()
+                      ]))
+                    ],
+                  ),
+                ),
+                controller.isSyncing
+                    ? Container(
+                        alignment: Alignment.center,
+                        width: w(context),
+                        color: AppColors.kBlack.withOpacity(.5),
+                        child: Container(
+                          margin:
+                              const EdgeInsets.all(AppDimensions.paddingSize25),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AppDimensions.paddingSize20),
+                          width: w(context),
+                          height: h(context) * .1,
+                          color: AppColors.kWhite,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const AppLoadingIndicator(),
+                              const AppSpacer(
+                                widthPortion: .05,
+                              ),
+                              Text(
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                'Please wait while syncing completes.',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize:
+                                        AppDimensions.fontSize16(context)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : const SizedBox()
+              ],
+            )),
+      );
+    });
   }
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/database/auth_db.dart';
 import 'package:test_managment/core/utils/app_const.dart';
 import 'package:test_managment/model/add_new_asset_model.dart';
@@ -33,6 +34,8 @@ class AddNewTestRepo {
         return ResponseModel.fromJson(decodedata);
       }
     } catch (e) {
+      errorSnackBar(context, e.toString(),isError: true);
+
       return null;
     }
   }

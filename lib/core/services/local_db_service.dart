@@ -145,7 +145,7 @@ class LocalDatabaseService with ChangeNotifier {
         version: 1,
         onCreate: (db, version) {
           db.execute(
-              'CREATE TABLE IF NOT EXISTS ${OfflineAddEntityDb.offlineCollectionTable} (id INTEGER PRIMARY KEY AUTOINCREMENT,entityIdentifier TEXT , sectionInchargeId TEXT,sectionId TEXT,blockSectionId TEXT,stationId TEXT,entityId TEXT,entityLatt TEXT,entityLong TEXT)');
+              'CREATE TABLE IF NOT EXISTS ${OfflineAddEntityDb.offlineCollectionTable} (id INTEGER PRIMARY KEY AUTOINCREMENT,entityIdentifier TEXT , sectionInchargeId TEXT,sectionId TEXT,blockSectionId TEXT,stationId TEXT,entityId TEXT,entityLatt TEXT,entityLong TEXT,createdDate TEXT)');
         },
       );
     } catch (e) {
@@ -180,7 +180,8 @@ class LocalDatabaseService with ChangeNotifier {
             testLong TEXT,
             testMode TEXT,
             connectivityMode TEXT,
-            picture blob
+            picture blob,
+            createdDate TEXT
           )
         ''');
 

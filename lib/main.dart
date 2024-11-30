@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/core/controller/add_asset_controller.dart';
 import 'package:test_managment/core/controller/parameter_controller.dart';
+import 'package:test_managment/core/controller/sync_controller.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
@@ -59,7 +60,7 @@ class _ProviderMainState extends State<ProviderMain> {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-           ChangeNotifierProvider<LanguageService>(
+          ChangeNotifierProvider<LanguageService>(
             create: (context) => LanguageService(),
           ),
           ChangeNotifierProvider<SharedPreService>(
@@ -122,17 +123,19 @@ class _ProviderMainState extends State<ProviderMain> {
           ChangeNotifierProvider<OfflineTestEntityDb>(
             create: (context) => OfflineTestEntityDb(),
           ),
-       
+
           ChangeNotifierProvider<OfflineAddEntityDb>(
             create: (context) => OfflineAddEntityDb(),
           ),
           ChangeNotifierProvider<ParameterController>(
             create: (context) => ParameterController(),
           ),
-             ChangeNotifierProvider<NetworkService>(
+          ChangeNotifierProvider<NetworkService>(
             create: (context) => NetworkService(context),
           ),
-          
+          ChangeNotifierProvider<SyncController>(
+            create: (context) => SyncController(),
+          ),
         ],
         child: EasyLocalization(
             supportedLocales: const [

@@ -76,6 +76,7 @@ class EnitityProfileDb with ChangeNotifier {
       final db = await LocalDatabaseService().initDb;
 
       await _clearTable();
+
       final result = await FetchEntityProfileRepo().fetchEntityProfile(context);
       List data = result!.data as List;
       List<EntityProfileModel> listOfEnitityProfile =

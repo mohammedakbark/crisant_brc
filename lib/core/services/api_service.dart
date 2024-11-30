@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/repositories/add_new_asset_repo.dart';
@@ -73,10 +74,10 @@ class ApiService {
     final result = await AddNewAssetRepo().addNewAsset(context, model);
     if (result != null) {
       if (!result.error) {
-        showMessage(result.message);
+        errorSnackBar(context, result.message);
         return true;
       } else {
-        showMessage(result.message, isWarning: true);
+        errorSnackBar(context, result.message, isError: true);
         return false;
       }
     } else {
@@ -89,17 +90,16 @@ class ApiService {
     final result = await AddNewTestRepo().addNewTest(context, model);
     if (result != null) {
       if (!result.error) {
-        showMessage(result.message);
+        errorSnackBar(context, result.message);
+
         log(result.data.toString());
         return true;
       } else {
-        showMessage(result.message, isWarning: true);
-                return false;
-
+        errorSnackBar(context, result.message, isError: true);
+        return false;
       }
-    }else{
-              return false;
-
+    } else {
+      return false;
     }
   }
 

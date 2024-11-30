@@ -6,6 +6,8 @@ import 'package:test_managment/core/alert_message.dart';
 import 'package:test_managment/core/components/app_margin.dart';
 import 'package:test_managment/core/components/app_spacer.dart';
 import 'package:test_managment/core/components/common_widgets.dart';
+import 'package:test_managment/core/components/custom_button.dart';
+import 'package:test_managment/core/controller/sync_controller.dart';
 import 'package:test_managment/core/database/block_section_db.dart';
 import 'package:test_managment/core/database/enitity_profile_db.dart';
 import 'package:test_managment/core/database/entite_db.dart';
@@ -17,6 +19,8 @@ import 'package:test_managment/core/database/station_db.dart';
 import 'package:test_managment/core/utils/app_colors.dart';
 import 'package:test_managment/core/utils/app_dimentions.dart';
 import 'package:test_managment/core/utils/responsive_helper.dart';
+import 'package:test_managment/core/utils/route.dart';
+import 'package:test_managment/presentation/screens/dashboard.dart';
 
 class TabOfflinTestViews extends StatefulWidget {
   const TabOfflinTestViews({super.key});
@@ -38,8 +42,8 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
     await Provider.of<OfflineTestEntityDb>(context, listen: false)
         .getAllPendingOfflineTest(dontListen: true);
     await getEachData();
-    await Provider.of<OfflineTestEntityDb>(context, listen: false)
-        .offlineSyncTestToServer(context);
+    // await Provider.of<OfflineTestEntityDb>(context, listen: false)
+    //     .offlineSyncTestToServer(context);
 
     setState(() {
       isLoading = false;
@@ -64,8 +68,8 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
       sectionInchargeid, sectionid, blockSectionid, stationid) async {
     String assetType = await EntiteDb.getValueById(assetTypeId);
     String assetId = await EnitityProfileDb.getValueById(assetIds);
-   final ddd = await SectionInchargeDb.getValueById(sectionInchargeid);
-      String sectionIncharge = ddd ?? "N/A";
+    final ddd = await SectionInchargeDb.getValueById(sectionInchargeid);
+    String sectionIncharge = ddd ?? "N/A";
     String section = await SectionDb.getValueById(sectionid);
     String blockSection = (blockSectionid == null ||
             blockSectionid.isEmpty ||
@@ -87,7 +91,7 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
   }
 
   Future<void> syncData() async {
-    await Provider.of<OfflineTestEntityDb>(context, listen: false)
+    return await Provider.of<OfflineTestEntityDb>(context, listen: false)
         .offlineSyncTestToServer(context);
   }
 
@@ -179,7 +183,9 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
                                           tile('latitudeCap'.tr(),
                                               report.testLatt),
                                           tile('longitudeCap'.tr(),
-                                              report.testLong)
+                                              report.testLong),
+                                          tile('date'.tr(), report.createdAt),
+                                          deleteButton(report.rawId)
                                         ],
                                       ),
                                     ),
@@ -194,36 +200,43 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
                           Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: AppDimensions.paddingSize10),
-                            child: InkWell(
-                              onTap: () async {
-                                await syncData();
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: h(context) * .06,
-                                width: w(context) * .4,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        AppDimensions.radiusSize50),
-                                    color: AppColors.kPrimaryColor,
-                                    boxShadow: [
-                                      BoxShadow(
-                                          spreadRadius: 1,
-                                          color:
-                                              AppColors.kBlack.withOpacity(0.2),
-                                          blurRadius: 2,
-                                          offset: const Offset(2, 1)),
-                                    ]),
-                                child: Text(
-                                  'syncAll'.tr(),
-                                  style: TextStyle(
-                                      color: AppColors.kWhite,
-                                      fontSize:
-                                          AppDimensions.fontSize16(context),
-                                      fontWeight: FontWeight.bold),
+                            child: Consumer<SyncController>(
+                                builder: (context, syncController, _) {
+                              return InkWell(
+                                onTap: () async {
+                                  if (!syncController.isSyncing) {
+                                    syncController.syncDataLoadingState();
+                                    await syncData();
+                                    syncController.closeSync();
+                                  }
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  height: h(context) * .06,
+                                  width: w(context) * .4,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          AppDimensions.radiusSize50),
+                                      color: AppColors.kPrimaryColor,
+                                      boxShadow: [
+                                        BoxShadow(
+                                            spreadRadius: 1,
+                                            color: AppColors.kBlack
+                                                .withOpacity(0.2),
+                                            blurRadius: 2,
+                                            offset: const Offset(2, 1)),
+                                      ]),
+                                  child: Text(
+                                    'syncAll'.tr(),
+                                    style: TextStyle(
+                                        color: AppColors.kWhite,
+                                        fontSize:
+                                            AppDimensions.fontSize16(context),
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              );
+                            }),
                           )
                         ],
                       );
@@ -255,5 +268,56 @@ class _TabOfflinTestViewsState extends State<TabOfflinTestViews> {
         ],
       ),
     );
+  }
+
+  Widget deleteButton(dynamic id) {
+    return Consumer<OfflineTestEntityDb>(
+        builder: (context, deleteController, _) {
+      return Padding(
+        padding:
+            const EdgeInsets.symmetric(vertical: AppDimensions.paddingSize10),
+        child: Center(
+          child: CustomButton(
+            textColor: AppColors.kWhite,
+            butonColor: AppColors.kRed,
+            title: "DELETE",
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text(
+                    'Do you want to delete ?',
+                    style: const TextStyle(fontWeight: FontWeight.w400),
+                  ),
+                  actions: [
+                    CustomButton(
+                      butonColor: AppColors.kRed,
+                      title: "No",
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    CustomButton(
+                      title: "Yes",
+                      onTap: () async {
+                        await deleteController.deleteTableWhere(id);
+                        await deleteController.getAllPendingOfflineTest();
+
+                        showMessage("Deleted");
+                        Navigator.pop(context);
+                        // Navigator.of(context).pushAndRemoveUntil(
+                        //   AppRoutes.createRoute(const DashboardScreen()),
+                        //   (route) => false,
+                        // );
+                      },
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    });
   }
 }

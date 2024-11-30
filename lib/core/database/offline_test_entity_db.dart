@@ -52,7 +52,8 @@ class OfflineTestEntityDb with ChangeNotifier {
         "testLong": model.testLong,
         "testMode": model.testMode, //MANUAL
         "connectivityMode": model.connectivityMode,
-        "picture": CameraController.base64ToBlob(model.picture)
+        "picture": CameraController.base64ToBlob(model.picture),
+        "createdDate":model.createdAt
       };
 
       final primaryKey = await db.insert(
@@ -75,16 +76,16 @@ class OfflineTestEntityDb with ChangeNotifier {
     }
   }
 
-  Future _clearEntityTable() async {
-    final db = await LocalDatabaseService().initOfflinTestEntityDb;
+  // Future _clearEntityTable() async {
+  //   final db = await LocalDatabaseService().initOfflinTestEntityDb;
 
-    try {
-      await db.delete(testEntityOfflineCollection);
-      log('---table is cleared');
-    } catch (e) {
-      log('exception on deleting  table  ${e.toString()}');
-    }
-  }
+  //   try {
+  //     await db.delete(testEntityOfflineCollection);
+  //     log('---table is cleared');
+  //   } catch (e) {
+  //     log('exception on deleting  table  ${e.toString()}');
+  //   }
+  // }
 
   Future getAllPendingOfflineTest({bool? dontListen}) async {
     try {
@@ -114,6 +115,7 @@ class OfflineTestEntityDb with ChangeNotifier {
           String picture =
               CameraController.blobToBase64(json["picture"] as Uint8List);
           List<TestParametersModel> testParametersModel = [];
+          String createdAt=json["createdDate"] as String;
 
           final dataOfParametes = await db.rawQuery(
               'SELECT * FROM $testEntityParameterCollection  WHERE $testEntityId ==testEntityId');
@@ -141,7 +143,9 @@ class OfflineTestEntityDb with ChangeNotifier {
               testMode: testMode,
               blockSectionId: blockSectionId.toString(),
               stationId: stationId.toString(),
-              parameters: testParametersModel));
+              parameters: testParametersModel,
+              createdAt: createdAt
+              ));
         }
       } else {
         log('No Offline File');
@@ -163,7 +167,7 @@ class OfflineTestEntityDb with ChangeNotifier {
     }
   }
 
-  Future _deleteTableWhere(dynamic id) async {
+  Future deleteTableWhere(dynamic id) async {
     final db = await LocalDatabaseService().initOfflinTestEntityDb;
 
     try {
@@ -203,15 +207,15 @@ class OfflineTestEntityDb with ChangeNotifier {
           final isAddTestSuccess = await ApiService.addNewTest(context, i);
           if (isAddTestSuccess) {
             log("raw id - ${i.rawId}");
-            _deleteTableWhere(i.rawId);
+            deleteTableWhere(i.rawId);
 
             showMessage('Storing offline Test to server');
           } else {
-            showMessage('Storing offline assets to server - FAILED',
+            showMessage('Storing offline test to server - FAILED',
                 isWarning: true);
           }
         }
-        await _clearEntityTable();
+        // await _clearEntityTable();
         await getAllPendingOfflineTest();
       }
     }

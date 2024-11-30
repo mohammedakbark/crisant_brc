@@ -81,18 +81,18 @@ class OfflineAddEntityDb with ChangeNotifier {
     }
   }
 
-  Future _clearTable() async {
-    final db = await LocalDatabaseService().initOfflineAddEntityDb;
+  // Future _clearTable() async {
+  //   final db = await LocalDatabaseService().initOfflineAddEntityDb;
 
-    try {
-      await db.delete(offlineCollectionTable);
-      log('---table is cleared');
-    } catch (e) {
-      log('exception on deleting  table  ${e.toString()}');
-    }
-  }
+  //   try {
+  //     await db.delete(offlineCollectionTable);
+  //     log('---table is cleared');
+  //   } catch (e) {
+  //     log('exception on deleting  table  ${e.toString()}');
+  //   }
+  // }
 
-  Future _deleteTableWhere(dynamic id) async {
+  Future deleteTableWhere(dynamic id) async {
     final db = await LocalDatabaseService().initOfflineAddEntityDb;
 
     try {
@@ -130,7 +130,7 @@ class OfflineAddEntityDb with ChangeNotifier {
         for (var i in listOfflineEntitites!) {
           final isSuccessAdd = await ApiService.addNewAsset(context, i);
           if (isSuccessAdd) {
-            _deleteTableWhere(i.rawId);
+            deleteTableWhere(i.rawId);
             showMessage('Storing offline assets to server');
           } else {
             showMessage('Storing offline assets to server - FAILED',
@@ -139,7 +139,8 @@ class OfflineAddEntityDb with ChangeNotifier {
         }
         // await _clearTable();
         await Provider.of<EnitityProfileDb>(context, listen: false)
-            .storeEnitityProfile(context, dontehckNet: dontehckNet);
+            .storeEnitityProfile(context,
+                dontehckNet: dontehckNet,);
         await getAllOfflineAddEntityDb();
       }
     }

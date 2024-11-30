@@ -42,6 +42,7 @@ class _DownloadDataScreenState extends State<DownloadDataScreen> {
     return Consumer<LocalDatabaseService>(builder: (context, controller, _) {
       return PopScope(
         canPop: !controller.isDownloading,
+        
         child: Scaffold(
             appBar: AppBar(
               leading: BackButton(

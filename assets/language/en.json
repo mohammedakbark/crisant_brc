@@ -32,7 +32,7 @@
   "submitTestReport": "SUBMIT TEST REPORT",
   "onlineData": "ONLINE TEST DATA",
   "offlineData": "OFFLINE TEST DATA",
-  "offlineAddAsset":"OFFLINE ADD ASSETS",
+  "offlineAddAsset": "OFFLINE ADD ASSETS",
   "noRecordFoundMessage": "No records found",
 
   "assetTypeCap": "ASSET TYPE",
@@ -61,10 +61,10 @@
   "parametersD": "Parameters",
   "parametersValuesD": "Parameter Values",
   "reasonsD": "Reasons",
-  "assetProfilesofflineD":"Asset Profiles - Offline",
-  "testReportsOfflineD":"Test Reports - Offline",
-  "lastUpdated":"Last updated",
-  "assetsProfilesD":"Asset Profiles",
-  "syncAll":"Sync All"
-  
+  "assetProfilesofflineD": "Asset Profiles - Offline",
+  "testReportsOfflineD": "Test Reports - Offline",
+  "lastUpdated": "Last updated",
+  "assetsProfilesD": "Asset Profiles",
+  "syncAll": "Sync All",
+  "date": "DATE"
 }
